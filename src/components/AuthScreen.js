@@ -1,11 +1,14 @@
+// src/components/AuthScreen.js
 'use client';
 import React, { useState } from 'react';
+import { Mail, Lock, LogIn, UserPlus, Flame } from 'lucide-react';
 import { 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
   signInWithPopup 
 } from 'firebase/auth';
 import { auth, googleProvider } from '@/lib/firebase';
+import { useRouter } from 'next/navigation';
 
 export default function AuthScreen() {
   const [email, setEmail] = useState('');
@@ -13,6 +16,7 @@ export default function AuthScreen() {
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const router = useRouter();
 
   const handleEmailAuth = async (e) => {
     e.preventDefault();
@@ -27,9 +31,35 @@ export default function AuthScreen() {
       }
       setEmail('');
       setPassword('');
+      // Next.js navigace po úspěšném přihlášení
+      router.push('/dashboard');
     } catch (err) {
       console.error('Auth error:', err);
-      setError(err.message);
+      let errorMessage = 'Nastala chyba';
+      
+      switch (err.code) {
+        case 'auth/user-not-found':
+          errorMessage = 'Uživatel nenalezen';
+          break;
+        case 'auth/wrong-password':
+          errorMessage = 'Nesprávné heslo';
+          break;
+        case 'auth/email-already-in-use':
+          errorMessage = 'Email už je registrovaný';
+          break;
+        case 'auth/weak-password':
+          errorMessage = 'Heslo je příliš slabé (min. 6 znaků)';
+          break;
+        case 'auth/invalid-email':
+          errorMessage = 'Neplatný email';
+          break;
+        case 'auth/too-many-requests':
+          errorMessage = 'Příliš mnoho pokusů, zkuste to později';
+          break;
+        default:
+          errorMessage = err.message;
+      }
+      setError(errorMessage);
     }
 
     setLoading(false);
@@ -41,9 +71,14 @@ export default function AuthScreen() {
     
     try {
       await signInWithPopup(auth, googleProvider);
+      router.push('/dashboard');
     } catch (err) {
       console.error('Google sign in error:', err);
-      setError('Chyba při přihlášení přes Google');
+      if (err.code === 'auth/popup-closed-by-user') {
+        setError('Přihlašovací okno bylo zavřeno');
+      } else {
+        setError('Nastala chyba s Google přihlášením');
+      }
     }
     
     setLoading(false);
@@ -51,67 +86,98 @@ export default function AuthScreen() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-red-600 flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md">
+      <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 w-full max-w-md border border-blue-200 animate-fadeIn">
+        {/* Logo a nadpis */}
         <div className="text-center mb-8">
-          <div className="text-5xl mb-4">🏒</div>
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">HC Litvínov Cards</h1>
-          <p className="text-gray-600">Sbírej, vyměňuj, vítěz!</p>
+          <div className="w-20 h-20 bg-gradient-to-r from-blue-600 to-red-500 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse shadow-lg">
+            <Flame className="text-white" size={40} />
+          </div>
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">HC Litvínov</h1>
+          <h2 className="text-xl font-semibold text-gray-700 mb-1">Hokejové Kartičky</h2>
+          <p className="text-gray-600">Sbírej, vyměňuj, vítěz! 🏒</p>
         </div>
 
+        {/* Error alert */}
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
-            <p className="text-red-600 text-sm">{error}</p>
+          <div className="bg-red-50 border border-red-200 rounded-2xl p-4 mb-6 animate-shake">
+            <p className="text-red-600 text-center text-sm">{error}</p>
           </div>
         )}
 
-        <div className="flex mb-6 bg-gray-100 rounded-lg p-1">
+        {/* Toggle Login/Register */}
+        <div className="flex mb-6 bg-gray-100 rounded-2xl p-1">
           <button
-            onClick={() => setIsLogin(true)}
-            className={`flex-1 py-2 px-4 rounded ${
-              isLogin ? 'bg-blue-600 text-white' : 'text-gray-600'
+            onClick={() => {
+              setIsLogin(true);
+              setError('');
+            }}
+            className={`flex-1 py-2 px-4 rounded-xl font-semibold transition-all duration-300 ${
+              isLogin
+                ? 'bg-blue-600 text-white shadow-lg transform scale-105'
+                : 'text-gray-600 hover:text-gray-800'
             }`}
           >
             Přihlášení
           </button>
           <button
-            onClick={() => setIsLogin(false)}
-            className={`flex-1 py-2 px-4 rounded ${
-              !isLogin ? 'bg-blue-600 text-white' : 'text-gray-600'
+            onClick={() => {
+              setIsLogin(false);
+              setError('');
+            }}
+            className={`flex-1 py-2 px-4 rounded-xl font-semibold transition-all duration-300 ${
+              !isLogin
+                ? 'bg-blue-600 text-white shadow-lg transform scale-105'
+                : 'text-gray-600 hover:text-gray-800'
             }`}
           >
             Registrace
           </button>
         </div>
 
+        {/* Form inputs */}
         <form onSubmit={handleEmailAuth} className="space-y-4 mb-6">
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-            required
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-          />
+          <div className="relative group">
+            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors" size={20} />
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email"
+              required
+              className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+            />
+          </div>
 
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Heslo (min. 6 znaků)"
-            required
-            minLength={6}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-          />
+          <div className="relative group">
+            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors" size={20} />
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Heslo (min. 6 znaků)"
+              required
+              minLength={6}
+              className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+            />
+          </div>
 
           <button
             type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={loading || !email || !password}
+            className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 rounded-2xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transform hover:scale-[1.02] active:scale-[0.98]"
           >
-            {loading ? 'Načítám...' : (isLogin ? 'Přihlásit se' : 'Registrovat se')}
+            {loading ? (
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+            ) : (
+              <>
+                {isLogin ? <LogIn size={20} /> : <UserPlus size={20} />}
+                {isLogin ? 'Přihlásit se' : 'Registrovat se'}
+              </>
+            )}
           </button>
         </form>
 
+        {/* Divider */}
         <div className="relative mb-6">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-gray-300"></div>
@@ -121,10 +187,11 @@ export default function AuthScreen() {
           </div>
         </div>
 
+        {/* Google Sign In */}
         <button
           onClick={handleGoogleSignIn}
           disabled={loading}
-          className="w-full bg-white border-2 border-gray-300 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          className="w-full bg-white border-2 border-gray-300 text-gray-700 py-3 rounded-2xl font-semibold hover:bg-gray-50 hover:border-gray-400 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 transform hover:scale-[1.02] active:scale-[0.98]"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path fill="#4285f4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -134,6 +201,16 @@ export default function AuthScreen() {
           </svg>
           {loading ? 'Připojuji...' : 'Přihlásit se přes Google'}
         </button>
+
+        {/* Footer */}
+        <div className="mt-8 text-center">
+          <p className="text-xs text-gray-500">
+            Vytvořeno s ❤️ pro fanoušky HC Litvínov
+          </p>
+          <p className="text-xs text-gray-400 mt-1">
+            Next.js 14 + Firebase + Tailwind CSS
+          </p>
+        </div>
       </div>
     </div>
   );
