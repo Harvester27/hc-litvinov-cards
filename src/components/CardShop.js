@@ -1,9 +1,10 @@
-// 🏪 CARD SHOP - Kompletní obchod s vylepšenými Lancers kartami
+// 🏪 CARD SHOP - Kompletní obchod s opravenými kartami
 import React, { useState } from 'react';
 import { 
   Package, Star, Sparkles, Zap, Crown, Shield, 
   ArrowLeft, Coins, ShoppingCart, Flame, Diamond,
-  Trophy, Gem, X, Award, Users, Target, Brain
+  Trophy, Gem, X, Award, Users, Target, Brain,
+  ChevronLeft, ChevronRight, BarChart3, Activity
 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -44,14 +45,25 @@ const RomanSimekData = {
     games: 42,
     goals: 8,
     assists: 24,
-    plusMinus: '+18'
+    points: 32,
+    plusMinus: '+18',
+    pim: 36,
+    hits: 145,
+    blockedShots: 89,
+    timeOnIce: '22:45',
+    faceoffWins: '48.2%',
+    shootingPercent: '9.8%',
+    powerplayGoals: 2,
+    shorthandedGoals: 0,
+    gameWinningGoals: 3,
+    overtimeGoals: 1
   }
 };
 
 // ============================================
 // KOMPONENTA PRO ZOBRAZENÍ ATRIBUTU
 // ============================================
-function AttributeBar({ name, value }) {
+function AttributeBar({ name, value, compact = false }) {
   const getColor = (val) => {
     if (val >= 85) return 'bg-gradient-to-r from-yellow-500 to-orange-500';
     if (val >= 75) return 'bg-gradient-to-r from-green-500 to-emerald-500';
@@ -59,8 +71,25 @@ function AttributeBar({ name, value }) {
     return 'bg-gradient-to-r from-gray-500 to-slate-500';
   };
 
+  if (compact) {
+    return (
+      <div className="flex items-center gap-1 mb-1">
+        <div className="w-16 text-[9px] text-amber-300 font-semibold truncate">
+          {name}
+        </div>
+        <div className="flex-1 bg-black/30 rounded-full h-1.5 relative overflow-hidden">
+          <div 
+            className={`h-full ${getColor(value)} transition-all duration-500`}
+            style={{ width: `${value}%` }}
+          />
+        </div>
+        <div className="w-5 text-right text-white font-bold text-[9px]">{value}</div>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex items-center gap-2 mb-1">
+    <div className="flex items-center gap-2 mb-1.5">
       <div className="w-20 text-[10px] text-amber-300 font-semibold">
         {name}
       </div>
@@ -76,16 +105,18 @@ function AttributeBar({ name, value }) {
 }
 
 // ============================================
-// VYLEPŠENÁ LANCERS KARTA S OTÁČENÍM
+// VYLEPŠENÁ LANCERS KARTA S OTÁČENÍM A 2 LISTY
 // ============================================
 function EnhancedLancersCard({ player, canFlip = true, onClick, isInModal = false }) {
   const [isFlipped, setIsFlipped] = useState(false);
+  const [backPage, setBackPage] = useState(1); // 1 = atributy, 2 = statistiky
   const [imageError, setImageError] = useState(false);
 
   const handleRightClick = (e) => {
     e.preventDefault();
-    if (canFlip && player.name === 'Roman Šimek') { // Otáčení jen pro Romana
+    if (canFlip && player.name === 'Roman Šimek') {
       setIsFlipped(!isFlipped);
+      setBackPage(1); // Reset na první stranu při otočení
     }
   };
 
@@ -95,12 +126,18 @@ function EnhancedLancersCard({ player, canFlip = true, onClick, isInModal = fals
     }
   };
 
-  // Velikost karty podle kontextu
-  const cardSize = isInModal ? "w-84 h-[480px]" : "w-56 h-80";
+  const switchBackPage = (e, page) => {
+    e.stopPropagation();
+    setBackPage(page);
+  };
+
+  // Velikost karty podle kontextu - ZMENŠENÁ pro modal
+  const cardSize = isInModal ? "w-64 h-[360px]" : "w-56 h-80";
+  const scale = isInModal ? "scale-100" : "scale-100";
 
   return (
     <div 
-      className={`relative ${cardSize} cursor-pointer preserve-3d transition-transform duration-700`}
+      className={`relative ${cardSize} cursor-pointer preserve-3d transition-transform duration-700 ${scale}`}
       style={{
         transformStyle: 'preserve-3d',
         transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
@@ -115,66 +152,45 @@ function EnhancedLancersCard({ player, canFlip = true, onClick, isInModal = fals
           <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-amber-400/20 to-transparent"></div>
           
           {/* Header s jménem a pozicí */}
-          <div className="relative z-10 bg-black/30 backdrop-blur p-3">
+          <div className="relative z-10 bg-black/30 backdrop-blur p-2">
             <div className="flex justify-between items-start">
               <div>
-                <h3 className={`text-white font-bold ${isInModal ? 'text-2xl' : 'text-lg'}`}>{player.name}</h3>
-                <p className={`text-amber-300 ${isInModal ? 'text-lg' : 'text-sm'}`}>{player.position}</p>
+                <h3 className={`text-white font-bold ${isInModal ? 'text-lg' : 'text-base'}`}>{player.name}</h3>
+                <p className={`text-amber-300 ${isInModal ? 'text-sm' : 'text-xs'}`}>{player.position}</p>
               </div>
-              <div className="bg-white/20 backdrop-blur rounded-full px-3 py-1">
-                <span className={`text-white font-bold ${isInModal ? 'text-2xl' : 'text-xl'}`}>#{player.number}</span>
+              <div className="bg-white/20 backdrop-blur rounded-full px-2 py-1">
+                <span className={`text-white font-bold ${isInModal ? 'text-lg' : 'text-base'}`}>#{player.number}</span>
               </div>
             </div>
           </div>
           
           {/* Fotka hráče */}
-          <div className={`relative ${isInModal ? 'h-56' : 'h-40'} mx-3 rounded-lg overflow-hidden bg-gradient-to-b from-black/20 to-black/50`}>
+          <div className={`relative ${isInModal ? 'h-44' : 'h-36'} mx-3 rounded-lg overflow-hidden bg-gradient-to-b from-black/20 to-black/50`}>
             {!imageError && player.images?.front ? (
               <Image
                 src={player.images.front}
                 alt={player.name}
                 fill
                 className="object-cover object-top"
-                sizes={isInModal ? "336px" : "224px"}
+                sizes={isInModal ? "256px" : "224px"}
                 onError={() => setImageError(true)}
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
-                <Users className="text-white/30" size={isInModal ? 80 : 60} />
+                <Users className="text-white/30" size={isInModal ? 60 : 50} />
               </div>
             )}
           </div>
           
-          {/* Stats sekce */}
-          <div className={`p-3 ${isInModal ? 'mt-4' : 'mt-2'}`}>
-            {/* Sezónní statistiky */}
-            <div className={`grid grid-cols-4 gap-2 mb-3 text-center`}>
-              <div className="bg-black/30 rounded-lg p-2">
-                <div className={`text-amber-300 ${isInModal ? 'text-sm' : 'text-xs'}`}>Z</div>
-                <div className={`text-white font-bold ${isInModal ? 'text-lg' : ''}`}>{player.seasonStats?.games || 42}</div>
-              </div>
-              <div className="bg-black/30 rounded-lg p-2">
-                <div className={`text-amber-300 ${isInModal ? 'text-sm' : 'text-xs'}`}>G</div>
-                <div className={`text-white font-bold ${isInModal ? 'text-lg' : ''}`}>{player.seasonStats?.goals || 8}</div>
-              </div>
-              <div className="bg-black/30 rounded-lg p-2">
-                <div className={`text-amber-300 ${isInModal ? 'text-sm' : 'text-xs'}`}>A</div>
-                <div className={`text-white font-bold ${isInModal ? 'text-lg' : ''}`}>{player.seasonStats?.assists || 24}</div>
-              </div>
-              <div className="bg-black/30 rounded-lg p-2">
-                <div className={`text-amber-300 ${isInModal ? 'text-sm' : 'text-xs'}`}>+/-</div>
-                <div className={`text-white font-bold ${isInModal ? 'text-lg' : 'text-sm'}`}>{player.seasonStats?.plusMinus || '+18'}</div>
-              </div>
-            </div>
-            
-            {/* Loga a overall */}
+          {/* Loga a overall - přesunuté ze statistik */}
+          <div className="p-3 mt-2">
             <div className="grid grid-cols-3 gap-2 items-center">
-              <div className={`bg-white/80 rounded-lg p-2 flex items-center justify-center ${isInModal ? 'h-20' : 'h-14'}`}>
+              <div className={`bg-white/80 rounded-lg p-2 flex items-center justify-center ${isInModal ? 'h-14' : 'h-12'}`}>
                 <Image 
                   src={player.images?.leagueLogo || '/images/players/KHLA.png'}
                   alt="KHLA"
-                  width={isInModal ? 60 : 40}
-                  height={isInModal ? 60 : 40}
+                  width={isInModal ? 50 : 40}
+                  height={isInModal ? 50 : 40}
                   className="object-contain"
                   onError={(e) => {
                     e.currentTarget.style.display = 'none';
@@ -182,26 +198,26 @@ function EnhancedLancersCard({ player, canFlip = true, onClick, isInModal = fals
                 />
               </div>
               
-              <div className={`bg-black/40 backdrop-blur rounded-lg p-2 flex flex-col items-center justify-center ${isInModal ? 'h-20' : 'h-14'}`}>
-                <div className={`text-white font-bold ${isInModal ? 'text-3xl' : 'text-2xl'}`}>{player.overall}</div>
+              <div className={`bg-black/40 backdrop-blur rounded-lg p-1 flex flex-col items-center justify-center ${isInModal ? 'h-14' : 'h-12'}`}>
+                <div className={`text-white font-bold ${isInModal ? 'text-2xl' : 'text-xl'}`}>{player.overall}</div>
                 <div className="flex">
                   {[...Array(5)].map((_, i) => (
                     <Star 
                       key={i} 
                       className="text-amber-400" 
-                      size={isInModal ? 14 : 10} 
+                      size={isInModal ? 10 : 8} 
                       fill={i < Math.floor(player.overall / 20) ? 'currentColor' : 'none'} 
                     />
                   ))}
                 </div>
               </div>
               
-              <div className={`bg-white/80 rounded-lg p-2 flex items-center justify-center ${isInModal ? 'h-20' : 'h-14'}`}>
+              <div className={`bg-white/80 rounded-lg p-2 flex items-center justify-center ${isInModal ? 'h-14' : 'h-12'}`}>
                 <Image 
                   src={player.images?.teamLogo || '/images/players/lancers-logo.png'}
                   alt="Lancers"
-                  width={isInModal ? 60 : 40}
-                  height={isInModal ? 60 : 40}
+                  width={isInModal ? 50 : 40}
+                  height={isInModal ? 50 : 40}
                   className="object-contain"
                   onError={(e) => {
                     e.currentTarget.style.display = 'none';
@@ -212,19 +228,19 @@ function EnhancedLancersCard({ player, canFlip = true, onClick, isInModal = fals
           </div>
           
           {canFlip && player.name === 'Roman Šimek' && (
-            <div className={`absolute bottom-2 right-2 text-white/50 ${isInModal ? 'text-sm' : 'text-xs'}`}>
-              Pravý klik pro otočení
+            <div className={`absolute bottom-1 right-2 text-white/50 ${isInModal ? 'text-xs' : 'text-[10px]'}`}>
+              Pravý klik pro info
             </div>
           )}
         </div>
       </div>
 
-      {/* ZADNÍ STRANA - Atributy */}
+      {/* ZADNÍ STRANA - 2 listy (atributy a statistiky) */}
       <div 
         className="absolute inset-0 backface-hidden"
         style={{ transform: 'rotateY(180deg)' }}
       >
-        <div className="w-full h-full bg-gradient-to-br from-amber-900 via-orange-700 to-amber-900 rounded-xl shadow-2xl border-2 border-amber-400/50 overflow-hidden p-3">
+        <div className="w-full h-full bg-gradient-to-br from-amber-900 via-orange-700 to-amber-900 rounded-xl shadow-2xl border-2 border-amber-400/50 overflow-hidden">
           {/* Pattern */}
           <div className="absolute inset-0 opacity-10">
             <div className="absolute inset-0" style={{
@@ -232,67 +248,181 @@ function EnhancedLancersCard({ player, canFlip = true, onClick, isInModal = fals
             }}></div>
           </div>
           
-          {/* Header */}
-          <div className="relative z-10 bg-black/40 rounded-lg p-2 mb-2">
+          {/* Header s navigací mezi listy */}
+          <div className="relative z-10 bg-black/40 p-2">
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-2">
-                <Shield className="text-amber-400" size={isInModal ? 24 : 20} />
-                <span className={`text-white font-bold ${isInModal ? 'text-xl' : ''}`}>{player.name}</span>
+                <Shield className="text-amber-400" size={16} />
+                <span className={`text-white font-bold ${isInModal ? 'text-base' : 'text-sm'}`}>{player.name}</span>
               </div>
-              <span className={`text-amber-300 ${isInModal ? 'text-lg' : 'text-sm'}`}>#{player.number}</span>
+              <div className="flex items-center gap-1">
+                <button 
+                  onClick={(e) => switchBackPage(e, 1)}
+                  className={`px-2 py-1 rounded text-xs transition-all ${
+                    backPage === 1 
+                      ? 'bg-amber-500/30 text-amber-300 font-bold' 
+                      : 'bg-black/20 text-white/60 hover:bg-black/30'
+                  }`}
+                >
+                  Atributy
+                </button>
+                <button 
+                  onClick={(e) => switchBackPage(e, 2)}
+                  className={`px-2 py-1 rounded text-xs transition-all ${
+                    backPage === 2 
+                      ? 'bg-amber-500/30 text-amber-300 font-bold' 
+                      : 'bg-black/20 text-white/60 hover:bg-black/30'
+                  }`}
+                >
+                  Statistiky
+                </button>
+              </div>
             </div>
           </div>
           
-          {/* Atributy v menších sekcích */}
-          <div className={`relative z-10 ${isInModal ? 'space-y-3' : 'space-y-2'}`}>
-            {/* Útočné */}
-            <div className="bg-black/30 rounded-lg p-2">
-              <div className={`text-amber-400 font-bold mb-1 flex items-center gap-1 ${isInModal ? 'text-sm' : 'text-xs'}`}>
-                <Target size={isInModal ? 14 : 12} /> ÚTOČNÉ
+          {/* Obsah podle vybraného listu */}
+          <div className="relative z-10 p-2 h-[calc(100%-44px)] overflow-y-auto custom-scrollbar">
+            {backPage === 1 ? (
+              // LIST 1: ATRIBUTY
+              <div className="space-y-2">
+                {/* Útočné */}
+                <div className="bg-black/30 rounded-lg p-1.5">
+                  <div className={`text-amber-400 font-bold mb-1 flex items-center gap-1 text-[10px]`}>
+                    <Target size={10} /> ÚTOČNÉ
+                  </div>
+                  <AttributeBar name="Střela" value={player.attributes.strela} compact={!isInModal} />
+                  <AttributeBar name="Přihrávka" value={player.attributes.prihravka} compact={!isInModal} />
+                  <AttributeBar name="Kličky" value={player.attributes.klicky} compact={!isInModal} />
+                  <AttributeBar name="Vhazování" value={player.attributes.vhazovani} compact={!isInModal} />
+                  <AttributeBar name="Napadání" value={player.attributes.napadeniHoli} compact={!isInModal} />
+                </div>
+                
+                {/* Pohyb */}
+                <div className="bg-black/30 rounded-lg p-1.5">
+                  <div className={`text-amber-400 font-bold mb-1 flex items-center gap-1 text-[10px]`}>
+                    <Zap size={10} /> POHYB
+                  </div>
+                  <AttributeBar name="Rychlost" value={player.attributes.rychlost} compact={!isInModal} />
+                  <AttributeBar name="Zrychlení" value={player.attributes.zrychleni} compact={!isInModal} />
+                  <AttributeBar name="Hbitost" value={player.attributes.hbitost} compact={!isInModal} />
+                  <AttributeBar name="Stabilita" value={player.attributes.stabilita} compact={!isInModal} />
+                </div>
+                
+                {/* Obranné */}
+                <div className="bg-black/30 rounded-lg p-1.5">
+                  <div className={`text-amber-400 font-bold mb-1 flex items-center gap-1 text-[10px]`}>
+                    <Shield size={10} /> OBRANNÉ
+                  </div>
+                  <AttributeBar name="Blokování" value={player.attributes.blokovani} compact={!isInModal} />
+                  <AttributeBar name="Bránění" value={player.attributes.braneni} compact={!isInModal} />
+                  <AttributeBar name="Přesnost" value={player.attributes.presnost} compact={!isInModal} />
+                  <AttributeBar name="Síla" value={player.attributes.sila} compact={!isInModal} />
+                </div>
+                
+                {/* Mentální */}
+                <div className="bg-black/30 rounded-lg p-1.5">
+                  <div className={`text-amber-400 font-bold mb-1 flex items-center gap-1 text-[10px]`}>
+                    <Brain size={10} /> MENTÁLNÍ
+                  </div>
+                  <AttributeBar name="Předvídavost" value={player.attributes.predvidavost} compact={!isInModal} />
+                  <AttributeBar name="Mentalita" value={player.attributes.mentalita} compact={!isInModal} />
+                  <AttributeBar name="Disciplína" value={player.attributes.disciplina} compact={!isInModal} />
+                  <AttributeBar name="Vydrž" value={player.attributes.vydrz} compact={!isInModal} />
+                </div>
               </div>
-              <AttributeBar name="Střela" value={player.attributes.strela} />
-              <AttributeBar name="Přihrávka" value={player.attributes.prihravka} />
-              <AttributeBar name="Kličky" value={player.attributes.klicky} />
-              <AttributeBar name="Vhazování" value={player.attributes.vhazovani} />
-              <AttributeBar name="Napadání" value={player.attributes.napadeniHoli} />
-            </div>
-            
-            {/* Pohyb */}
-            <div className="bg-black/30 rounded-lg p-2">
-              <div className={`text-amber-400 font-bold mb-1 flex items-center gap-1 ${isInModal ? 'text-sm' : 'text-xs'}`}>
-                <Zap size={isInModal ? 14 : 12} /> POHYB
+            ) : (
+              // LIST 2: STATISTIKY
+              <div className="space-y-2">
+                {/* Základní statistiky */}
+                <div className="bg-black/30 rounded-lg p-2">
+                  <div className={`text-amber-400 font-bold mb-2 flex items-center gap-1 text-[11px]`}>
+                    <BarChart3 size={12} /> ZÁKLADNÍ STATISTIKY
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 text-center">
+                    <div className="bg-black/20 rounded p-1">
+                      <div className="text-amber-300 text-[9px]">Zápasy</div>
+                      <div className="text-white font-bold text-sm">{player.seasonStats?.games || 42}</div>
+                    </div>
+                    <div className="bg-black/20 rounded p-1">
+                      <div className="text-amber-300 text-[9px]">Góly</div>
+                      <div className="text-white font-bold text-sm">{player.seasonStats?.goals || 8}</div>
+                    </div>
+                    <div className="bg-black/20 rounded p-1">
+                      <div className="text-amber-300 text-[9px]">Asistence</div>
+                      <div className="text-white font-bold text-sm">{player.seasonStats?.assists || 24}</div>
+                    </div>
+                    <div className="bg-black/20 rounded p-1">
+                      <div className="text-amber-300 text-[9px]">Body</div>
+                      <div className="text-white font-bold text-sm">{player.seasonStats?.points || 32}</div>
+                    </div>
+                    <div className="bg-black/20 rounded p-1">
+                      <div className="text-amber-300 text-[9px]">+/-</div>
+                      <div className="text-white font-bold text-sm">{player.seasonStats?.plusMinus || '+18'}</div>
+                    </div>
+                    <div className="bg-black/20 rounded p-1">
+                      <div className="text-amber-300 text-[9px]">TM</div>
+                      <div className="text-white font-bold text-sm">{player.seasonStats?.pim || 36}</div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Pokročilé statistiky */}
+                <div className="bg-black/30 rounded-lg p-2">
+                  <div className={`text-amber-400 font-bold mb-2 flex items-center gap-1 text-[11px]`}>
+                    <Activity size={12} /> POKROČILÉ STATISTIKY
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="flex justify-between bg-black/20 rounded p-1">
+                      <span className="text-amber-300 text-[9px]">Hity:</span>
+                      <span className="text-white font-bold text-[10px]">{player.seasonStats?.hits || 145}</span>
+                    </div>
+                    <div className="flex justify-between bg-black/20 rounded p-1">
+                      <span className="text-amber-300 text-[9px]">Bloky:</span>
+                      <span className="text-white font-bold text-[10px]">{player.seasonStats?.blockedShots || 89}</span>
+                    </div>
+                    <div className="flex justify-between bg-black/20 rounded p-1">
+                      <span className="text-amber-300 text-[9px]">TOI/G:</span>
+                      <span className="text-white font-bold text-[10px]">{player.seasonStats?.timeOnIce || '22:45'}</span>
+                    </div>
+                    <div className="flex justify-between bg-black/20 rounded p-1">
+                      <span className="text-amber-300 text-[9px]">FO%:</span>
+                      <span className="text-white font-bold text-[10px]">{player.seasonStats?.faceoffWins || '48.2%'}</span>
+                    </div>
+                    <div className="flex justify-between bg-black/20 rounded p-1">
+                      <span className="text-amber-300 text-[9px]">Střelba%:</span>
+                      <span className="text-white font-bold text-[10px]">{player.seasonStats?.shootingPercent || '9.8%'}</span>
+                    </div>
+                    <div className="flex justify-between bg-black/20 rounded p-1">
+                      <span className="text-amber-300 text-[9px]">PP góly:</span>
+                      <span className="text-white font-bold text-[10px]">{player.seasonStats?.powerplayGoals || 2}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Speciální */}
+                <div className="bg-black/30 rounded-lg p-2">
+                  <div className={`text-amber-400 font-bold mb-2 flex items-center gap-1 text-[11px]`}>
+                    <Trophy size={12} /> SPECIÁLNÍ
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="flex justify-between bg-black/20 rounded p-1">
+                      <span className="text-amber-300 text-[9px]">GWG:</span>
+                      <span className="text-white font-bold text-[10px]">{player.seasonStats?.gameWinningGoals || 3}</span>
+                    </div>
+                    <div className="flex justify-between bg-black/20 rounded p-1">
+                      <span className="text-amber-300 text-[9px]">OT góly:</span>
+                      <span className="text-white font-bold text-[10px]">{player.seasonStats?.overtimeGoals || 1}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <AttributeBar name="Rychlost" value={player.attributes.rychlost} />
-              <AttributeBar name="Zrychlení" value={player.attributes.zrychleni} />
-              <AttributeBar name="Hbitost" value={player.attributes.hbitost} />
-              <AttributeBar name="Stabilita" value={player.attributes.stabilita} />
-            </div>
-            
-            {/* Obranné */}
-            <div className="bg-black/30 rounded-lg p-2">
-              <div className={`text-amber-400 font-bold mb-1 flex items-center gap-1 ${isInModal ? 'text-sm' : 'text-xs'}`}>
-                <Shield size={isInModal ? 14 : 12} /> OBRANNÉ
-              </div>
-              <AttributeBar name="Blokování" value={player.attributes.blokovani} />
-              <AttributeBar name="Bránění" value={player.attributes.braneni} />
-              <AttributeBar name="Přesnost" value={player.attributes.presnost} />
-              <AttributeBar name="Síla" value={player.attributes.sila} />
-            </div>
-            
-            {/* Mentální */}
-            <div className="bg-black/30 rounded-lg p-2">
-              <div className={`text-amber-400 font-bold mb-1 flex items-center gap-1 ${isInModal ? 'text-sm' : 'text-xs'}`}>
-                <Brain size={isInModal ? 14 : 12} /> MENTÁLNÍ
-              </div>
-              <AttributeBar name="Předvídavost" value={player.attributes.predvidavost} />
-              <AttributeBar name="Mentalita" value={player.attributes.mentalita} />
-              <AttributeBar name="Disciplína" value={player.attributes.disciplina} />
-              <AttributeBar name="Vydrž" value={player.attributes.vydrz} />
-            </div>
+            )}
           </div>
           
-          <div className={`absolute bottom-2 right-2 text-white/50 ${isInModal ? 'text-sm' : 'text-xs'}`}>
-            Pravý klik pro otočení zpět
+          {/* Indikátor stránky */}
+          <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 flex gap-1">
+            <div className={`w-6 h-1 rounded-full transition-all ${backPage === 1 ? 'bg-amber-400' : 'bg-white/20'}`}></div>
+            <div className={`w-6 h-1 rounded-full transition-all ${backPage === 2 ? 'bg-amber-400' : 'bg-white/20'}`}></div>
           </div>
         </div>
       </div>
@@ -304,13 +434,27 @@ function EnhancedLancersCard({ player, canFlip = true, onClick, isInModal = fals
         .backface-hidden {
           backface-visibility: hidden;
         }
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: rgba(0, 0, 0, 0.2);
+          border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(251, 191, 36, 0.5);
+          border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(251, 191, 36, 0.7);
+        }
       `}</style>
     </div>
   );
 }
 
 // ============================================
-// MODAL PRO ZVĚTŠENOU KARTU
+// MODAL PRO ZVĚTŠENOU KARTU - OPRAVENÝ
 // ============================================
 function CardModal({ player, isOpen, onClose }) {
   if (!isOpen || !player) return null;
@@ -318,17 +462,18 @@ function CardModal({ player, isOpen, onClose }) {
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur z-50 flex items-center justify-center p-4" onClick={onClose}>
       <div 
-        className="relative"
+        className="relative max-h-[90vh] overflow-visible"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={onClose}
-          className="absolute -top-4 -right-4 bg-white/20 hover:bg-white/30 rounded-full p-2 z-10"
+          className="absolute -top-10 right-0 bg-white/20 hover:bg-white/30 rounded-full p-2 z-10"
         >
           <X className="text-white" size={24} />
         </button>
         
-        <div className="transform scale-125">
+        {/* Karta se správnou velikostí pro obrazovku */}
+        <div className="flex items-center justify-center">
           <EnhancedLancersCard 
             player={player} 
             canFlip={true}
@@ -337,8 +482,8 @@ function CardModal({ player, isOpen, onClose }) {
         </div>
         
         {player.name === 'Roman Šimek' && (
-          <div className="text-center mt-12 text-white/70 text-sm">
-            Pravý klik myši pro otočení karty
+          <div className="text-center mt-4 text-white/70 text-sm">
+            Pravý klik myši pro otočení karty • Přepínej mezi Atributy a Statistikami
           </div>
         )}
       </div>
@@ -697,7 +842,7 @@ function PackOpeningAnimation({ pack, cards, onClose }) {
             {pack.id === 'lancers' && (
               <div className="text-center mt-4 text-amber-300 text-sm">
                 <p>👆 Klikni na kartu pro zvětšení</p>
-                <p>👉 Pravý klik na Romana Šimka pro zobrazení atributů</p>
+                <p>👉 Pravý klik na Romana Šimka pro zobrazení atributů a statistik</p>
               </div>
             )}
           </div>
@@ -745,7 +890,7 @@ export default function CardShop() {
   const [isOpening, setIsOpening] = useState(false);
   const [openedCards, setOpenedCards] = useState([]);
   
-  // Data hráčů Lancers - všichni používají data Romana Šimka pro demo
+  // Data hráčů Lancers
   const lancersPlayers = [
     { ...RomanSimekData, id: 1, isLancers: true },
     { 
@@ -755,7 +900,7 @@ export default function CardShop() {
       position: 'Útočník',
       overall: 85,
       images: {
-        front: '', // Nemá fotku
+        front: '',
         teamLogo: '/images/players/lancers-logo.png',
         leagueLogo: '/images/players/KHLA.png'
       },
@@ -769,7 +914,7 @@ export default function CardShop() {
       position: 'Brankář',
       overall: 88,
       images: {
-        front: '', // Nemá fotku
+        front: '',
         teamLogo: '/images/players/lancers-logo.png',
         leagueLogo: '/images/players/KHLA.png'
       },
@@ -781,7 +926,6 @@ export default function CardShop() {
   // Generování karet
   const generateCards = (pack) => {
     if (pack.id === 'lancers') {
-      // Pro Lancers balíček - vrať 3 karty
       return lancersPlayers.map(player => ({
         ...player,
         isLancers: true,
@@ -790,7 +934,6 @@ export default function CardShop() {
       }));
     }
     
-    // Původní generování pro ostatní balíčky
     const cardNames = [
       { name: 'David Krejčí', position: 'Útočník', rarity: 'legendary', stars: 5 },
       { name: 'Ondřej Kaše', position: 'Útočník', rarity: 'rare', stars: 4 },
@@ -869,7 +1012,7 @@ export default function CardShop() {
                 NOVINKA: Hráči Lancers - Bronze Edition!
               </h2>
               <p className="text-amber-200">
-                Exkluzivní kolekce hráčů HC Lancers z ligy KHLA. Roman Šimek s unikátními atributy!
+                Roman Šimek s 18 atributy a kompletními statistikami na 2 listech!
               </p>
             </div>
             <div className="text-6xl animate-pulse">⚔️</div>
@@ -886,41 +1029,6 @@ export default function CardShop() {
               onClick={() => handlePackPurchase(pack)}
             />
           ))}
-        </div>
-        
-        {/* Informace o balíčcích */}
-        <div className="mt-12 bg-white/5 backdrop-blur-sm rounded-3xl p-6 border border-white/10">
-          <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-            <Shield className="text-blue-400" />
-            Informace o Vzácnosti Karet
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            <div className="text-center">
-              <div className="w-12 h-12 bg-gray-500 rounded-full mx-auto mb-2"></div>
-              <p className="text-gray-300 text-sm">Běžné</p>
-              <p className="text-gray-400 text-xs">70% šance</p>
-            </div>
-            <div className="text-center">
-              <div className="w-12 h-12 bg-gradient-to-br from-amber-600 to-orange-600 rounded-full mx-auto mb-2"></div>
-              <p className="text-amber-300 text-sm">Bronze</p>
-              <p className="text-amber-400 text-xs">Lancers edice</p>
-            </div>
-            <div className="text-center">
-              <div className="w-12 h-12 bg-blue-500 rounded-full mx-auto mb-2"></div>
-              <p className="text-blue-300 text-sm">Neobvyklé</p>
-              <p className="text-blue-400 text-xs">20% šance</p>
-            </div>
-            <div className="text-center">
-              <div className="w-12 h-12 bg-purple-500 rounded-full mx-auto mb-2"></div>
-              <p className="text-purple-300 text-sm">Vzácné</p>
-              <p className="text-purple-400 text-xs">8% šance</p>
-            </div>
-            <div className="text-center">
-              <div className="w-12 h-12 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full mx-auto mb-2"></div>
-              <p className="text-yellow-300 text-sm">Legendární</p>
-              <p className="text-yellow-400 text-xs">2% šance</p>
-            </div>
-          </div>
         </div>
       </div>
       
