@@ -1,7 +1,6 @@
-import { initializeApp, getApps } from "firebase/app";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-import { getAnalytics, isSupported } from "firebase/analytics";
+import { initializeApp, getApps } from 'firebase/app';
+import { getAuth, GoogleAuthProvider } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: "AIzaSyCO6XhPvjWZMfPIfMIB3-v_szBTwpk6WfE",
@@ -13,17 +12,9 @@ const firebaseConfig = {
   measurementId: "G-15WQB9LCRM"
 };
 
-// Inicializace jen pokud ještě neexistuje
+// Inicializace pouze pokud ještě neexistuje
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const googleProvider = new GoogleAuthProvider();
-
-// Analytics jen na klientovi
-export const initAnalytics = async () => {
-  if (typeof window !== 'undefined' && await isSupported()) {
-    return getAnalytics(app);
-  }
-  return null;
-};
