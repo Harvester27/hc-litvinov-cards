@@ -1,12 +1,13 @@
-// 🏪 CARD SHOP - Obchod s balíčky kartiček HC Litvínov
+// 🏪 CARD SHOP - Obchod s balíčky kartiček HC Litvínov + LANCERS
 import React, { useState } from 'react';
 import { 
   Package, Star, Sparkles, Zap, Crown, Shield, 
   ArrowLeft, Coins, ShoppingCart, Flame, Diamond,
-  Trophy, Gem, X
+  Trophy, Gem, X, Award, Users
 } from 'lucide-react';
+import Image from 'next/image';
 
-// Definice typů balíčků
+// Definice typů balíčků - PŘIDÁN LANCERS BALÍČEK
 const packs = [
   {
     id: 'starter',
@@ -33,6 +34,22 @@ const packs = [
     description: '5 karet, šance na vzácnou',
     guaranteed: '1x Neobvyklá zaručena',
     image: '🥉'
+  },
+  // 🆕 NOVÝ LANCERS BALÍČEK
+  {
+    id: 'lancers',
+    name: 'Hráči Lancers',
+    price: 750,
+    cards: 3,
+    rarity: 'lancers',
+    color: 'from-amber-700 via-orange-600 to-amber-800',
+    glowColor: 'shadow-amber-500/50',
+    icon: Users,
+    description: 'Exkluzivní Bronze Edition',
+    guaranteed: 'Liga KHLA - Tým Lancers',
+    image: '⚔️',
+    special: true,
+    badge: 'LIMITOVANÁ EDICE'
   },
   {
     id: 'silver',
@@ -88,7 +105,7 @@ const packs = [
   }
 ];
 
-// Komponenta pro 3D balíček
+// Komponenta pro 3D balíček - UPRAVENÁ PRO LANCERS
 function Pack3D({ pack, onClick, isAffordable }) {
   const [isHovered, setIsHovered] = useState(false);
   
@@ -104,11 +121,18 @@ function Pack3D({ pack, onClick, isAffordable }) {
         perspective: '1000px'
       }}
     >
+      {/* Special badge pro Lancers */}
+      {pack.special && (
+        <div className="absolute -top-2 -right-2 z-10 bg-gradient-to-r from-amber-600 to-orange-600 text-white text-xs px-3 py-1 rounded-full font-bold animate-pulse shadow-lg">
+          {pack.badge}
+        </div>
+      )}
+      
       {/* Glow efekt */}
       <div className={`absolute inset-0 bg-gradient-to-r ${pack.color} rounded-2xl blur-xl opacity-50 ${pack.glowColor} shadow-2xl transition-all duration-500 ${isHovered ? 'scale-110' : 'scale-95'}`}></div>
       
       {/* Hlavní balíček */}
-      <div className={`relative bg-gradient-to-br ${pack.color} rounded-2xl p-6 border-2 border-white/20 backdrop-blur-sm ${!isAffordable ? 'opacity-60' : ''}`}>
+      <div className={`relative bg-gradient-to-br ${pack.color} rounded-2xl p-6 border-2 ${pack.id === 'lancers' ? 'border-amber-400/50' : 'border-white/20'} backdrop-blur-sm ${!isAffordable ? 'opacity-60' : ''}`}>
         {/* Horní část - logo týmu */}
         <div className="absolute top-3 right-3 text-4xl opacity-80">
           {pack.image}
@@ -120,20 +144,40 @@ function Pack3D({ pack, onClick, isAffordable }) {
         {/* Vizualizace balíčku */}
         <div className="relative w-full h-40 mb-4 flex items-center justify-center">
           <div className="relative">
-            {/* Zadní karty (preview) */}
-            <div className="absolute w-20 h-28 bg-gradient-to-br from-blue-900 to-red-700 rounded-lg transform rotate-12 translate-x-4 border-2 border-white/30"></div>
-            <div className="absolute w-20 h-28 bg-gradient-to-br from-blue-900 to-red-700 rounded-lg transform -rotate-12 -translate-x-4 border-2 border-white/30"></div>
-            
-            {/* Přední balíček */}
-            <div className="relative w-24 h-32 bg-gradient-to-br from-white/90 to-white/70 rounded-lg shadow-2xl border-2 border-white flex items-center justify-center overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-red-600/20"></div>
-              <div className="relative">
-                <Flame className="text-red-600" size={32} />
-                <div className="text-xs font-bold text-blue-900 text-center mt-1">HC LITVÍNOV</div>
-              </div>
-              {/* Lesklý efekt */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/30 to-transparent transform translate-x-full group-hover:translate-x-[-100%] transition-transform duration-1000"></div>
-            </div>
+            {pack.id === 'lancers' ? (
+              // Speciální vizualizace pro Lancers
+              <>
+                <div className="absolute w-20 h-28 bg-gradient-to-br from-amber-700 to-orange-600 rounded-lg transform rotate-12 translate-x-4 border-2 border-amber-400/50 shadow-xl">
+                  <div className="flex items-center justify-center h-full text-white/80 font-bold">KHLA</div>
+                </div>
+                <div className="absolute w-20 h-28 bg-gradient-to-br from-amber-700 to-orange-600 rounded-lg transform -rotate-12 -translate-x-4 border-2 border-amber-400/50 shadow-xl">
+                  <div className="flex items-center justify-center h-full text-white/80 font-bold">KHLA</div>
+                </div>
+                <div className="relative w-24 h-32 bg-gradient-to-br from-amber-600/90 to-orange-700/90 rounded-lg shadow-2xl border-2 border-amber-400 flex items-center justify-center overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-amber-400/20 to-orange-600/20"></div>
+                  <div className="relative text-center">
+                    <Users className="text-white mx-auto mb-1" size={28} />
+                    <div className="text-xs font-bold text-white">LANCERS</div>
+                    <div className="text-[10px] text-amber-200">BRONZE ED.</div>
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-amber-300/20 to-transparent transform translate-x-full group-hover:translate-x-[-100%] transition-transform duration-1000"></div>
+                </div>
+              </>
+            ) : (
+              // Původní vizualizace pro ostatní balíčky
+              <>
+                <div className="absolute w-20 h-28 bg-gradient-to-br from-blue-900 to-red-700 rounded-lg transform rotate-12 translate-x-4 border-2 border-white/30"></div>
+                <div className="absolute w-20 h-28 bg-gradient-to-br from-blue-900 to-red-700 rounded-lg transform -rotate-12 -translate-x-4 border-2 border-white/30"></div>
+                <div className="relative w-24 h-32 bg-gradient-to-br from-white/90 to-white/70 rounded-lg shadow-2xl border-2 border-white flex items-center justify-center overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-red-600/20"></div>
+                  <div className="relative">
+                    <Flame className="text-red-600" size={32} />
+                    <div className="text-xs font-bold text-blue-900 text-center mt-1">HC LITVÍNOV</div>
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/30 to-transparent transform translate-x-full group-hover:translate-x-[-100%] transition-transform duration-1000"></div>
+                </div>
+              </>
+            )}
           </div>
         </div>
         
@@ -157,7 +201,9 @@ function Pack3D({ pack, onClick, isAffordable }) {
           <button 
             className={`px-4 py-2 rounded-full font-semibold transition-all ${
               isAffordable 
-                ? 'bg-green-500 hover:bg-green-400 text-white shadow-lg hover:shadow-xl' 
+                ? pack.id === 'lancers' 
+                  ? 'bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white shadow-lg hover:shadow-xl'
+                  : 'bg-green-500 hover:bg-green-400 text-white shadow-lg hover:shadow-xl'
                 : 'bg-gray-600 text-gray-400 cursor-not-allowed'
             }`}
             disabled={!isAffordable}
@@ -167,7 +213,7 @@ function Pack3D({ pack, onClick, isAffordable }) {
         </div>
         
         {/* Počet karet badge */}
-        <div className="absolute -top-3 left-4 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
+        <div className={`absolute -top-3 left-4 ${pack.id === 'lancers' ? 'bg-amber-600' : 'bg-red-600'} text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg`}>
           {pack.cards} karet
         </div>
       </div>
@@ -175,13 +221,61 @@ function Pack3D({ pack, onClick, isAffordable }) {
   );
 }
 
-// Animace otevírání balíčku
+// Komponenta pro Lancers kartu v animaci otevírání
+function LancersCard({ player }) {
+  return (
+    <div className="w-40 h-56 bg-gradient-to-br from-amber-700 via-orange-600 to-amber-800 rounded-xl shadow-2xl border-2 border-amber-400/50 flex flex-col p-3 relative overflow-hidden">
+      {/* Metalický efekt */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-amber-400/20 to-transparent"></div>
+      
+      {/* Logo týmu */}
+      <div className="absolute top-2 right-2 bg-white/80 rounded-lg p-1">
+        <Users className="text-amber-700" size={16} />
+      </div>
+      
+      {/* Číslo */}
+      <div className="text-white/90 font-bold text-lg">#{player.number}</div>
+      
+      {/* Fotka placeholder */}
+      <div className="flex-1 bg-black/20 rounded-lg mt-2 mb-2 flex items-center justify-center">
+        {player.photo ? (
+          <div className="text-center">
+            <Users className="text-white/50 mx-auto" size={40} />
+            <div className="text-[10px] text-white/70 mt-1">{player.photo}</div>
+          </div>
+        ) : (
+          <Users className="text-white/30" size={50} />
+        )}
+      </div>
+      
+      {/* Jméno */}
+      <div className="text-white font-bold text-sm text-center truncate">{player.name}</div>
+      <div className="text-amber-300 text-xs text-center">{player.position}</div>
+      
+      {/* Overall */}
+      <div className="flex items-center justify-center mt-2 gap-1">
+        <div className="text-white font-bold text-lg">{player.overall}</div>
+        <div className="flex">
+          {[...Array(5)].map((_, i) => (
+            <Star key={i} className="text-amber-400" size={10} fill={i < Math.floor(player.overall / 20) ? 'currentColor' : 'none'} />
+          ))}
+        </div>
+      </div>
+      
+      {/* Badge */}
+      <div className="absolute bottom-2 left-2 right-2 bg-black/40 rounded-full py-1 text-center">
+        <span className="text-[9px] text-amber-300 font-bold uppercase tracking-wider">Bronze Edition</span>
+      </div>
+    </div>
+  );
+}
+
+// Animace otevírání balíčku - UPRAVENÁ PRO LANCERS
 function PackOpeningAnimation({ pack, cards, onClose }) {
-  const [stage, setStage] = useState('sealed'); // sealed -> opening -> revealing -> revealed
+  const [stage, setStage] = useState('sealed');
   const [revealedCards, setRevealedCards] = useState([]);
   
   React.useEffect(() => {
-    // Automatická sekvence animace
     const timer1 = setTimeout(() => setStage('opening'), 500);
     const timer2 = setTimeout(() => setStage('revealing'), 2000);
     const timer3 = setTimeout(() => {
@@ -198,7 +292,6 @@ function PackOpeningAnimation({ pack, cards, onClose }) {
   
   return (
     <div className="fixed inset-0 bg-black/90 backdrop-blur-lg z-50 flex items-center justify-center">
-      {/* Zavřít button */}
       {stage === 'revealed' && (
         <button 
           onClick={onClose}
@@ -213,19 +306,26 @@ function PackOpeningAnimation({ pack, cards, onClose }) {
         {(stage === 'sealed' || stage === 'opening') && (
           <div className={`transform transition-all duration-1000 ${stage === 'opening' ? 'scale-110 rotate-y-180' : ''}`}>
             <div className="relative">
-              {/* Efekt záření */}
               <div className={`absolute inset-0 bg-gradient-to-r ${pack.color} rounded-3xl blur-3xl opacity-70 animate-pulse`}></div>
               
-              {/* Balíček */}
-              <div className={`relative w-48 h-64 bg-gradient-to-br ${pack.color} rounded-3xl shadow-2xl border-4 border-white/30 flex items-center justify-center transform ${stage === 'opening' ? 'animate-bounce' : ''}`}>
+              <div className={`relative w-48 h-64 bg-gradient-to-br ${pack.color} rounded-3xl shadow-2xl border-4 ${pack.id === 'lancers' ? 'border-amber-400/50' : 'border-white/30'} flex items-center justify-center transform ${stage === 'opening' ? 'animate-bounce' : ''}`}>
                 <div className="text-center">
                   <div className="text-6xl mb-4">{pack.image}</div>
-                  <Flame className="text-white mx-auto mb-2" size={48} />
-                  <div className="text-white font-bold text-lg">HC LITVÍNOV</div>
+                  {pack.id === 'lancers' ? (
+                    <>
+                      <Users className="text-white mx-auto mb-2" size={48} />
+                      <div className="text-white font-bold text-lg">LANCERS</div>
+                      <div className="text-amber-300/80 text-sm mt-1">BRONZE EDITION</div>
+                    </>
+                  ) : (
+                    <>
+                      <Flame className="text-white mx-auto mb-2" size={48} />
+                      <div className="text-white font-bold text-lg">HC LITVÍNOV</div>
+                    </>
+                  )}
                   <div className="text-white/80 text-sm mt-2">{pack.name}</div>
                 </div>
                 
-                {/* Trhání obalu */}
                 {stage === 'opening' && (
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="text-8xl animate-ping">💥</div>
@@ -240,7 +340,7 @@ function PackOpeningAnimation({ pack, cards, onClose }) {
         {stage === 'revealing' && (
           <div className="flex items-center justify-center">
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 via-purple-500 to-blue-500 rounded-full blur-3xl opacity-80 animate-pulse scale-150"></div>
+              <div className={`absolute inset-0 ${pack.id === 'lancers' ? 'bg-gradient-to-r from-amber-400 via-orange-500 to-amber-600' : 'bg-gradient-to-r from-yellow-400 via-purple-500 to-blue-500'} rounded-full blur-3xl opacity-80 animate-pulse scale-150`}></div>
               <Sparkles className="text-white relative animate-spin" size={100} />
             </div>
           </div>
@@ -250,9 +350,9 @@ function PackOpeningAnimation({ pack, cards, onClose }) {
         {stage === 'revealed' && (
           <div className="animate-fadeIn">
             <h2 className="text-3xl font-bold text-white text-center mb-8">
-              🎉 Získal jsi {cards.length} karet! 🎉
+              {pack.id === 'lancers' ? '⚔️ Lancers Bronze Edition! ⚔️' : `🎉 Získal jsi ${cards.length} karet! 🎉`}
             </h2>
-            <div className="flex gap-4 justify-center flex-wrap max-w-4xl">
+            <div className="flex gap-4 justify-center flex-wrap max-w-5xl">
               {revealedCards.map((card, index) => (
                 <div 
                   key={index}
@@ -261,22 +361,26 @@ function PackOpeningAnimation({ pack, cards, onClose }) {
                     animation: `slideInUp 0.5s ease-out ${index * 0.1}s both`
                   }}
                 >
-                  <div className={`w-32 h-44 bg-gradient-to-br ${
-                    card.rarity === 'legendary' ? 'from-yellow-400 to-orange-500' :
-                    card.rarity === 'rare' ? 'from-purple-400 to-blue-500' :
-                    'from-gray-400 to-gray-600'
-                  } rounded-xl shadow-2xl border-2 border-white/50 flex flex-col items-center justify-center p-3`}>
-                    <div className="text-4xl mb-2">🏒</div>
-                    <div className="text-white font-bold text-sm text-center">{card.name}</div>
-                    <div className="text-white/80 text-xs mt-1">{card.position}</div>
-                    <div className="mt-auto">
-                      <div className="flex gap-1">
-                        {[...Array(card.stars || 3)].map((_, i) => (
-                          <Star key={i} className="text-yellow-300" size={12} fill="currentColor" />
-                        ))}
+                  {card.isLancers ? (
+                    <LancersCard player={card} />
+                  ) : (
+                    <div className={`w-32 h-44 bg-gradient-to-br ${
+                      card.rarity === 'legendary' ? 'from-yellow-400 to-orange-500' :
+                      card.rarity === 'rare' ? 'from-purple-400 to-blue-500' :
+                      'from-gray-400 to-gray-600'
+                    } rounded-xl shadow-2xl border-2 border-white/50 flex flex-col items-center justify-center p-3`}>
+                      <div className="text-4xl mb-2">🏒</div>
+                      <div className="text-white font-bold text-sm text-center">{card.name}</div>
+                      <div className="text-white/80 text-xs mt-1">{card.position}</div>
+                      <div className="mt-auto">
+                        <div className="flex gap-1">
+                          {[...Array(card.stars || 3)].map((_, i) => (
+                            <Star key={i} className="text-yellow-300" size={12} fill="currentColor" />
+                          ))}
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -284,7 +388,7 @@ function PackOpeningAnimation({ pack, cards, onClose }) {
             <div className="text-center mt-8">
               <button 
                 onClick={onClose}
-                className="bg-gradient-to-r from-blue-600 to-red-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:scale-105 transition-all shadow-lg"
+                className={`${pack.id === 'lancers' ? 'bg-gradient-to-r from-amber-600 to-orange-600' : 'bg-gradient-to-r from-blue-600 to-red-600'} text-white px-8 py-3 rounded-full font-bold text-lg hover:scale-105 transition-all shadow-lg`}
               >
                 Pokračovat
               </button>
@@ -320,13 +424,35 @@ function PackOpeningAnimation({ pack, cards, onClose }) {
 
 // Hlavní komponenta obchodu
 export default function CardShop() {
-  const [playerCoins, setPlayerCoins] = useState(2500); // Simulace coinů hráče
+  const [playerCoins, setPlayerCoins] = useState(3000); // Více coinů pro testování
   const [selectedPack, setSelectedPack] = useState(null);
   const [isOpening, setIsOpening] = useState(false);
   const [openedCards, setOpenedCards] = useState([]);
   
-  // Simulace generování karet
+  // Data hráčů Lancers
+  const lancersPlayers = [
+    { name: 'Michal Šimek', number: '27', position: 'Obránce', photo: 'Roman_Simek_Bronze.png', overall: 82 },
+    { name: 'Jakub Novák', number: '91', position: 'Útočník', photo: 'novak.png', overall: 85 },
+    { name: 'Tomáš Dvořák', number: '30', position: 'Brankář', photo: 'dvorak.png', overall: 88 },
+    { name: 'Martin Procházka', number: '15', position: 'Útočník', photo: 'prochazka.png', overall: 79 },
+    { name: 'Pavel Černý', number: '7', position: 'Obránce', photo: 'cerny.png', overall: 81 }
+  ];
+  
+  // Generování karet - UPRAVENÉ PRO LANCERS
   const generateCards = (pack) => {
+    if (pack.id === 'lancers') {
+      // Pro Lancers balíček - vyber 3 náhodné hráče
+      const shuffled = [...lancersPlayers].sort(() => 0.5 - Math.random());
+      return shuffled.slice(0, pack.cards).map(player => ({
+        ...player,
+        isLancers: true,
+        rarity: 'bronze',
+        stars: Math.floor(player.overall / 20),
+        id: Math.random()
+      }));
+    }
+    
+    // Původní generování pro ostatní balíčky
     const cardNames = [
       { name: 'David Krejčí', position: 'Útočník', rarity: 'legendary', stars: 5 },
       { name: 'Ondřej Kaše', position: 'Útočník', rarity: 'rare', stars: 4 },
@@ -344,7 +470,6 @@ export default function CardShop() {
       cards.push({ ...randomCard, id: Math.random() });
     }
     
-    // Zaručit legendární kartu pro premium balíčky
     if (pack.rarity === 'legendary' || pack.rarity === 'mythic') {
       cards[0] = { ...cardNames.find(c => c.rarity === 'legendary'), id: Math.random() };
     }
@@ -387,7 +512,6 @@ export default function CardShop() {
               </div>
             </div>
             
-            {/* Coin balance */}
             <div className="bg-yellow-500/20 px-4 py-2 rounded-full flex items-center gap-2">
               <span className="text-yellow-400 text-lg">💰</span>
               <span className="font-bold text-white text-xl">{playerCoins}</span>
@@ -398,19 +522,19 @@ export default function CardShop() {
       
       {/* Shop content */}
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Speciální nabídka banner */}
-        <div className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-3xl p-6 mb-8 border border-purple-500/30">
+        {/* Speciální nabídka pro Lancers */}
+        <div className="bg-gradient-to-r from-amber-600/20 to-orange-600/20 rounded-3xl p-6 mb-8 border border-amber-500/30">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
-                <Gem className="text-purple-400" />
-                Speciální Nabídka Týdne!
+                <Award className="text-amber-400" />
+                NOVINKA: Hráči Lancers - Bronze Edition!
               </h2>
-              <p className="text-purple-200">
-                Získej 20% slevu na Diamantový balíček! Pouze do neděle!
+              <p className="text-amber-200">
+                Exkluzivní kolekce hráčů HC Lancers z ligy KHLA. Limitovaná edice!
               </p>
             </div>
-            <div className="text-6xl animate-pulse">💎</div>
+            <div className="text-6xl animate-pulse">⚔️</div>
           </div>
         </div>
         
@@ -432,11 +556,16 @@ export default function CardShop() {
             <Shield className="text-blue-400" />
             Informace o Vzácnosti Karet
           </h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             <div className="text-center">
               <div className="w-12 h-12 bg-gray-500 rounded-full mx-auto mb-2"></div>
               <p className="text-gray-300 text-sm">Běžné</p>
               <p className="text-gray-400 text-xs">70% šance</p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-amber-600 to-orange-600 rounded-full mx-auto mb-2"></div>
+              <p className="text-amber-300 text-sm">Bronze</p>
+              <p className="text-amber-400 text-xs">Lancers edice</p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 bg-blue-500 rounded-full mx-auto mb-2"></div>
