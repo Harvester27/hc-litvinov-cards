@@ -1,15 +1,354 @@
-// 🏪 CARD SHOP - Obchod s balíčky kartiček HC Litvínov + LANCERS
-import { EnhancedLancersCard } from './EnhancedLancersCard';
+// 🏪 CARD SHOP - Kompletní obchod s vylepšenými Lancers kartami
 import React, { useState } from 'react';
 import { 
   Package, Star, Sparkles, Zap, Crown, Shield, 
   ArrowLeft, Coins, ShoppingCart, Flame, Diamond,
-  Trophy, Gem, X, Award, Users
+  Trophy, Gem, X, Award, Users, Target, Brain
 } from 'lucide-react';
 import Image from 'next/image';
 
+// ============================================
+// DATA HRÁČŮ
+// ============================================
+const RomanSimekData = {
+  name: 'Roman Šimek',
+  number: '27',
+  position: 'Obránce',
+  team: 'HC Lancers',
+  overall: 82,
+  images: {
+    front: '/images/players/Roman_Simek_Bronze.png',
+    teamLogo: '/images/players/lancers-logo.png',
+    leagueLogo: '/images/players/KHLA.png'
+  },
+  attributes: {
+    strela: 72,
+    prihravka: 78,
+    klicky: 65,
+    vhazovani: 58,
+    napadeniHoli: 75,
+    rychlost: 74,
+    zrychleni: 71,
+    hbitost: 76,
+    stabilita: 83,
+    blokovani: 88,
+    braneni: 85,
+    presnost: 79,
+    sila: 84,
+    predvidavost: 81,
+    mentalita: 77,
+    disciplina: 80,
+    vydrz: 82,
+  },
+  seasonStats: {
+    games: 42,
+    goals: 8,
+    assists: 24,
+    plusMinus: '+18'
+  }
+};
 
-// Definice typů balíčků - PŘIDÁN LANCERS BALÍČEK
+// ============================================
+// KOMPONENTA PRO ZOBRAZENÍ ATRIBUTU
+// ============================================
+function AttributeBar({ name, value }) {
+  const getColor = (val) => {
+    if (val >= 85) return 'bg-gradient-to-r from-yellow-500 to-orange-500';
+    if (val >= 75) return 'bg-gradient-to-r from-green-500 to-emerald-500';
+    if (val >= 65) return 'bg-gradient-to-r from-blue-500 to-cyan-500';
+    return 'bg-gradient-to-r from-gray-500 to-slate-500';
+  };
+
+  return (
+    <div className="flex items-center gap-2 mb-1">
+      <div className="w-20 text-[10px] text-amber-300 font-semibold">
+        {name}
+      </div>
+      <div className="flex-1 bg-black/30 rounded-full h-2 relative overflow-hidden">
+        <div 
+          className={`h-full ${getColor(value)} transition-all duration-500`}
+          style={{ width: `${value}%` }}
+        />
+      </div>
+      <div className="w-6 text-right text-white font-bold text-[10px]">{value}</div>
+    </div>
+  );
+}
+
+// ============================================
+// VYLEPŠENÁ LANCERS KARTA S OTÁČENÍM
+// ============================================
+function EnhancedLancersCard({ player, canFlip = true, onClick, isInModal = false }) {
+  const [isFlipped, setIsFlipped] = useState(false);
+  const [imageError, setImageError] = useState(false);
+
+  const handleRightClick = (e) => {
+    e.preventDefault();
+    if (canFlip && player.name === 'Roman Šimek') { // Otáčení jen pro Romana
+      setIsFlipped(!isFlipped);
+    }
+  };
+
+  const handleClick = () => {
+    if (onClick && !isInModal) {
+      onClick(player);
+    }
+  };
+
+  // Velikost karty podle kontextu
+  const cardSize = isInModal ? "w-84 h-[480px]" : "w-56 h-80";
+
+  return (
+    <div 
+      className={`relative ${cardSize} cursor-pointer preserve-3d transition-transform duration-700`}
+      style={{
+        transformStyle: 'preserve-3d',
+        transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
+      }}
+      onClick={handleClick}
+      onContextMenu={handleRightClick}
+    >
+      {/* PŘEDNÍ STRANA */}
+      <div className="absolute inset-0 backface-hidden">
+        <div className="w-full h-full bg-gradient-to-br from-amber-700 via-orange-600 to-amber-800 rounded-xl shadow-2xl border-2 border-amber-400/50 overflow-hidden">
+          {/* Metalický efekt */}
+          <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-amber-400/20 to-transparent"></div>
+          
+          {/* Header s jménem a pozicí */}
+          <div className="relative z-10 bg-black/30 backdrop-blur p-3">
+            <div className="flex justify-between items-start">
+              <div>
+                <h3 className={`text-white font-bold ${isInModal ? 'text-2xl' : 'text-lg'}`}>{player.name}</h3>
+                <p className={`text-amber-300 ${isInModal ? 'text-lg' : 'text-sm'}`}>{player.position}</p>
+              </div>
+              <div className="bg-white/20 backdrop-blur rounded-full px-3 py-1">
+                <span className={`text-white font-bold ${isInModal ? 'text-2xl' : 'text-xl'}`}>#{player.number}</span>
+              </div>
+            </div>
+          </div>
+          
+          {/* Fotka hráče */}
+          <div className={`relative ${isInModal ? 'h-56' : 'h-40'} mx-3 rounded-lg overflow-hidden bg-gradient-to-b from-black/20 to-black/50`}>
+            {!imageError && player.images?.front ? (
+              <Image
+                src={player.images.front}
+                alt={player.name}
+                fill
+                className="object-cover object-top"
+                sizes={isInModal ? "336px" : "224px"}
+                onError={() => setImageError(true)}
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <Users className="text-white/30" size={isInModal ? 80 : 60} />
+              </div>
+            )}
+          </div>
+          
+          {/* Stats sekce */}
+          <div className={`p-3 ${isInModal ? 'mt-4' : 'mt-2'}`}>
+            {/* Sezónní statistiky */}
+            <div className={`grid grid-cols-4 gap-2 mb-3 text-center`}>
+              <div className="bg-black/30 rounded-lg p-2">
+                <div className={`text-amber-300 ${isInModal ? 'text-sm' : 'text-xs'}`}>Z</div>
+                <div className={`text-white font-bold ${isInModal ? 'text-lg' : ''}`}>{player.seasonStats?.games || 42}</div>
+              </div>
+              <div className="bg-black/30 rounded-lg p-2">
+                <div className={`text-amber-300 ${isInModal ? 'text-sm' : 'text-xs'}`}>G</div>
+                <div className={`text-white font-bold ${isInModal ? 'text-lg' : ''}`}>{player.seasonStats?.goals || 8}</div>
+              </div>
+              <div className="bg-black/30 rounded-lg p-2">
+                <div className={`text-amber-300 ${isInModal ? 'text-sm' : 'text-xs'}`}>A</div>
+                <div className={`text-white font-bold ${isInModal ? 'text-lg' : ''}`}>{player.seasonStats?.assists || 24}</div>
+              </div>
+              <div className="bg-black/30 rounded-lg p-2">
+                <div className={`text-amber-300 ${isInModal ? 'text-sm' : 'text-xs'}`}>+/-</div>
+                <div className={`text-white font-bold ${isInModal ? 'text-lg' : 'text-sm'}`}>{player.seasonStats?.plusMinus || '+18'}</div>
+              </div>
+            </div>
+            
+            {/* Loga a overall */}
+            <div className="grid grid-cols-3 gap-2 items-center">
+              <div className={`bg-white/80 rounded-lg p-2 flex items-center justify-center ${isInModal ? 'h-20' : 'h-14'}`}>
+                <Image 
+                  src={player.images?.leagueLogo || '/images/players/KHLA.png'}
+                  alt="KHLA"
+                  width={isInModal ? 60 : 40}
+                  height={isInModal ? 60 : 40}
+                  className="object-contain"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                  }}
+                />
+              </div>
+              
+              <div className={`bg-black/40 backdrop-blur rounded-lg p-2 flex flex-col items-center justify-center ${isInModal ? 'h-20' : 'h-14'}`}>
+                <div className={`text-white font-bold ${isInModal ? 'text-3xl' : 'text-2xl'}`}>{player.overall}</div>
+                <div className="flex">
+                  {[...Array(5)].map((_, i) => (
+                    <Star 
+                      key={i} 
+                      className="text-amber-400" 
+                      size={isInModal ? 14 : 10} 
+                      fill={i < Math.floor(player.overall / 20) ? 'currentColor' : 'none'} 
+                    />
+                  ))}
+                </div>
+              </div>
+              
+              <div className={`bg-white/80 rounded-lg p-2 flex items-center justify-center ${isInModal ? 'h-20' : 'h-14'}`}>
+                <Image 
+                  src={player.images?.teamLogo || '/images/players/lancers-logo.png'}
+                  alt="Lancers"
+                  width={isInModal ? 60 : 40}
+                  height={isInModal ? 60 : 40}
+                  className="object-contain"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+          
+          {canFlip && player.name === 'Roman Šimek' && (
+            <div className={`absolute bottom-2 right-2 text-white/50 ${isInModal ? 'text-sm' : 'text-xs'}`}>
+              Pravý klik pro otočení
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ZADNÍ STRANA - Atributy */}
+      <div 
+        className="absolute inset-0 backface-hidden"
+        style={{ transform: 'rotateY(180deg)' }}
+      >
+        <div className="w-full h-full bg-gradient-to-br from-amber-900 via-orange-700 to-amber-900 rounded-xl shadow-2xl border-2 border-amber-400/50 overflow-hidden p-3">
+          {/* Pattern */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute inset-0" style={{
+              backgroundImage: `repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.05) 10px, rgba(255,255,255,0.05) 20px)`
+            }}></div>
+          </div>
+          
+          {/* Header */}
+          <div className="relative z-10 bg-black/40 rounded-lg p-2 mb-2">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <Shield className="text-amber-400" size={isInModal ? 24 : 20} />
+                <span className={`text-white font-bold ${isInModal ? 'text-xl' : ''}`}>{player.name}</span>
+              </div>
+              <span className={`text-amber-300 ${isInModal ? 'text-lg' : 'text-sm'}`}>#{player.number}</span>
+            </div>
+          </div>
+          
+          {/* Atributy v menších sekcích */}
+          <div className={`relative z-10 ${isInModal ? 'space-y-3' : 'space-y-2'}`}>
+            {/* Útočné */}
+            <div className="bg-black/30 rounded-lg p-2">
+              <div className={`text-amber-400 font-bold mb-1 flex items-center gap-1 ${isInModal ? 'text-sm' : 'text-xs'}`}>
+                <Target size={isInModal ? 14 : 12} /> ÚTOČNÉ
+              </div>
+              <AttributeBar name="Střela" value={player.attributes.strela} />
+              <AttributeBar name="Přihrávka" value={player.attributes.prihravka} />
+              <AttributeBar name="Kličky" value={player.attributes.klicky} />
+              <AttributeBar name="Vhazování" value={player.attributes.vhazovani} />
+              <AttributeBar name="Napadání" value={player.attributes.napadeniHoli} />
+            </div>
+            
+            {/* Pohyb */}
+            <div className="bg-black/30 rounded-lg p-2">
+              <div className={`text-amber-400 font-bold mb-1 flex items-center gap-1 ${isInModal ? 'text-sm' : 'text-xs'}`}>
+                <Zap size={isInModal ? 14 : 12} /> POHYB
+              </div>
+              <AttributeBar name="Rychlost" value={player.attributes.rychlost} />
+              <AttributeBar name="Zrychlení" value={player.attributes.zrychleni} />
+              <AttributeBar name="Hbitost" value={player.attributes.hbitost} />
+              <AttributeBar name="Stabilita" value={player.attributes.stabilita} />
+            </div>
+            
+            {/* Obranné */}
+            <div className="bg-black/30 rounded-lg p-2">
+              <div className={`text-amber-400 font-bold mb-1 flex items-center gap-1 ${isInModal ? 'text-sm' : 'text-xs'}`}>
+                <Shield size={isInModal ? 14 : 12} /> OBRANNÉ
+              </div>
+              <AttributeBar name="Blokování" value={player.attributes.blokovani} />
+              <AttributeBar name="Bránění" value={player.attributes.braneni} />
+              <AttributeBar name="Přesnost" value={player.attributes.presnost} />
+              <AttributeBar name="Síla" value={player.attributes.sila} />
+            </div>
+            
+            {/* Mentální */}
+            <div className="bg-black/30 rounded-lg p-2">
+              <div className={`text-amber-400 font-bold mb-1 flex items-center gap-1 ${isInModal ? 'text-sm' : 'text-xs'}`}>
+                <Brain size={isInModal ? 14 : 12} /> MENTÁLNÍ
+              </div>
+              <AttributeBar name="Předvídavost" value={player.attributes.predvidavost} />
+              <AttributeBar name="Mentalita" value={player.attributes.mentalita} />
+              <AttributeBar name="Disciplína" value={player.attributes.disciplina} />
+              <AttributeBar name="Vydrž" value={player.attributes.vydrz} />
+            </div>
+          </div>
+          
+          <div className={`absolute bottom-2 right-2 text-white/50 ${isInModal ? 'text-sm' : 'text-xs'}`}>
+            Pravý klik pro otočení zpět
+          </div>
+        </div>
+      </div>
+      
+      <style jsx>{`
+        .preserve-3d {
+          transform-style: preserve-3d;
+        }
+        .backface-hidden {
+          backface-visibility: hidden;
+        }
+      `}</style>
+    </div>
+  );
+}
+
+// ============================================
+// MODAL PRO ZVĚTŠENOU KARTU
+// ============================================
+function CardModal({ player, isOpen, onClose }) {
+  if (!isOpen || !player) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/80 backdrop-blur z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div 
+        className="relative"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={onClose}
+          className="absolute -top-4 -right-4 bg-white/20 hover:bg-white/30 rounded-full p-2 z-10"
+        >
+          <X className="text-white" size={24} />
+        </button>
+        
+        <div className="transform scale-125">
+          <EnhancedLancersCard 
+            player={player} 
+            canFlip={true}
+            isInModal={true}
+          />
+        </div>
+        
+        {player.name === 'Roman Šimek' && (
+          <div className="text-center mt-12 text-white/70 text-sm">
+            Pravý klik myši pro otočení karty
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============================================
+// DEFINICE BALÍČKŮ
+// ============================================
 const packs = [
   {
     id: 'starter',
@@ -37,7 +376,6 @@ const packs = [
     guaranteed: '1x Neobvyklá zaručena',
     image: '🥉'
   },
-  // 🆕 NOVÝ LANCERS BALÍČEK
   {
     id: 'lancers',
     name: 'Hráči Lancers',
@@ -107,7 +445,9 @@ const packs = [
   }
 ];
 
-// Komponenta pro 3D balíček - UPRAVENÁ PRO LANCERS
+// ============================================
+// KOMPONENTA 3D BALÍČKU
+// ============================================
 function Pack3D({ pack, onClick, isAffordable }) {
   const [isHovered, setIsHovered] = useState(false);
   
@@ -135,7 +475,7 @@ function Pack3D({ pack, onClick, isAffordable }) {
       
       {/* Hlavní balíček */}
       <div className={`relative bg-gradient-to-br ${pack.color} rounded-2xl p-6 border-2 ${pack.id === 'lancers' ? 'border-amber-400/50' : 'border-white/20'} backdrop-blur-sm ${!isAffordable ? 'opacity-60' : ''}`}>
-        {/* Horní část - logo týmu */}
+        {/* Horní část - logo */}
         <div className="absolute top-3 right-3 text-4xl opacity-80">
           {pack.image}
         </div>
@@ -166,7 +506,7 @@ function Pack3D({ pack, onClick, isAffordable }) {
                 </div>
               </>
             ) : (
-              // Původní vizualizace pro ostatní balíčky
+              // Původní vizualizace
               <>
                 <div className="absolute w-20 h-28 bg-gradient-to-br from-blue-900 to-red-700 rounded-lg transform rotate-12 translate-x-4 border-2 border-white/30"></div>
                 <div className="absolute w-20 h-28 bg-gradient-to-br from-blue-900 to-red-700 rounded-lg transform -rotate-12 -translate-x-4 border-2 border-white/30"></div>
@@ -223,104 +563,13 @@ function Pack3D({ pack, onClick, isAffordable }) {
   );
 }
 
-// Komponenta pro Lancers kartu v animaci otevírání
-function LancersCard({ player }) {
-  const [imageError, setImageError] = useState(false);
-  
-  return (
-    <div className="w-44 h-60 bg-gradient-to-br from-amber-700 via-orange-600 to-amber-800 rounded-xl shadow-2xl border-2 border-amber-400/50 flex flex-col p-3 relative overflow-hidden">
-      {/* Metalický efekt */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-amber-400/20 to-transparent"></div>
-      
-      {/* Číslo hráče v rohu */}
-      <div className="absolute top-2 right-2 bg-black/30 backdrop-blur rounded-full px-2 py-1">
-        <span className="text-white font-bold text-sm">#{player.number}</span>
-      </div>
-      
-      {/* Fotka hráče */}
-      <div className="relative h-32 bg-black/20 rounded-lg overflow-hidden mb-2">
-        {!imageError && player.photo ? (
-          <Image
-            src={`/images/players/${player.photo}`}
-            alt={player.name}
-            fill
-            className="object-cover object-top"
-            sizes="176px"
-            onError={() => {
-              console.log(`Failed to load: /images/players/${player.photo}`);
-              setImageError(true);
-            }}
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-amber-600/50 to-orange-700/50">
-            <Users className="text-white/30" size={50} />
-          </div>
-        )}
-      </div>
-      
-      {/* Jméno a pozice */}
-      <div className="text-center mb-2">
-        <div className="text-white font-bold text-sm truncate">{player.name}</div>
-        <div className="text-amber-300 text-xs">{player.position}</div>
-      </div>
-      
-      {/* Spodní část s logy a overall */}
-      <div className="mt-auto">
-        <div className="grid grid-cols-3 gap-1 items-center">
-          {/* Logo ligy KHLA vlevo */}
-          <div className="bg-white/80 rounded-lg p-2 flex items-center justify-center h-12">
-            <Image 
-              src="/images/players/KHLA.png"
-              alt="KHLA"
-              width={28}
-              height={28}
-              className="object-contain"
-              onError={(e) => {
-                e.currentTarget.style.display = 'none';
-                e.currentTarget.parentElement.innerHTML = '<div class="text-[8px] font-bold text-amber-800">KHLA</div>';
-              }}
-            />
-          </div>
-          
-          {/* Overall uprostřed */}
-          <div className="bg-black/40 backdrop-blur rounded-lg p-1 flex flex-col items-center justify-center h-12">
-            <div className="text-white font-bold text-xl">{player.overall}</div>
-            <div className="flex">
-              {[...Array(5)].map((_, i) => (
-                <Star 
-                  key={i} 
-                  className="text-amber-400" 
-                  size={8} 
-                  fill={i < Math.floor(player.overall / 20) ? 'currentColor' : 'none'} 
-                />
-              ))}
-            </div>
-          </div>
-          
-          {/* Logo týmu Lancers vpravo */}
-          <div className="bg-white/80 rounded-lg p-2 flex items-center justify-center h-12">
-            <Image 
-              src="/images/players/lancers-logo.png"
-              alt="Lancers"
-              width={28}
-              height={28}
-              className="object-contain"
-              onError={(e) => {
-                e.currentTarget.style.display = 'none';
-                e.currentTarget.parentElement.innerHTML = '<div class="text-[8px] font-bold text-amber-800">LAN</div>';
-              }}
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Animace otevírání balíčku - UPRAVENÁ PRO LANCERS
+// ============================================
+// ANIMACE OTEVÍRÁNÍ BALÍČKU
+// ============================================
 function PackOpeningAnimation({ pack, cards, onClose }) {
   const [stage, setStage] = useState('sealed');
   const [revealedCards, setRevealedCards] = useState([]);
+  const [selectedCard, setSelectedCard] = useState(null);
   
   React.useEffect(() => {
     const timer1 = setTimeout(() => setStage('opening'), 500);
@@ -342,7 +591,7 @@ function PackOpeningAnimation({ pack, cards, onClose }) {
       {stage === 'revealed' && (
         <button 
           onClick={onClose}
-          className="absolute top-4 right-4 bg-white/20 hover:bg-white/30 rounded-full p-2 transition-all"
+          className="absolute top-4 right-4 bg-white/20 hover:bg-white/30 rounded-full p-2 transition-all z-50"
         >
           <X className="text-white" size={24} />
         </button>
@@ -399,17 +648,21 @@ function PackOpeningAnimation({ pack, cards, onClose }) {
             <h2 className="text-3xl font-bold text-white text-center mb-8">
               {pack.id === 'lancers' ? '⚔️ Lancers Bronze Edition! ⚔️' : `🎉 Získal jsi ${cards.length} karet! 🎉`}
             </h2>
-            <div className="flex gap-4 justify-center flex-wrap max-w-5xl">
+            <div className="flex gap-6 justify-center flex-wrap max-w-6xl">
               {revealedCards.map((card, index) => (
                 <div 
                   key={index}
-                  className="transform transition-all duration-500 hover:scale-110 hover:rotate-2"
+                  className="transform transition-all duration-500 hover:scale-110"
                   style={{
                     animation: `slideInUp 0.5s ease-out ${index * 0.1}s both`
                   }}
                 >
                   {card.isLancers ? (
-                    <LancersCard player={card} />
+                    <EnhancedLancersCard 
+                      player={card}
+                      canFlip={true}
+                      onClick={(player) => setSelectedCard(player)}
+                    />
                   ) : (
                     <div className={`w-32 h-44 bg-gradient-to-br ${
                       card.rarity === 'legendary' ? 'from-yellow-400 to-orange-500' :
@@ -440,9 +693,23 @@ function PackOpeningAnimation({ pack, cards, onClose }) {
                 Pokračovat
               </button>
             </div>
+            
+            {pack.id === 'lancers' && (
+              <div className="text-center mt-4 text-amber-300 text-sm">
+                <p>👆 Klikni na kartu pro zvětšení</p>
+                <p>👉 Pravý klik na Romana Šimka pro zobrazení atributů</p>
+              </div>
+            )}
           </div>
         )}
       </div>
+      
+      {/* Modal pro zvětšenou kartu */}
+      <CardModal 
+        player={selectedCard}
+        isOpen={!!selectedCard}
+        onClose={() => setSelectedCard(null)}
+      />
       
       <style jsx>{`
         @keyframes slideInUp {
@@ -469,33 +736,57 @@ function PackOpeningAnimation({ pack, cards, onClose }) {
   );
 }
 
-// Hlavní komponenta obchodu
+// ============================================
+// HLAVNÍ KOMPONENTA OBCHODU
+// ============================================
 export default function CardShop() {
-  const [playerCoins, setPlayerCoins] = useState(3000); // Více coinů pro testování
+  const [playerCoins, setPlayerCoins] = useState(3000);
   const [selectedPack, setSelectedPack] = useState(null);
   const [isOpening, setIsOpening] = useState(false);
   const [openedCards, setOpenedCards] = useState([]);
   
-  // Data hráčů Lancers - OPRAVENÉ NÁZVY SOUBORŮ
+  // Data hráčů Lancers - všichni používají data Romana Šimka pro demo
   const lancersPlayers = [
-    { name: 'Roman Šimek', number: '27', position: 'Obránce', photo: 'Roman_Simek_Bronze.png', overall: 82 },
-    { name: 'Jakub Novák', number: '91', position: 'Útočník', photo: '', overall: 85 },
-    { name: 'Tomáš Dvořák', number: '30', position: 'Brankář', photo: '', overall: 88 },
-    { name: 'Martin Procházka', number: '15', position: 'Útočník', photo: '', overall: 79 },
-    { name: 'Pavel Černý', number: '7', position: 'Obránce', photo: '', overall: 81 }
+    { ...RomanSimekData, id: 1, isLancers: true },
+    { 
+      ...RomanSimekData, 
+      name: 'Jakub Novák', 
+      number: '91', 
+      position: 'Útočník',
+      overall: 85,
+      images: {
+        front: '', // Nemá fotku
+        teamLogo: '/images/players/lancers-logo.png',
+        leagueLogo: '/images/players/KHLA.png'
+      },
+      id: 2,
+      isLancers: true
+    },
+    { 
+      ...RomanSimekData,
+      name: 'Tomáš Dvořák', 
+      number: '30', 
+      position: 'Brankář',
+      overall: 88,
+      images: {
+        front: '', // Nemá fotku
+        teamLogo: '/images/players/lancers-logo.png',
+        leagueLogo: '/images/players/KHLA.png'
+      },
+      id: 3,
+      isLancers: true
+    }
   ];
   
-  // Generování karet - UPRAVENÉ PRO LANCERS
+  // Generování karet
   const generateCards = (pack) => {
     if (pack.id === 'lancers') {
-      // Pro Lancers balíček - vyber 3 náhodné hráče
-      const shuffled = [...lancersPlayers].sort(() => 0.5 - Math.random());
-      return shuffled.slice(0, pack.cards).map(player => ({
+      // Pro Lancers balíček - vrať 3 karty
+      return lancersPlayers.map(player => ({
         ...player,
         isLancers: true,
         rarity: 'bronze',
         stars: Math.floor(player.overall / 20),
-        id: Math.random()
       }));
     }
     
@@ -578,7 +869,7 @@ export default function CardShop() {
                 NOVINKA: Hráči Lancers - Bronze Edition!
               </h2>
               <p className="text-amber-200">
-                Exkluzivní kolekce hráčů HC Lancers z ligy KHLA. Limitovaná edice!
+                Exkluzivní kolekce hráčů HC Lancers z ligy KHLA. Roman Šimek s unikátními atributy!
               </p>
             </div>
             <div className="text-6xl animate-pulse">⚔️</div>
