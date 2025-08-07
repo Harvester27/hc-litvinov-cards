@@ -223,48 +223,93 @@ function Pack3D({ pack, onClick, isAffordable }) {
 
 // Komponenta pro Lancers kartu v animaci otevírání
 function LancersCard({ player }) {
+  const [imageError, setImageError] = useState(false);
+  
   return (
-    <div className="w-40 h-56 bg-gradient-to-br from-amber-700 via-orange-600 to-amber-800 rounded-xl shadow-2xl border-2 border-amber-400/50 flex flex-col p-3 relative overflow-hidden">
+    <div className="w-44 h-60 bg-gradient-to-br from-amber-700 via-orange-600 to-amber-800 rounded-xl shadow-2xl border-2 border-amber-400/50 flex flex-col p-3 relative overflow-hidden">
       {/* Metalický efekt */}
       <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-amber-400/20 to-transparent"></div>
       
-      {/* Logo týmu */}
-      <div className="absolute top-2 right-2 bg-white/80 rounded-lg p-1">
-        <Users className="text-amber-700" size={16} />
+      {/* Číslo hráče v rohu */}
+      <div className="absolute top-2 right-2 bg-black/30 backdrop-blur rounded-full px-2 py-1">
+        <span className="text-white font-bold text-sm">#{player.number}</span>
       </div>
       
-      {/* Číslo */}
-      <div className="text-white/90 font-bold text-lg">#{player.number}</div>
-      
-      {/* Fotka placeholder */}
-      <div className="flex-1 bg-black/20 rounded-lg mt-2 mb-2 flex items-center justify-center">
-        {player.photo ? (
-          <div className="text-center">
-            <Users className="text-white/50 mx-auto" size={40} />
-            <div className="text-[10px] text-white/70 mt-1">{player.photo}</div>
-          </div>
+      {/* Fotka hráče */}
+      <div className="relative h-32 bg-black/20 rounded-lg overflow-hidden mb-2">
+        {!imageError && player.photo ? (
+          <Image
+            src={`/images/players/${player.photo}`}
+            alt={player.name}
+            fill
+            className="object-cover object-top"
+            sizes="176px"
+            onError={() => {
+              console.log(`Failed to load: /images/players/${player.photo}`);
+              setImageError(true);
+            }}
+          />
         ) : (
-          <Users className="text-white/30" size={50} />
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-amber-600/50 to-orange-700/50">
+            <Users className="text-white/30" size={50} />
+          </div>
         )}
       </div>
       
-      {/* Jméno */}
-      <div className="text-white font-bold text-sm text-center truncate">{player.name}</div>
-      <div className="text-amber-300 text-xs text-center">{player.position}</div>
-      
-      {/* Overall */}
-      <div className="flex items-center justify-center mt-2 gap-1">
-        <div className="text-white font-bold text-lg">{player.overall}</div>
-        <div className="flex">
-          {[...Array(5)].map((_, i) => (
-            <Star key={i} className="text-amber-400" size={10} fill={i < Math.floor(player.overall / 20) ? 'currentColor' : 'none'} />
-          ))}
-        </div>
+      {/* Jméno a pozice */}
+      <div className="text-center mb-2">
+        <div className="text-white font-bold text-sm truncate">{player.name}</div>
+        <div className="text-amber-300 text-xs">{player.position}</div>
       </div>
       
-      {/* Badge */}
-      <div className="absolute bottom-2 left-2 right-2 bg-black/40 rounded-full py-1 text-center">
-        <span className="text-[9px] text-amber-300 font-bold uppercase tracking-wider">Bronze Edition</span>
+      {/* Spodní část s logy a overall */}
+      <div className="mt-auto">
+        <div className="grid grid-cols-3 gap-1 items-center">
+          {/* Logo ligy KHLA vlevo */}
+          <div className="bg-white/80 rounded-lg p-2 flex items-center justify-center h-12">
+            <Image 
+              src="/images/players/KHLA.png"
+              alt="KHLA"
+              width={28}
+              height={28}
+              className="object-contain"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+                e.currentTarget.parentElement.innerHTML = '<div class="text-[8px] font-bold text-amber-800">KHLA</div>';
+              }}
+            />
+          </div>
+          
+          {/* Overall uprostřed */}
+          <div className="bg-black/40 backdrop-blur rounded-lg p-1 flex flex-col items-center justify-center h-12">
+            <div className="text-white font-bold text-xl">{player.overall}</div>
+            <div className="flex">
+              {[...Array(5)].map((_, i) => (
+                <Star 
+                  key={i} 
+                  className="text-amber-400" 
+                  size={8} 
+                  fill={i < Math.floor(player.overall / 20) ? 'currentColor' : 'none'} 
+                />
+              ))}
+            </div>
+          </div>
+          
+          {/* Logo týmu Lancers vpravo */}
+          <div className="bg-white/80 rounded-lg p-2 flex items-center justify-center h-12">
+            <Image 
+              src="/images/players/lancers-logo.png"
+              alt="Lancers"
+              width={28}
+              height={28}
+              className="object-contain"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+                e.currentTarget.parentElement.innerHTML = '<div class="text-[8px] font-bold text-amber-800">LAN</div>';
+              }}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -429,13 +474,13 @@ export default function CardShop() {
   const [isOpening, setIsOpening] = useState(false);
   const [openedCards, setOpenedCards] = useState([]);
   
-  // Data hráčů Lancers
+  // Data hráčů Lancers - OPRAVENÉ NÁZVY SOUBORŮ
   const lancersPlayers = [
-    { name: 'Michal Šimek', number: '27', position: 'Obránce', photo: 'Roman_Simek_Bronze.png', overall: 82 },
-    { name: 'Jakub Novák', number: '91', position: 'Útočník', photo: 'novak.png', overall: 85 },
-    { name: 'Tomáš Dvořák', number: '30', position: 'Brankář', photo: 'dvorak.png', overall: 88 },
-    { name: 'Martin Procházka', number: '15', position: 'Útočník', photo: 'prochazka.png', overall: 79 },
-    { name: 'Pavel Černý', number: '7', position: 'Obránce', photo: 'cerny.png', overall: 81 }
+    { name: 'Roman Šimek', number: '27', position: 'Obránce', photo: 'Roman_Simek_Bronze.png', overall: 82 },
+    { name: 'Jakub Novák', number: '91', position: 'Útočník', photo: '', overall: 85 },
+    { name: 'Tomáš Dvořák', number: '30', position: 'Brankář', photo: '', overall: 88 },
+    { name: 'Martin Procházka', number: '15', position: 'Útočník', photo: '', overall: 79 },
+    { name: 'Pavel Černý', number: '7', position: 'Obránce', photo: '', overall: 81 }
   ];
   
   // Generování karet - UPRAVENÉ PRO LANCERS
