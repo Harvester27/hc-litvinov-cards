@@ -1,4 +1,5 @@
 // 🏪 CARD SHOP - Obchod s balíčky kartiček HC Litvínov + LANCERS
+import { EnhancedLancersCard } from './EnhancedLancersCard';
 import React, { useState } from 'react';
 import { 
   Package, Star, Sparkles, Zap, Crown, Shield, 
@@ -6,6 +7,7 @@ import {
   Trophy, Gem, X, Award, Users
 } from 'lucide-react';
 import Image from 'next/image';
+
 
 // Definice typů balíčků - PŘIDÁN LANCERS BALÍČEK
 const packs = [
