@@ -14,7 +14,7 @@ const RomanSimekData = {
   weight: 92,
   shoots: 'Pravá',
   nationality: 'CZ',
-  hometown: 'České Budějovice',
+  hometown: 'Litvínov',
   
   // Cesty k obrázkům
   images: {

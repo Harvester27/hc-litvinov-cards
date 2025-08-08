@@ -1,0 +1,60 @@
+001: 'use client';
+002: 
+003: import React, { useMemo, useState } from 'react';
+004: import { ArrowLeft, Award, Flag, Shield, Target, Trophy, Zap, Users, Sparkles, Star } from 'lucide-react';
+005: 
+006: export default function CareerMode({ user, playerStats, onBack, onUpdateStats }) {
+007:   const [selectedRole, setSelectedRole] = useState(null);
+008:   const [selectedTeam, setSelectedTeam] = useState('HC Litvínov');
+009:   const [logItems, setLogItems] = useState([]);
+010:   const [isSimulating, setIsSimulating] = useState(false);
+011: 
+012:   const displayName = useMemo(() => (user?.displayName || user?.email?.split('@')[0] || 'Hráè'), [user]);
+013: 
+014:   const addLog = (type, message) => {
+015:     setLogItems((prev) => [ { id: Date.now() + Math.random(), type, message }, ...prev ].slice(0, 20));
+016:   };
+017: 
+018:   const safeUpdateStats = (mutator) => {
+019:     if (!onUpdateStats || !playerStats) return;
+020:     const updated = mutator(playerStats);
+021:     onUpdateStats(updated);
+022:   };
+023: 
+024:   const handleTraining = () => {
+025:     const xpGain = Math.floor(50 + Math.random() * 120);
+026:     const coinGain = Math.floor(20 + Math.random() * 80);
+027:     addLog('train', Intenzivní trénink + XP, + coinù);
+028:     safeUpdateStats((stats) => ({ ...stats, experience: (stats.experience || 0) + xpGain, coinsBalance: (stats.coinsBalance || 0) + coinGain }));
+029:   };
+030: 
+031:   const simulateMatch = async () => {
+032:     if (!selectedRole) { addLog('warn', 'Vyber si nejdøív roli kariéry.'); return; }
+033:     setIsSimulating(true);
+034:     setLogItems([]);
+035:     const randEvent = () => {
+036:       const pool = [ 'Šance po rychlém kontru!', 'Tvrdý zákrok u mantinelu.', 'Výborný zákrok brankáøe!', 'Tlak v útoèném pásmu.', 'Støela tìsnì mimo.', 'Pøesilová hra 5 na 4.', 'GÓL! Stadion bouøí!' ];
+037:       return pool[Math.floor(Math.random() * pool.length)];
+038:     };
+039:     const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+040:     for (let period = 1; period <= 3; period += 1) {
+041:       addLog('info', ${period}. tøetina startuje);
+042:       for (let i = 0; i < 4; i += 1) { const e = randEvent(); addLog(e.includes('GÓL') ? 'goal' : 'info', e); await wait(120); }
+043:     }
+044:     const didWin = Math.random() < 0.55;
+045:     const xpGain = didWin ? 180 : 90;
+046:     const coinGain = didWin ? 200 : 90;
+047:     addLog('result', didWin ? 'Výhra! Skvìlý výkon týmu!' : 'Tìsná prohra, pøíštì to vyjde.');
+048:     addLog('reward', Odmìna: + XP, + coinù);
+049:     safeUpdateStats((stats) => ({ ...stats, experience: (stats.experience || 0) + xpGain, coinsBalance: (stats.coinsBalance || 0) + coinGain }));
+050:     setIsSimulating(false);
+051:   };
+052: 
+053:   return (
+054:     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 text-white">
+055:       <div className="bg-black/30 backdrop-blur-sm border-b border-blue-500/30">
+056:         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+057:           <div className="flex items-center gap-4">
+058:             <button onClick={onBack} className="bg-blue-600/20 hover:bg-blue-600/30 p-2 rounded-full transition-all">
+059:               <ArrowLeft className="text-blue-300" size={22} />
+060:             </button>

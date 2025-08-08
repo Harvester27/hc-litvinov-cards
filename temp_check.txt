@@ -1,0 +1,4 @@
+    addLog('train', Intenzivní trénink + XP, + coinù);
+      addLog('info', ${period}. tøetina startuje);
+    addLog('reward', Odmìna: + XP, + coinù);
+              <p className="text-blue-200 text-sm">Rychlá simulace s odmìnami</p>
