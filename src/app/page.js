@@ -1,5 +1,5 @@
-'use client';
-import { useState, useEffect } from 'react';
+﻿'use client';
+import React, { useState, useEffect } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import AuthScreen from '@/components/AuthScreen';
@@ -10,15 +10,13 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
+    const unsubscribe = onAuthStateChanged(auth, (u) => {
+      setUser(u);
       setLoading(false);
     });
-
     return () => unsubscribe();
   }, []);
 
-  // Loading screen
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-red-600 flex items-center justify-center">
@@ -33,11 +31,20 @@ export default function Home() {
     );
   }
 
-  // Pokud není přihlášený, zobraz auth screen
   if (!user) {
     return <AuthScreen />;
   }
 
-  // Pokud je přihlášený, zobraz herní obrazovku
-  return <GameHomeScreen user={user} />;
+  return (
+    <div className="relative">
+      <GameHomeScreen user={user} />
+      <a
+        href="/kariera"
+        className="fixed bottom-6 right-6 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white px-4 py-3 rounded-full font-semibold shadow-xl transition-all hover:scale-105"
+        title="Kariéra"
+      >
+        🎯 Kariéra
+      </a>
+    </div>
+  );
 }
