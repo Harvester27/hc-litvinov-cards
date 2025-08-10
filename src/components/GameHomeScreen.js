@@ -1,18 +1,17 @@
-// 🎮 AKTUALIZOVANÝ GameHomeScreen.js - s navigací na obchod
+// components/GameHomeScreen.js
 import React, { useState, useEffect } from 'react';
 import { 
   User, LogOut, Flame, Trophy, Package, Shuffle, Settings, 
-  Star, Award, Users, Target, Clock, ShoppingCart, Sparkles 
+  Star, Award, Users, Target, Clock, Plus, Sparkles 
 } from 'lucide-react';
 import { signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
-import CardShop from './CardShop'; // Import nové komponenty obchodu
 
 function GameHomeScreen({ user }) {
   const [playerStats, setPlayerStats] = useState({
     cardsOwned: 0,
     cardsNeeded: 150,
-    coinsBalance: 2500, // Zvýšené startovní coiny pro testování
+    coinsBalance: 500,
     level: 1,
     experience: 0
   });
@@ -23,17 +22,21 @@ function GameHomeScreen({ user }) {
     { id: 3, name: "Přihlas se 5 dní v řadě", progress: 1, max: 5, reward: 200 }
   ]);
 
-  const [currentView, setCurrentView] = useState('home'); // 'home' nebo 'shop'
-
+  // Načtení hráčských dat při načtení komponenty
   useEffect(() => {
+    // Zde bys načítal data z Firestore
+    // loadPlayerData(user.uid);
+    
+    // Pro demo, simulujeme načtení dat
     const savedStats = localStorage.getItem(`playerStats_${user.uid}`);
     if (savedStats) {
       setPlayerStats(JSON.parse(savedStats));
     } else {
+      // Nový hráč - nastav základní statistiky
       const newPlayerStats = {
-        cardsOwned: 3,
+        cardsOwned: 3, // Startovní karty
         cardsNeeded: 147,
-        coinsBalance: 2500, // Více coinů pro start
+        coinsBalance: 1000, // Startovní coiny
         level: 1,
         experience: 0
       };
@@ -50,25 +53,32 @@ function GameHomeScreen({ user }) {
     }
   };
 
-  // Zobrazit obchod
-  if (currentView === 'shop') {
-    return (
-      <div>
-        {/* Předat funkci pro návrat a aktualizaci coinů */}
-        <CardShop 
-          user={user}
-          playerStats={playerStats}
-          onBack={() => setCurrentView('home')}
-          onUpdateStats={(newStats) => {
-            setPlayerStats(newStats);
-            localStorage.setItem(`playerStats_${user.uid}`, JSON.stringify(newStats));
-          }}
-        />
-      </div>
-    );
-  }
+  const handleOpenPack = () => {
+    if (playerStats.coinsBalance >= 100) {
+      // Simulace otevření balíčku
+      const newStats = {
+        ...playerStats,
+        coinsBalance: playerStats.coinsBalance - 100,
+        cardsOwned: playerStats.cardsOwned + 3,
+        cardsNeeded: Math.max(0, playerStats.cardsNeeded - 3),
+        experience: playerStats.experience + 50
+      };
+      
+      // Kontrola level up
+      if (newStats.experience >= newStats.level * 1000) {
+        newStats.level += 1;
+        newStats.experience = newStats.experience - (newStats.level - 1) * 1000;
+      }
+      
+      setPlayerStats(newStats);
+      localStorage.setItem(`playerStats_${user.uid}`, JSON.stringify(newStats));
+      
+      alert(`🎉 Získal jsi 3 nové karty! Nyní máš ${newStats.cardsOwned} karet.`);
+    } else {
+      alert('⚠️ Nemáš dostatek coinů! Potřebuješ 100 coinů.');
+    }
+  };
 
-  // Hlavní dashboard
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 text-white">
       {/* Header */}
@@ -146,26 +156,18 @@ function GameHomeScreen({ user }) {
           </div>
         </div>
 
-        {/* Hlavní herní akce - UPRAVENO */}
+        {/* Hlavní herní akce */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* NOVÝ OBCHOD KARTIČEK - nahrazuje Otevři Balíček */}
           <button 
-            onClick={() => setCurrentView('shop')}
-            className="bg-gradient-to-br from-green-600 to-green-700 rounded-3xl p-6 hover:from-green-500 hover:to-green-600 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl group relative overflow-hidden"
+            onClick={handleOpenPack}
+            className="bg-gradient-to-br from-green-600 to-green-700 rounded-3xl p-6 hover:from-green-500 hover:to-green-600 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl group"
           >
-            {/* Animovaný background */}
-            <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 via-transparent to-yellow-400/20 animate-shimmer"></div>
-            
-            <div className="relative text-center">
-              <ShoppingCart className="mx-auto mb-3 group-hover:scale-110 transition-transform" size={48} />
-              <h3 className="text-xl font-bold mb-2">Obchod Kartiček</h3>
-              <p className="text-green-200 text-sm">Kup si balíčky a rozšiř sbírku!</p>
+            <div className="text-center">
+              <Plus className="mx-auto mb-3 group-hover:scale-110 transition-transform" size={48} />
+              <h3 className="text-xl font-bold mb-2">Otevři Balíček</h3>
+              <p className="text-green-200 text-sm">Získej 3 nové kartičky!</p>
               <div className="mt-4 bg-white/20 rounded-full px-3 py-1 inline-block">
-                <span className="text-sm">🛍️ 6 typů balíčků</span>
-              </div>
-              {/* Badge pro novinku */}
-              <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full animate-pulse">
-                NOVÉ!
+                <span className="text-sm">💰 100 coinů</span>
               </div>
             </div>
           </button>
@@ -266,30 +268,20 @@ function GameHomeScreen({ user }) {
             <div className="flex items-start gap-3">
               <div className="w-2 h-2 bg-green-400 rounded-full mt-2 flex-shrink-0"></div>
               <div>
-                <p className="font-semibold">🆕 Nový obchod kartiček!</p>
-                <p className="text-sm text-gray-300">Navštiv obchod a vyber si z 6 různých typů balíčků s animacemi!</p>
+                <p className="font-semibold">Vítej v HC Litvínov Cards!</p>
+                <p className="text-sm text-gray-300">Začni svou sběratelskou cestu otevřením prvního balíčku.</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <div className="w-2 h-2 bg-blue-400 rounded-full mt-2 flex-shrink-0"></div>
               <div>
-                <p className="font-semibold">💎 Diamantové balíčky</p>
-                <p className="text-sm text-gray-300">Získej garantované legendární karty v prémiových balíčcích!</p>
+                <p className="font-semibold">Denní odměny čekají!</p>
+                <p className="text-sm text-gray-300">Plň úkoly a získávej extra coiny a XP body.</p>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        @keyframes shimmer {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(200%); }
-        }
-        .animate-shimmer {
-          animation: shimmer 3s infinite;
-        }
-      `}</style>
     </div>
   );
 }
