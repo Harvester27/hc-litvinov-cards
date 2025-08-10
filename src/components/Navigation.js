@@ -6,7 +6,8 @@ import Image from 'next/image';
 import { 
   Shield, Menu, X, ChevronDown, Users, Trophy, 
   Calendar, Clock, Star, Gamepad2, User, LogIn,
-  FileText, BarChart3, Award, LogOut, Flame
+  FileText, BarChart3, Award, LogOut, Flame,
+  AlertCircle
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { signOut } from 'firebase/auth';
@@ -266,6 +267,14 @@ export default function Navigation() {
                       )}
                     </>
                   ) : (
+                    // REGISTRACE DOČASNĚ VYPNUTA - místo tlačítka zobrazíme informaci
+                    <div className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-gray-400 rounded-lg cursor-not-allowed">
+                      <AlertCircle size={18} />
+                      <span className="text-sm">Registrace dočasně nedostupná</span>
+                    </div>
+                    
+                    // PŮVODNÍ KÓD PRO REGISTRACI (ZAKOMENTOVANÝ):
+                    /* 
                     <Link
                       href="/games/cards"
                       className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg hover:from-red-700 hover:to-red-800 transition-all font-bold shadow-lg"
@@ -273,6 +282,7 @@ export default function Navigation() {
                       <LogIn size={18} />
                       <span>Přihlásit se</span>
                     </Link>
+                    */
                   )}
                 </>
               )}
@@ -348,6 +358,14 @@ export default function Navigation() {
                     </button>
                   </>
                 ) : (
+                  // REGISTRACE DOČASNĚ VYPNUTA - místo tlačítka zobrazíme informaci
+                  <div className="flex items-center justify-center gap-2 mx-4 px-4 py-3 bg-gray-100 text-gray-500 rounded-lg cursor-not-allowed">
+                    <AlertCircle size={18} />
+                    <span className="text-sm font-semibold">Registrace dočasně nedostupná</span>
+                  </div>
+                  
+                  // PŮVODNÍ KÓD PRO REGISTRACI (ZAKOMENTOVANÝ):
+                  /*
                   <Link
                     href="/games/cards"
                     className="flex items-center justify-center gap-2 mx-4 px-4 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg hover:from-red-700 hover:to-red-800 transition-all font-bold"
@@ -356,6 +374,7 @@ export default function Navigation() {
                     <LogIn size={18} />
                     <span>Přihlásit se</span>
                   </Link>
+                  */
                 )}
               </div>
             </div>
