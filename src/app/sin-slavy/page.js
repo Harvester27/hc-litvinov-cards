@@ -88,7 +88,7 @@ export default function SinSlavyPage() {
         name: 'Extraliga – Mistr',
         year: 2015,
         image: null,
-        description: 'Mistrovský titul v české Extralize.',
+        description: 'Mistrovský titul v České Extralize.',
         category: 'Domácí soutěž',
         details: 'Finálová série 4:2 proti Liberci.',
         icon: <Trophy className="w-16 h-16" aria-hidden />,
@@ -135,10 +135,10 @@ export default function SinSlavyPage() {
       },
       {
         id: 11,
-        name: 'Pohár T. Radějovského',
+        name: 'Pohár T. Radějevského',
         year: 2014,
         image: null,
-        description: 'Vítězství v poháru T. Radějovského.',
+        description: 'Vítězství v poháru T. Radějevského.',
         category: 'Domácí pohár',
         details: 'Finále: HC Litvínov – Mladá Boleslav 4:3.',
         icon: <Star className="w-16 h-16" aria-hidden />,
@@ -279,7 +279,7 @@ export default function SinSlavyPage() {
                 Síň slávy <span className="text-amber-400">HC Litvínov Lancers</span>
               </h1>
               <p className="text-gray-300 mt-3">
-                Prozkoumej naše trofeje, rekordy a milníky. Teď v nové vitríně git add .se „světlem reflektoru" při najetí myší.
+                Prozkoumej naše trofeje, rekordy a milníky. Teď v nové vitríně se &bdquo;světlem reflektoru&ldquo; při najetí myší.
               </p>
             </div>
             {/* quick stats */}
