@@ -214,7 +214,7 @@ export default function SwimmingActivityPlayer2({
             {withPlayer && (
               <div className="bg-blue-500/20 rounded-lg p-3">
                 <p className="text-cyan-300 text-sm italic">
-                  "{withPlayer.name}: Díky za pozvání! Bylo to super!"
+                  &quot;{withPlayer.name}: Díky za pozvání! Bylo to super!&quot;
                 </p>
               </div>
             )}

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { ChevronLeft, CheckCircle, Zap, Users } from 'lucide-react';
+import { ChevronLeft, CheckCircle, Users } from 'lucide-react';
 
 /**
  * Aktivita - Jít běhat (verze pro 2 hráče)
@@ -236,7 +236,7 @@ export default function RunningActivityPlayer2({
             {withPlayer && (
               <div className="bg-green-500/20 rounded-lg p-3">
                 <p className="text-green-300 text-sm italic">
-                  "{withPlayer.name}: Super tempo! Příště zase můžeme!"
+                  &quot;{withPlayer.name}: Super tempo! Příště zase můžeme!&quot;
                 </p>
               </div>
             )}
