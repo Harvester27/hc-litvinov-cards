@@ -215,6 +215,11 @@ body {
   backface-visibility: hidden;
 }
 
+/* 🆕 Rotate Y 180 pro otočení karet */
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
 /* ========================================
    🌟 GRADIENT ANIMACE
    ======================================== */
@@ -281,4 +286,41 @@ body {
 * {
   scrollbar-width: thin;
   scrollbar-color: #3b82f6 rgba(0, 0, 0, 0.1);
+}
+
+/* ========================================
+   🚀 ANIMACE PRO SPACE ODYSSEY
+   ======================================== */
+
+/* Floating animace pro loď */
+@keyframes floatShip {
+  0%, 100% { 
+    transform: translateY(0px) translateX(-50%) scale(1.25); 
+  }
+  50% { 
+    transform: translateY(-20px) translateX(-50%) scale(1.25); 
+  }
+}
+
+.animate-float-ship {
+  animation: floatShip 6s ease-in-out infinite;
+}
+
+/* Padající hvězda */
+@keyframes shootingStar {
+  0% {
+    transform: translateX(0) translateY(0);
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(300px) translateY(300px);
+    opacity: 0;
+  }
+}
+
+.animate-shooting-star {
+  animation: shootingStar linear infinite;
 }
