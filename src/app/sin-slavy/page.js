@@ -279,7 +279,7 @@ export default function SinSlavyPage() {
                 Síň slávy <span className="text-amber-400">HC Litvínov Lancers</span>
               </h1>
               <p className="text-gray-300 mt-3">
-                Prozkoumej naše trofeje, rekordy a milníky. Teď v nové vitríně – se „světlem reflektoru" při najetí myší.
+                Prozkoumej naše trofeje, rekordy a milníky. Teď v nové vitríně git add .se „světlem reflektoru" při najetí myší.
               </p>
             </div>
             {/* quick stats */}

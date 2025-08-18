@@ -8,8 +8,9 @@ import { getUserProfile } from '@/lib/firebaseProfile';
 import { 
   Trophy, Lock, Star, Zap, Target, Medal, 
   Award, Crown, Loader, ChevronLeft, ChevronRight,
-  Sparkles, Shield, Swords, Heart, Coins
-} from 'lucide-react';
+  Sparkles, Shield, Swords, Heart, Coins,
+  X  // <-- PŘIDEJ TOTO
+} from 'lucide-react'
 
 export default function AchievementsPage() {
   const { user, loading: authLoading } = useAuth();
