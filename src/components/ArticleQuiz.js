@@ -13,7 +13,8 @@ import {
   Gift,
   Loader,
   Lock,
-  Zap
+  Zap,
+  ArrowRight
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { 
@@ -37,13 +38,7 @@ export default function ArticleQuiz({ quizId = 'straubing-2025-quiz' }) {
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [alreadyCompleted, setAlreadyCompleted] = useState(false);
   const [loading, setLoading] = useState(true);
-  
-  // Reward states
-  const [showRewards, setShowRewards] = useState(false);
-  const [selectedCard, setSelectedCard] = useState(null);
-  const [cardRevealing, setCardRevealing] = useState(false);
-  const [savingRewards, setSavingRewards] = useState(false);
-  const [rewardsSaved, setRewardsSaved] = useState(false);
+  const [savingCompletion, setSavingCompletion] = useState(false);
   
   const quiz = straubingQuizData;
   
@@ -97,7 +92,7 @@ export default function ArticleQuiz({ quizId = 'straubing-2025-quiz' }) {
   };
   
   // Check answers and show results
-  const checkAnswers = (answers) => {
+  const checkAnswers = async (answers) => {
     const correctCount = quiz.questions.filter(
       (q, index) => q.correctAnswer === answers[index]
     ).length;
@@ -106,10 +101,21 @@ export default function ArticleQuiz({ quizId = 'straubing-2025-quiz' }) {
     
     if (correctCount === quiz.questions.length) {
       setQuizCompleted(true);
-      setTimeout(() => {
-        setShowRewards(true);
-        fireConfetti();
-      }, 1000);
+      fireConfetti();
+      
+      // Uložit dokončení kvízu (ale bez výběru karty)
+      setSavingCompletion(true);
+      try {
+        await saveQuizCompletion(user.uid, quizId);
+        // Po uložení počkáme 2 sekundy a pak redirect
+        setTimeout(() => {
+          router.push('/profil/odmeny');
+        }, 2000);
+      } catch (error) {
+        console.error('Error saving quiz completion:', error);
+      } finally {
+        setSavingCompletion(false);
+      }
     }
   };
   
@@ -143,34 +149,9 @@ export default function ArticleQuiz({ quizId = 'straubing-2025-quiz' }) {
     }, 250);
   };
   
-  // Handle card selection and save rewards
-  const selectRewardCard = async (card) => {
-    if (selectedCard || savingRewards) return;
-    
-    setSelectedCard(card);
-    setCardRevealing(true);
-    
-    // Play card reveal animation
-    setTimeout(async () => {
-      setSavingRewards(true);
-      
-      try {
-        const result = await saveQuizCompletion(user.uid, quizId, card.id);
-        if (result.success) {
-          setRewardsSaved(true);
-          fireConfetti();
-          
-          // Reload stránky po 3 sekundách, aby se aktualizovaly kredity v navigaci
-          setTimeout(() => {
-            window.location.reload();
-          }, 3000);
-        }
-      } catch (error) {
-        console.error('Error saving rewards:', error);
-      } finally {
-        setSavingRewards(false);
-      }
-    }, 2000);
+  // Go to rewards page
+  const goToRewards = () => {
+    router.push('/profil/odmeny');
   };
   
   // Go to collection
@@ -207,17 +188,28 @@ export default function ArticleQuiz({ quizId = 'straubing-2025-quiz' }) {
           Kvíz již splněn!
         </h3>
         <p className="text-gray-600 mb-6">
-          Tento kvíz jste již úspěšně dokončili a získali odměny.
+          Tento kvíz jste již úspěšně dokončili.
         </p>
-        <button
-          onClick={goToCollection}
-          className="px-6 py-3 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition-all"
-        >
-          Zobrazit moji sbírku
-        </button>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <button
+            onClick={goToRewards}
+            className="px-6 py-3 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition-all inline-flex items-center justify-center gap-2"
+          >
+            <Gift size={20} />
+            Zobrazit odměny
+          </button>
+          <button
+            onClick={goToCollection}
+            className="px-6 py-3 bg-gray-800 text-white rounded-xl font-bold hover:bg-gray-900 transition-all inline-flex items-center justify-center gap-2"
+          >
+            <Package size={20} />
+            Moje sbírka
+          </button>
+        </div>
       </div>
     );
   }
+  
   // Not logged in state
   if (!user) {
     return (
@@ -241,139 +233,86 @@ export default function ArticleQuiz({ quizId = 'straubing-2025-quiz' }) {
     );
   }
   
-  // Rewards screen
-  if (showRewards) {
+  // Success screen after completion
+  if (quizCompleted) {
     return (
       <div className="bg-gradient-to-br from-yellow-50 via-red-50 to-orange-50 rounded-3xl p-8 my-12">
-        <div className="text-center mb-8">
+        <div className="text-center">
           <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full mb-4 animate-bounce">
             <Trophy className="text-white" size={48} />
           </div>
           <h2 className="text-4xl font-black text-gray-900 mb-2">
             Gratulujeme! 🎉
           </h2>
-          <p className="text-xl text-gray-600">
+          <p className="text-xl text-gray-600 mb-8">
             Úspěšně jste dokončili kvíz!
           </p>
-        </div>
-        
-        {/* Rewards display */}
-        <div className="bg-white rounded-2xl p-6 mb-6">
-          <h3 className="text-xl font-bold text-gray-900 mb-4 text-center">
-            Vaše odměny:
-          </h3>
           
-          {/* Credits reward */}
-          <div className="flex items-center justify-between bg-green-50 rounded-xl p-4 mb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
-                <Coins className="text-white" size={24} />
-              </div>
-              <div>
-                <div className="font-bold text-gray-900">Kredity</div>
-                <div className="text-sm text-gray-600">Za dokončení kvízu</div>
-              </div>
-            </div>
-            <div className="text-2xl font-black text-green-600">
-              +1000
-            </div>
-          </div>
-          
-          {/* Card selection */}
-          <div className="mt-6">
-            <h4 className="font-bold text-gray-900 mb-3 text-center">
-              Vyberte si jednu speciální kartu:
-            </h4>
+          {/* Rewards info */}
+          <div className="bg-white rounded-2xl p-6 mb-6 max-w-md mx-auto">
+            <h3 className="text-lg font-bold text-gray-900 mb-4">
+              Vaše odměny čekají:
+            </h3>
             
-            <div className="grid grid-cols-3 gap-4">
-              {quiz.rewards.cards.map((card) => (
-                <div
-                  key={card.id}
-                  className="relative"
-                >
-                  <button
-                    onClick={() => selectRewardCard(card)}
-                    disabled={selectedCard !== null || savingRewards}
-                    className={`
-                      relative w-full aspect-[2/3] rounded-xl overflow-hidden transition-all
-                      ${selectedCard === card ? 'scale-110 z-10' : ''}
-                      ${selectedCard && selectedCard !== card ? 'opacity-50 scale-95' : ''}
-                      ${!selectedCard ? 'hover:scale-105 cursor-pointer' : ''}
-                    `}
-                  >
-                    {/* Card back or reveal */}
-                    {!selectedCard || selectedCard !== card ? (
-                      // Card back
-                      <div className="w-full h-full bg-gradient-to-br from-red-600 to-red-800 flex items-center justify-center">
-                        <div className="text-center">
-                          <Gift className="text-white mb-2 mx-auto" size={32} />
-                          <div className="text-white font-bold text-xs">
-                            Mystery Card
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      // Card reveal with video
-                      <div className="w-full h-full">
-                        {cardRevealing && (
-                          <video
-                            src={card.videoPath}
-                            autoPlay
-                            muted
-                            playsInline
-                            className="w-full h-full object-cover"
-                            onEnded={() => setCardRevealing(false)}
-                          />
-                        )}
-                        {!cardRevealing && (
-                          <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center">
-                            <div className="text-center text-white">
-                              <Star className="mb-2 mx-auto" size={32} />
-                              <div className="font-bold">{card.name}</div>
-                              <div className="text-xs">{card.edition}</div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </button>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between bg-green-50 rounded-xl p-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                    <Coins className="text-white" size={20} />
+                  </div>
+                  <div className="text-left">
+                    <div className="font-semibold text-gray-900">1000 kreditů</div>
+                    <div className="text-xs text-gray-600">Přidáno k vašemu účtu</div>
+                  </div>
                 </div>
-              ))}
-            </div>
-            
-            {selectedCard && (
-              <div className="mt-4 text-center">
-                <p className="text-green-600 font-bold mb-2">
-                  Získali jste: {selectedCard.name}!
-                </p>
-                {savingRewards && (
-                  <div className="flex items-center justify-center gap-2 text-gray-600">
-                    <Loader className="animate-spin" size={16} />
-                    <span>Ukládám odměny...</span>
-                  </div>
-                )}
-                {rewardsSaved && (
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-center gap-2 text-green-600">
-                      <Check size={20} />
-                      <span className="font-bold">Odměny uloženy!</span>
-                    </div>
-                    <div className="text-center text-gray-600">
-                      <Loader className="animate-spin inline mr-2" size={16} />
-                      Aktualizuji profil...
-                    </div>
-                    <button
-                      onClick={goToCollection}
-                      className="px-6 py-3 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition-all inline-flex items-center gap-2"
-                    >
-                      <Package size={20} />
-                      Zobrazit sbírku karet
-                    </button>
-                  </div>
-                )}
+                <Check className="text-green-600" size={24} />
               </div>
-            )}
+              
+              <div className="flex items-center justify-between bg-purple-50 rounded-xl p-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center">
+                    <Star className="text-white" size={20} />
+                  </div>
+                  <div className="text-left">
+                    <div className="font-semibold text-gray-900">500 XP</div>
+                    <div className="text-xs text-gray-600">Pro postup na další level</div>
+                  </div>
+                </div>
+                <Check className="text-purple-600" size={24} />
+              </div>
+              
+              <div className="flex items-center justify-between bg-yellow-50 rounded-xl p-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center">
+                    <Gift className="text-white" size={20} />
+                  </div>
+                  <div className="text-left">
+                    <div className="font-semibold text-gray-900">Speciální karta</div>
+                    <div className="text-xs text-gray-600">Čeká na vyzvednutí</div>
+                  </div>
+                </div>
+                <div className="bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold animate-pulse">
+                  NOVÁ!
+                </div>
+              </div>
+            </div>
           </div>
+          
+          {savingCompletion ? (
+            <div className="flex items-center justify-center gap-2 text-gray-600 mb-4">
+              <Loader className="animate-spin" size={20} />
+              <span>Přesměrování na odměny...</span>
+            </div>
+          ) : (
+            <button
+              onClick={goToRewards}
+              className="px-8 py-4 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl font-black text-lg hover:from-red-700 hover:to-red-800 transition-all inline-flex items-center gap-2 shadow-xl hover:shadow-2xl transform hover:scale-105"
+            >
+              <Gift size={24} />
+              Vybrat odměny
+              <ArrowRight size={24} />
+            </button>
+          )}
         </div>
       </div>
     );
@@ -542,6 +481,14 @@ export default function ArticleQuiz({ quizId = 'straubing-2025-quiz' }) {
               </div>
               <span className="font-bold">
                 +1000 kreditů za dokončení
+              </span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                <Star className="text-yellow-300" size={20} />
+              </div>
+              <span className="font-bold">
+                +500 XP pro další level
               </span>
             </div>
             <div className="flex items-center gap-3">

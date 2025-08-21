@@ -7,7 +7,7 @@ import {
   Shield, Menu, X, ChevronDown, Users, Trophy,
   Calendar, Clock, Star, Gamepad2, User, LogIn,
   FileText, BarChart3, Award, LogOut,
-  AlertCircle, Coins, Zap, Package
+  AlertCircle, Coins, Zap, Package, Gift
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { signOut } from 'firebase/auth';
@@ -30,7 +30,7 @@ export default function Navigation() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Načti profil po přihlášení
+  // Načíst profil po přihlášení
   useEffect(() => {
     if (user) loadProfile();
   }, [user]);
@@ -77,6 +77,7 @@ export default function Navigation() {
   const level = profile?.level ?? 1;
   const credits = profile?.credits ?? 0;
   const displayName = profile?.displayName || 'Hráč';
+  const pendingRewards = profile?.pendingRewards || 0; // Počet nevyzvednutých odměn
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${isScrolled ? 'bg-black shadow-2xl' : 'bg-black/90 backdrop-blur-lg'}`}>
@@ -123,7 +124,7 @@ export default function Navigation() {
                         className="flex items-center gap-3 px-3 py-2 text-gray-100 hover:text-white hover:bg-white/10 rounded-xl transition-all"
                       >
                         {/* Avatar */}
-                        <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center ring-2 ring-white/10">
+                        <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center ring-2 ring-white/10 relative">
                           {profile.avatar ? (
                             <Image
                               src={profile.avatar}
@@ -134,6 +135,12 @@ export default function Navigation() {
                             />
                           ) : (
                             <User size={20} className="text-white" />
+                          )}
+                          {/* Notification badge pro nevyzvednuté odměny */}
+                          {pendingRewards > 0 && (
+                            <div className="absolute -top-1 -right-1 bg-yellow-500 text-black text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
+                              {pendingRewards}
+                            </div>
                           )}
                         </div>
 
@@ -162,7 +169,7 @@ export default function Navigation() {
                           {/* Profile header */}
                           <div className="p-4 bg-gradient-to-r from-red-600 to-red-700">
                             <div className="flex items-center gap-3">
-                              <div className="w-16 h-16 rounded-full overflow-hidden bg-white p-0.5">
+                              <div className="w-16 h-16 rounded-full overflow-hidden bg-white p-0.5 relative">
                                 {profile.avatar ? (
                                   <Image
                                     src={profile.avatar}
@@ -174,6 +181,12 @@ export default function Navigation() {
                                 ) : (
                                   <div className="w-full h-full rounded-full bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center">
                                     <User size={28} className="text-white" />
+                                  </div>
+                                )}
+                                {/* Notification badge v profilu */}
+                                {pendingRewards > 0 && (
+                                  <div className="absolute -top-1 -right-1 bg-yellow-500 text-black text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center animate-pulse">
+                                    {pendingRewards}
                                   </div>
                                 )}
                               </div>
@@ -209,6 +222,20 @@ export default function Navigation() {
                           </div>
 
                           <div className="p-2">
+                            {/* NOVÝ ODKAZ NA ODMĚNY */}
+                            <Link
+                              href="/profil/odmeny"
+                              className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-red-50 transition-all text-gray-700 hover:text-red-600 relative"
+                              onClick={() => setIsProfileDropdownOpen(false)}
+                            >
+                              <Gift size={18} />
+                              <span>Odměny za kvízy</span>
+                              {pendingRewards > 0 && (
+                                <span className="absolute right-3 bg-yellow-500 text-black text-xs font-bold px-2 py-0.5 rounded-full animate-pulse">
+                                  {pendingRewards} nové
+                                </span>
+                              )}
+                            </Link>
                             <Link
                               href="/sbirka-karet"
                               className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-red-50 transition-all text-gray-700 hover:text-red-600"
@@ -251,7 +278,7 @@ export default function Navigation() {
                       <span className="text-sm">Načítání...</span>
                     </div>
                   ) : (
-                    // OPRAVENO: Tlačítko pro přihlášení/registraci
+                    // Tlačítko pro přihlášení/registraci
                     <Link
                       href="/auth"
                       className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg hover:from-red-700 hover:to-red-800 transition-all font-semibold shadow-lg hover:shadow-xl transform hover:scale-105"
@@ -296,7 +323,7 @@ export default function Navigation() {
                     <div className="px-4 py-2 text-red-600 font-bold">Profil</div>
                     <div className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center ring-2 ring-red-200/40">
+                        <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center ring-2 ring-red-200/40 relative">
                           {profile.avatar ? (
                             <Image
                               src={profile.avatar}
@@ -307,6 +334,11 @@ export default function Navigation() {
                             />
                           ) : (
                             <User size={24} className="text-white" />
+                          )}
+                          {pendingRewards > 0 && (
+                            <div className="absolute -top-1 -right-1 bg-yellow-500 text-black text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
+                              {pendingRewards}
+                            </div>
                           )}
                         </div>
                         <div>
@@ -325,6 +357,20 @@ export default function Navigation() {
                       </div>
                     </div>
 
+                    {/* NOVÝ ODKAZ NA ODMĚNY V MOBILE */}
+                    <Link
+                      href="/profil/odmeny"
+                      className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all relative"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      <Gift size={18} />
+                      <span>Odměny za kvízy</span>
+                      {pendingRewards > 0 && (
+                        <span className="absolute right-4 bg-yellow-500 text-black text-xs font-bold px-2 py-0.5 rounded-full animate-pulse">
+                          {pendingRewards}
+                        </span>
+                      )}
+                    </Link>
                     <Link
                       href="/sbirka-karet"
                       className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
@@ -358,7 +404,7 @@ export default function Navigation() {
                     </button>
                   </>
                 ) : (
-                  // OPRAVENO: Tlačítko pro přihlášení v mobilním menu
+                  // Tlačítko pro přihlášení v mobilním menu
                   <Link
                     href="/auth"
                     className="flex items-center justify-center gap-2 mx-4 px-4 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg hover:from-red-700 hover:to-red-800 transition-all font-semibold shadow-lg"

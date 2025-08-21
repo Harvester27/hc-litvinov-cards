@@ -20,8 +20,9 @@ const DEFAULT_PROFILE = {
   level: 1,
   xp: 0,
   credits: 12000,
-  collectedCards: [], // Přidáno pro sbírku karet
-  totalQuizzesCompleted: 0, // Přidáno pro kvízy
+  collectedCards: [], // Sbírka karet
+  totalQuizzesCompleted: 0, // Počet dokončených kvízů
+  pendingRewards: 0, // Počet nevyzvednutých odměn
   createdAt: null,
   lastLogin: null
 };
@@ -92,7 +93,7 @@ export const getUserProfile = async (uid) => {
     const profileDoc = await getDoc(doc(db, 'users', uid, 'profile', 'data'));
     
     if (!profileDoc.exists()) {
-      // Pokud profil neexistuje, vytvoř ho
+      // Pokud profil neexistuje, vytvořit ho
       const user = auth.currentUser;
       if (user) {
         return await createUserProfile(uid, user.email);
@@ -100,7 +101,14 @@ export const getUserProfile = async (uid) => {
       return null;
     }
     
-    return profileDoc.data();
+    const profileData = profileDoc.data();
+    
+    // Přidat pendingRewards pokud chybí (pro existující uživatele)
+    if (profileData.pendingRewards === undefined) {
+      profileData.pendingRewards = 0;
+    }
+    
+    return profileData;
   } catch (error) {
     console.error('Error getting user profile:', error);
     throw error;
@@ -281,6 +289,37 @@ export const getUserCards = async (uid) => {
   } catch (error) {
     console.error('Error getting user cards:', error);
     return [];
+  }
+};
+
+// ========================================
+// ODMĚNY FUNKCE
+// ========================================
+
+// Aktualizovat počet nevyzvednutých odměn
+export const updatePendingRewards = async (uid, delta) => {
+  try {
+    const profile = await getUserProfile(uid);
+    const currentPending = profile?.pendingRewards || 0;
+    const newPending = Math.max(0, currentPending + delta);
+    
+    await updateUserProfile(uid, { pendingRewards: newPending });
+    
+    return newPending;
+  } catch (error) {
+    console.error('Error updating pending rewards:', error);
+    throw error;
+  }
+};
+
+// Získat počet nevyzvednutých odměn
+export const getPendingRewardsCount = async (uid) => {
+  try {
+    const profile = await getUserProfile(uid);
+    return profile?.pendingRewards || 0;
+  } catch (error) {
+    console.error('Error getting pending rewards count:', error);
+    return 0;
   }
 };
 
