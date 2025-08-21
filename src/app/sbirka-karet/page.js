@@ -5,10 +5,12 @@ import { useRouter } from 'next/navigation';
 import Navigation from '@/components/Navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { getUserProfile } from '@/lib/firebaseProfile';
+import { getUserCards } from '@/lib/firebaseQuiz';
 import { 
   Package, Lock, Star, Search, Filter, 
   ChevronRight, Loader, Shield, Target, Heart,
-  Sparkles, Trophy, Zap, Folder, ArrowLeft, Users
+  Sparkles, Trophy, Zap, Folder, ArrowLeft, Users,
+  Award
 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -21,9 +23,9 @@ export default function CollectionPage() {
   const [selectedTeam, setSelectedTeam] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [collectedCards, setCollectedCards] = useState([]); // Zatím prázdné - později z Firebase
+  const [collectedCards, setCollectedCards] = useState([]);
   
-  // Načíst profil
+  // Načíst profil a karty
   useEffect(() => {
     if (!authLoading && !user) {
       router.push('/games/cards');
@@ -31,15 +33,18 @@ export default function CollectionPage() {
     }
     
     if (user) {
-      loadProfile();
+      loadProfileAndCards();
     }
   }, [user, authLoading, router]);
   
-  const loadProfile = async () => {
+  const loadProfileAndCards = async () => {
     try {
       const profileData = await getUserProfile(user.uid);
       setProfile(profileData);
-      // TODO: Načíst sebrané karty z Firebase
+      
+      // Načíst sebrané karty z Firebase
+      const cards = await getUserCards(user.uid);
+      setCollectedCards(cards);
     } catch (error) {
       console.error('Error loading profile:', error);
     } finally {
@@ -54,8 +59,10 @@ export default function CollectionPage() {
       name: 'HC Litvínov Lancers',
       logo: '/images/loga/lancers-logo.png',
       description: 'KHLA Sportega Liga',
-      totalCards: 20,
-      collectedCards: 0,
+      totalCards: 23, // 20 regular + 3 special
+      collectedCards: collectedCards.filter(c => 
+        c.includes('lancers') || c.includes('straubing')
+      ).length,
       primaryColor: 'from-red-600 to-red-700',
       secondaryColor: 'from-black to-gray-900'
     },
@@ -65,7 +72,7 @@ export default function CollectionPage() {
       logo: '/images/loga/Gurmani.png',
       description: 'Partnerský tým',
       totalCards: 15,
-      collectedCards: 0,
+      collectedCards: collectedCards.filter(c => c.includes('gurmani')).length,
       primaryColor: 'from-orange-600 to-orange-700',
       secondaryColor: 'from-gray-800 to-gray-900'
     }
@@ -75,6 +82,11 @@ export default function CollectionPage() {
   const getPlayerCards = (teamId) => {
     if (teamId === 'lancers') {
       return [
+        // Speciální karty z kvízu
+        { id: 'turecek-straubing-2025', name: 'Tomáš Tureček', number: 'S1', position: 'Útočník', rarity: 'special', category: 'special', edition: 'Straubing 2025', svgPath: '/CardGames/Straubing/TomasTurecekStraubing2025.svg' },
+        { id: 'kores-straubing-2025', name: 'Michal Koreš', number: 'S2', position: 'Útočník', rarity: 'special', category: 'special', edition: 'Straubing 2025', svgPath: '/CardGames/Straubing/MichalKoresStraubing2025.svg' },
+        { id: 'hanus-straubing-2025', name: 'Jan Hanuš', number: 'S3', position: 'Útočník', rarity: 'special', category: 'special', edition: 'Straubing 2025', svgPath: '/CardGames/Straubing/JanHanusStraubing2025.svg' },
+        
         // Brankáři
         { id: 'novakova', name: 'Michaela Nováková', number: 30, position: 'Brankář', rarity: 'gold', category: 'goalies' },
         { id: 'svoboda', name: 'Tomáš Svoboda', number: 1, position: 'Brankář', rarity: 'silver', category: 'goalies' },
@@ -107,7 +119,6 @@ export default function CollectionPage() {
         { id: 'gurman1', name: '???', number: 1, position: 'Brankář', rarity: 'gold', category: 'goalies' },
         { id: 'gurman2', name: '???', number: 2, position: 'Obránce', rarity: 'silver', category: 'defenders' },
         { id: 'gurman3', name: '???', number: 3, position: 'Útočník', rarity: 'bronze', category: 'forwards' },
-        // ... více hráčů
       ];
     }
     return [];
@@ -116,6 +127,7 @@ export default function CollectionPage() {
   // Kategorie pro filtrování
   const categories = [
     { id: 'all', label: 'Všechny karty', icon: Package },
+    { id: 'special', label: 'Speciální', icon: Award },
     { id: 'goalies', label: 'Brankáři', icon: Shield },
     { id: 'defenders', label: 'Obránci', icon: Heart },
     { id: 'forwards', label: 'Útočníci', icon: Target }
@@ -133,6 +145,7 @@ export default function CollectionPage() {
   // Získat barvu podle rarity
   const getRarityColor = (rarity) => {
     switch(rarity) {
+      case 'special': return 'from-purple-400 to-purple-600';
       case 'gold': return 'from-yellow-400 to-yellow-600';
       case 'silver': return 'from-gray-300 to-gray-500';
       case 'bronze': return 'from-orange-600 to-orange-800';
@@ -150,19 +163,23 @@ export default function CollectionPage() {
   // Statistiky sbírky
   const collectionStats = {
     total: playerCards.length,
-    collected: collectedCards.length,
-    percentage: playerCards.length > 0 ? Math.round((collectedCards.length / playerCards.length) * 100) : 0,
+    collected: playerCards.filter(c => collectedCards.includes(c.id)).length,
+    percentage: playerCards.length > 0 ? Math.round((playerCards.filter(c => collectedCards.includes(c.id)).length / playerCards.length) * 100) : 0,
+    special: { 
+      total: playerCards.filter(c => c.category === 'special').length,
+      collected: playerCards.filter(c => c.category === 'special' && collectedCards.includes(c.id)).length 
+    },
     goalies: { 
       total: playerCards.filter(c => c.category === 'goalies').length,
-      collected: collectedCards.filter(c => playerCards.find(p => p.id === c)?.category === 'goalies').length 
+      collected: playerCards.filter(c => c.category === 'goalies' && collectedCards.includes(c.id)).length 
     },
     defenders: { 
       total: playerCards.filter(c => c.category === 'defenders').length,
-      collected: collectedCards.filter(c => playerCards.find(p => p.id === c)?.category === 'defenders').length 
+      collected: playerCards.filter(c => c.category === 'defenders' && collectedCards.includes(c.id)).length 
     },
     forwards: { 
       total: playerCards.filter(c => c.category === 'forwards').length,
-      collected: collectedCards.filter(c => playerCards.find(p => p.id === c)?.category === 'forwards').length 
+      collected: playerCards.filter(c => c.category === 'forwards' && collectedCards.includes(c.id)).length 
     }
   };
   
@@ -201,64 +218,77 @@ export default function CollectionPage() {
             
             {/* Týmy jako složky */}
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {teams.map((team) => (
-                <button
-                  key={team.id}
-                  onClick={() => setSelectedTeam(team)}
-                  className="group relative bg-gray-800/50 backdrop-blur rounded-3xl border border-gray-700 hover:border-red-500 transition-all hover:scale-105 overflow-hidden"
-                >
-                  {/* Background gradient */}
-                  <div className={`absolute inset-0 bg-gradient-to-br ${team.primaryColor} opacity-0 group-hover:opacity-10 transition-opacity`} />
-                  
-                  <div className="relative p-8">
-                    {/* Logo týmu */}
-                    <div className="w-32 h-32 mx-auto mb-6 relative group-hover:scale-110 transition-transform">
-                      <Image
-                        src={team.logo}
-                        alt={team.name}
-                        width={128}
-                        height={128}
-                        className="object-contain filter drop-shadow-2xl"
-                      />
-                    </div>
+              {teams.map((team) => {
+                // Update collected count for display
+                const actualCollected = team.id === 'lancers' 
+                  ? collectedCards.filter(c => c.includes('lancers') || c.includes('straubing')).length
+                  : collectedCards.filter(c => c.includes(team.id)).length;
+                
+                return (
+                  <button
+                    key={team.id}
+                    onClick={() => setSelectedTeam(team)}
+                    className="group relative bg-gray-800/50 backdrop-blur rounded-3xl border border-gray-700 hover:border-red-500 transition-all hover:scale-105 overflow-hidden"
+                  >
+                    {/* Background gradient */}
+                    <div className={`absolute inset-0 bg-gradient-to-br ${team.primaryColor} opacity-0 group-hover:opacity-10 transition-opacity`} />
                     
-                    {/* Název týmu */}
-                    <h3 className="text-2xl font-black text-white mb-2 group-hover:text-red-400 transition-colors">
-                      {team.name}
-                    </h3>
-                    <p className="text-gray-400 mb-4">
-                      {team.description}
-                    </p>
-                    
-                    {/* Statistiky */}
-                    <div className="bg-gray-900/50 rounded-xl p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-gray-400 text-sm">Sbírka</span>
-                        <span className="text-white font-bold">
-                          {team.collectedCards} / {team.totalCards}
-                        </span>
-                      </div>
-                      <div className="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
-                        <div 
-                          className={`h-full bg-gradient-to-r ${team.primaryColor} transition-all`}
-                          style={{ width: `${(team.collectedCards / team.totalCards) * 100}%` }}
+                    <div className="relative p-8">
+                      {/* Logo týmu */}
+                      <div className="w-32 h-32 mx-auto mb-6 relative group-hover:scale-110 transition-transform">
+                        <Image
+                          src={team.logo}
+                          alt={team.name}
+                          width={128}
+                          height={128}
+                          className="object-contain filter drop-shadow-2xl"
                         />
+                        {/* Special badge pro Lancers pokud má speciální karty */}
+                        {team.id === 'lancers' && collectedCards.some(c => c.includes('straubing')) && (
+                          <div className="absolute -top-2 -right-2 bg-purple-600 text-white rounded-full p-2 animate-pulse">
+                            <Award size={20} />
+                          </div>
+                        )}
                       </div>
-                      <div className="text-center mt-2">
-                        <span className="text-2xl font-black text-white">
-                          {Math.round((team.collectedCards / team.totalCards) * 100)}%
-                        </span>
-                        <span className="text-gray-400 text-sm ml-2">dokončeno</span>
+                      
+                      {/* Název týmu */}
+                      <h3 className="text-2xl font-black text-white mb-2 group-hover:text-red-400 transition-colors">
+                        {team.name}
+                      </h3>
+                      <p className="text-gray-400 mb-4">
+                        {team.description}
+                      </p>
+                      
+                      {/* Statistiky */}
+                      <div className="bg-gray-900/50 rounded-xl p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-gray-400 text-sm">Sbírka</span>
+                          <span className="text-white font-bold">
+                            {actualCollected} / {team.totalCards}
+                          </span>
+                        </div>
+                        <div className="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
+                          <div 
+                            className={`h-full bg-gradient-to-r ${team.primaryColor} transition-all`}
+                            style={{ width: `${(actualCollected / team.totalCards) * 100}%` }}
+                          />
+                        </div>
+                        <div className="text-center mt-2">
+                          <span className="text-2xl font-black text-white">
+                            {Math.round((actualCollected / team.totalCards) * 100)}%
+                          </span>
+                          <span className="text-gray-400 text-sm ml-2">dokončeno</span>
+                        </div>
+                      </div>
+                      
+                      {/* Ikona šipky */}
+                      <div className="absolute top-4 right-4 bg-gray-900/50 rounded-full p-2 group-hover:bg-red-600/20 transition-all">
+                        <ChevronRight className="text-gray-400 group-hover:text-white" size={24} />
                       </div>
                     </div>
-                    
-                    {/* Ikona šipky */}
-                    <div className="absolute top-4 right-4 bg-gray-900/50 rounded-full p-2 group-hover:bg-red-600/20 transition-all">
-                      <ChevronRight className="text-gray-400 group-hover:text-white" size={24} />
-                    </div>
-                  </div>
-                </button>
-              ))}
+                  </button>
+                );
+              })}
               
               {/* Placeholder pro další týmy */}
               <div className="relative bg-gray-800/30 backdrop-blur rounded-3xl border border-gray-700 border-dashed">
@@ -284,7 +314,7 @@ export default function CollectionPage() {
               </div>
               <div className="grid md:grid-cols-3 gap-4">
                 <div className="bg-gray-900/50 rounded-xl p-4 text-center">
-                  <div className="text-3xl font-black text-white">0</div>
+                  <div className="text-3xl font-black text-white">{collectedCards.length}</div>
                   <div className="text-gray-400 text-sm">Celkem karet</div>
                 </div>
                 <div className="bg-gray-900/50 rounded-xl p-4 text-center">
@@ -292,8 +322,10 @@ export default function CollectionPage() {
                   <div className="text-gray-400 text-sm">Týmů ve sbírce</div>
                 </div>
                 <div className="bg-gray-900/50 rounded-xl p-4 text-center">
-                  <div className="text-3xl font-black text-green-500">0%</div>
-                  <div className="text-gray-400 text-sm">Kompletní sbírka</div>
+                  <div className="text-3xl font-black text-purple-500">
+                    {collectedCards.filter(c => c.includes('straubing')).length}
+                  </div>
+                  <div className="text-gray-400 text-sm">Speciálních karet</div>
                 </div>
               </div>
             </div>
@@ -342,7 +374,7 @@ export default function CollectionPage() {
           </div>
           
           {/* Statistiky sbírky */}
-          <div className="grid md:grid-cols-4 gap-4 mb-8">
+          <div className="grid md:grid-cols-5 gap-4 mb-8">
             <div className="bg-gray-800/50 backdrop-blur rounded-2xl p-6 border border-gray-700">
               <div className="flex items-center justify-between mb-3">
                 <Trophy className="text-yellow-500" size={24} />
@@ -360,6 +392,16 @@ export default function CollectionPage() {
                   style={{ width: `${collectionStats.percentage}%` }}
                 />
               </div>
+            </div>
+            
+            <div className="bg-gray-800/50 backdrop-blur rounded-2xl p-6 border border-gray-700">
+              <div className="flex items-center justify-between mb-3">
+                <Award className="text-purple-500" size={24} />
+                <span className="text-2xl font-black text-white">
+                  {collectionStats.special.collected}/{collectionStats.special.total}
+                </span>
+              </div>
+              <div className="text-gray-400 text-sm">Speciální</div>
             </div>
             
             <div className="bg-gray-800/50 backdrop-blur rounded-2xl p-6 border border-gray-700">
@@ -448,6 +490,13 @@ export default function CollectionPage() {
                   {/* Rarity gradient */}
                   <div className={`h-2 bg-gradient-to-r ${getRarityColor(card.rarity)}`} />
                   
+                  {/* Special edition badge */}
+                  {card.edition && (
+                    <div className="absolute top-2 right-2 bg-purple-600 text-white text-xs px-2 py-1 rounded-full font-bold z-10">
+                      {card.edition}
+                    </div>
+                  )}
+                  
                   {/* Card content */}
                   <div className="p-4">
                     {/* Číslo a pozice */}
@@ -460,14 +509,26 @@ export default function CollectionPage() {
                       </span>
                     </div>
                     
-                    {/* Avatar placeholder nebo otazník */}
+                    {/* Avatar nebo SVG karta */}
                     <div className="relative w-full h-32 bg-gray-900 rounded-xl mb-3 flex items-center justify-center">
                       {isCollected ? (
-                        <div className="w-20 h-20 bg-gradient-to-br from-red-600 to-red-700 rounded-full flex items-center justify-center">
-                          <span className="text-white text-2xl font-bold">
-                            {card.name.split(' ').map(n => n[0]).join('')}
-                          </span>
-                        </div>
+                        card.svgPath ? (
+                          // Speciální karta s SVG
+                          <Image
+                            src={card.svgPath}
+                            alt={card.name}
+                            width={100}
+                            height={140}
+                            className="object-contain"
+                          />
+                        ) : (
+                          // Normální karta
+                          <div className="w-20 h-20 bg-gradient-to-br from-red-600 to-red-700 rounded-full flex items-center justify-center">
+                            <span className="text-white text-2xl font-bold">
+                              {card.name.split(' ').map(n => n[0]).join('')}
+                            </span>
+                          </div>
+                        )
                       ) : (
                         <div className="text-gray-600 text-6xl font-black">?</div>
                       )}
@@ -486,6 +547,14 @@ export default function CollectionPage() {
                         {isCollected ? card.name : '???'}
                       </h3>
                       <div className="flex items-center justify-center gap-1 mt-1">
+                        {card.rarity === 'special' && (
+                          <>
+                            <Star className="text-purple-500" size={12} fill="currentColor" />
+                            <Star className="text-purple-500" size={12} fill="currentColor" />
+                            <Star className="text-purple-500" size={12} fill="currentColor" />
+                            <Star className="text-purple-500" size={12} fill="currentColor" />
+                          </>
+                        )}
                         {card.rarity === 'gold' && (
                           <>
                             <Star className="text-yellow-500" size={12} fill="currentColor" />

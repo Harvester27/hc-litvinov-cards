@@ -4,11 +4,12 @@ import React, { useState, useEffect } from 'react';
 import Navigation from '@/components/Navigation';
 import MatchDetail from '@/components/MatchDetail';
 import { matchData, getRecentMatches } from '@/data/matchData';
+import { getAllArticles } from '@/data/articleData';
 import { 
   Trophy, Users, Calendar, Flame, Shield, Star, 
   Clock, MapPin, ChevronRight, Award, TrendingUp,
   Target, Zap, Medal, Heart, BarChart3, ArrowRight,
-  Instagram, PlayCircle, Newspaper, Swords
+  Instagram, PlayCircle, Newspaper, Swords, Eye
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -20,6 +21,9 @@ export default function HomePage() {
 
   // Získat poslední 2 zápasy
   const recentMatches = getRecentMatches(2);
+  
+  // Získat články
+  const articles = getAllArticles();
 
   useEffect(() => {
     const calculateTimeToGame = () => {
@@ -42,42 +46,6 @@ export default function HomePage() {
     const interval = setInterval(calculateTimeToGame, 60000);
     return () => clearInterval(interval);
   }, []);
-
-  // Nové aktuality
-  const newsItems = [
-    {
-      id: 3,
-      title: 'Lancers posílili útok',
-      date: '7.1.2025',
-      category: 'Přestup',
-      image: '⭐',
-      excerpt: 'Management přivedl zkušeného útočníka z partnerského týmu.'
-    },
-    {
-      id: 4,
-      title: 'Michaela Nováková chytila penaltu',
-      date: '6.1.2025',
-      category: 'Úspěch',
-      image: '🥅',
-      excerpt: 'Brankářka předvedla fantastický zákrok v rozhodující chvíli.'
-    },
-    {
-      id: 5,
-      title: 'Mladíci dominují',
-      date: '4.1.2025',
-      category: 'Mládež',
-      image: '🌟',
-      excerpt: 'Naše juniorka vede svou ligu s náskokem 6 bodů.'
-    },
-    {
-      id: 6,
-      title: 'Nový sponzor týmu',
-      date: '3.1.2025',
-      category: 'Klub',
-      image: '🤝',
-      excerpt: 'Lancers získali významného partnera pro sezónu 2025.'
-    }
-  ];
 
   // KHLA tabulka
   const khlaStandings = [
@@ -277,14 +245,14 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Nové aktuality */}
+          {/* Články */}
           <div>
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-3xl font-black text-black flex items-center gap-3">
                 <div className="w-10 h-10 bg-amber-600 rounded-xl flex items-center justify-center">
                   <Newspaper className="text-white" size={20} />
                 </div>
-                Nové aktuality
+                Aktuality
               </h2>
               <Link href="/clanky" className="text-red-600 hover:text-red-700 font-bold flex items-center gap-2">
                 Všechny články
@@ -293,26 +261,52 @@ export default function HomePage() {
             </div>
 
             <div className="space-y-4">
-              {newsItems.map((news) => (
-                <article key={news.id} className="bg-white rounded-xl p-5 border border-gray-200 hover:shadow-lg transition-all cursor-pointer group">
-                  <div className="flex gap-4">
-                    <div className="text-3xl flex-shrink-0">
-                      {news.image}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <span className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded text-xs font-semibold">
-                          {news.category}
-                        </span>
-                        <span className="text-gray-400 text-xs">{news.date}</span>
+              {articles.map((article) => (
+                <Link 
+                  key={article.id}
+                  href={`/clanky/${article.slug}`}
+                  className="block"
+                >
+                  <article className="bg-white rounded-xl p-5 border border-gray-200 hover:shadow-lg transition-all cursor-pointer group">
+                    <div className="flex gap-4">
+                      {article.featuredImage ? (
+                        <div className="w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden">
+                          <img 
+                            src={article.featuredImage} 
+                            alt={article.title}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform"
+                          />
+                        </div>
+                      ) : (
+                        <div className="text-3xl flex-shrink-0">
+                          {article.image}
+                        </div>
+                      )}
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <span className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded text-xs font-semibold">
+                            {article.category}
+                          </span>
+                          <span className="text-gray-400 text-xs">{article.date}</span>
+                        </div>
+                        <h3 className="font-bold text-black group-hover:text-red-600 transition-colors">
+                          {article.title}
+                        </h3>
+                        <p className="text-gray-600 text-sm mt-1">{article.excerpt}</p>
+                        <div className="flex items-center gap-4 mt-2 text-gray-400 text-xs">
+                          <span className="flex items-center gap-1">
+                            <Eye size={12} />
+                            {article.views}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Heart size={12} />
+                            {article.likes}
+                          </span>
+                        </div>
                       </div>
-                      <h3 className="font-bold text-black group-hover:text-red-600 transition-colors">
-                        {news.title}
-                      </h3>
-                      <p className="text-gray-600 text-sm mt-1">{news.excerpt}</p>
                     </div>
-                  </div>
-                </article>
+                  </article>
+                </Link>
               ))}
             </div>
           </div>

@@ -182,6 +182,13 @@ class Wrestler {
   checkCollisionWith(otherWrestler) {
     if (!otherWrestler) return false;
     
+    // NIKDY nekontrolovat kolize během chvatů
+    if (this.isApproachingForMove || otherWrestler.isApproachingForMove ||
+        this.isPerformingMove || otherWrestler.isPerformingMove ||
+        this.isBeingGrabbed || otherWrestler.isBeingGrabbed) {
+      return false;
+    }
+    
     const dx = this.position.x - otherWrestler.position.x;
     const dz = this.position.z - otherWrestler.position.z;
     const distance = Math.sqrt(dx * dx + dz * dz);
@@ -193,37 +200,38 @@ class Wrestler {
   resolveCollisionWith(otherWrestler) {
     if (!otherWrestler) return;
     
-    // DŮLEŽITÉ: Neřešit kolize pokud někdo provádí chvat nebo se k němu přibližuje
+    // EXTRA KONTROLA - absolutně ŽÁDNÉ kolize během chvatů nebo přibližování
     if (this.isApproachingForMove || otherWrestler.isApproachingForMove ||
-        this.isPerformingMove || otherWrestler.isPerformingMove) {
-      return; // Ignorovat kolize během chvatů
+        this.isPerformingMove || otherWrestler.isPerformingMove ||
+        this.isBeingGrabbed || otherWrestler.isBeingGrabbed ||
+        this.isLyingDown || otherWrestler.isLyingDown) {
+      return; // ABSOLUTNĚ NEŘEŠIT kolize během chvatů
     }
     
     const dx = this.position.x - otherWrestler.position.x;
     const dz = this.position.z - otherWrestler.position.z;
     const distance = Math.sqrt(dx * dx + dz * dz);
     
-    if (distance < (this.radius + otherWrestler.radius) && distance > 0) {
-      // Normalizovaný vektor směru
+    // Povolit větší přiblížení než dříve (menší kolizní radius při normálním boji)
+    const effectiveRadius = this.radius * 0.7; // Zmenšený radius pro povolení bližšího kontaktu
+    
+    if (distance < (effectiveRadius + effectiveRadius) && distance > 0) {
+      // Jemnější odpuzení pro plynulejší pohyb
       const nx = dx / distance;
       const nz = dz / distance;
       
-      // Vzdálenost překryvu
-      const overlap = (this.radius + otherWrestler.radius) - distance;
+      const overlap = (effectiveRadius + effectiveRadius) - distance;
+      const pushForce = overlap * 0.3; // Jemnější síla
       
-      // Odražení - každý wrestler se posune o polovinu překryvu
-      const pushForce = overlap * 0.5;
-      
-      // Aplikuj odpuzení
+      // Aplikuj jemné odpuzení
       this.position.x += nx * pushForce;
       this.position.z += nz * pushForce;
       
-      // Druhý wrestler se posune opačným směrem
       otherWrestler.position.x -= nx * pushForce;
       otherWrestler.position.z -= nz * pushForce;
       
-      // Přenos hybnosti při nárazu
-      const impactForce = 0.3;
+      // Menší přenos hybnosti
+      const impactForce = 0.1;
       this.velocity.x += nx * impactForce;
       this.velocity.z += nz * impactForce;
       otherWrestler.velocity.x -= nx * impactForce;
@@ -232,12 +240,11 @@ class Wrestler {
   }
   
   move(direction) {
-    // Nelze se pohybovat když je omráčený, chycený, leží nebo provádí chvat
-    // ALE může se pohybovat když se přibližuje k chvatu!
+    // ABSOLUTNÍ ZÁKAZ POHYBU při těchto stavech
     if (this.isStunned || this.isBeingGrabbed || this.isLyingDown || this.isPerformingMove) {
       return;
     }
-    // isApproachingForMove je OK - může se pohybovat
+    // isApproachingForMove je OK - může se pohybovat při přibližování k chvatu
     
     // Pokud se wrestler pohybuje, vypočítat cílovou rotaci
     if (direction.x !== 0 || direction.z !== 0) {
@@ -350,46 +357,99 @@ class Wrestler {
   }
   
   update(otherWrestlers = []) {
-    // Pokud leží na zemi
-    if (this.isLyingDown && this.lyingTimer > 0) {
-      this.lyingTimer--;
-      
-      // Zajistit správnou výšku při ležení
+    // Pokud leží na zemi - HLAVNÍ LOGIKA LEŽENÍ
+    if (this.isLyingDown) {
+      // Zajistit správnou pozici a rotaci při ležení
       this.group.position.y = 0.65;
+      this.group.rotation.x = -Math.PI / 2; // Leží na zádech
       
-      // Může začít vstávat po 60 framech (1 sekunda) pokud už není omráčený
-      if (this.lyingTimer <= 180 && !this.isStunned) {
-        // Postupné vstávání - trvá 60 framů
-        const getUpFrames = 60;
-        const getUpStart = 180 - getUpFrames;
+      // Odpočítávat časovače
+      if (this.lyingTimer > 0) {
+        this.lyingTimer--;
         
-        if (this.lyingTimer <= getUpStart && this.lyingTimer > getUpStart - getUpFrames) {
-          const getUpProgress = (getUpStart - this.lyingTimer) / getUpFrames;
-          // Postupně se narovnat
-          this.group.rotation.x = -Math.PI / 2 * (1 - getUpProgress);
-          
-          // Při vstávání se trochu zvednout
-          if (getUpProgress > 0.5) {
-            this.group.position.y = 0.65 + Math.sin(getUpProgress * Math.PI) * 0.2;
+        // Debug výpis každých 60 framů (1 sekunda)
+        if (this.lyingTimer % 60 === 0) {
+          console.log(`${this.name} leží, zbývá: ${this.lyingTimer} framů (${(this.lyingTimer/60).toFixed(1)}s)`);
+        }
+      }
+      
+      if (this.stunnedTimer > 0) {
+        this.stunnedTimer--;
+        
+        // Během omráčení - jen ležet a občas sebou škubnout
+        if (Math.random() < 0.03) {
+          // Malé záškuby
+          if (this.leftLeg) this.leftLeg.rotation.x = (Math.random() - 0.5) * 0.2;
+          if (this.rightArm) this.rightArm.rotation.z = (Math.random() - 0.5) * 0.2;
+        }
+        
+        if (this.stunnedTimer % 30 === 0) {
+          console.log(`${this.name} je omráčený, zbývá: ${this.stunnedTimer} framů`);
+        }
+      }
+      
+      // Vstávání - pouze když není omráčený a časovač je nízký
+      if (this.stunnedTimer <= 0 && this.lyingTimer > 0 && this.lyingTimer <= 60) {
+        // Postupné vstávání během posledních 60 framů
+        const getUpProgress = 1 - (this.lyingTimer / 60);
+        
+        if (this.lyingTimer % 15 === 0) {
+          console.log(`${this.name} vstává: ${Math.floor(getUpProgress * 100)}%`);
+        }
+        
+        // Animace vstávání
+        this.group.rotation.x = -Math.PI / 2 * (1 - getUpProgress);
+        
+        // Při vstávání se trochu zvednout
+        if (getUpProgress > 0.5) {
+          this.group.position.y = 0.65 + Math.sin(getUpProgress * Math.PI) * 0.3;
+        }
+      }
+      
+      // Kompletně vstal
+      if (this.lyingTimer <= 0 && this.stunnedTimer <= 0) {
+        console.log(`${this.name} VSTAL! Zpět do boje!`);
+        this.isLyingDown = false;
+        this.isStunned = false;
+        this.group.rotation.x = 0;
+        this.group.position.y = 0.65;
+        this.lyingTimer = 0;
+        this.stunnedTimer = 0;
+      }
+      
+      // Při ležení ZASTAVIT všechno ostatní
+      this.velocity.set(0, 0, 0);
+      this.isJumping = false;
+      this.isPunching = false;
+      this.isBlocking = false;
+      this.walkCycle = 0;
+      
+      // Reset animací rukou pokud nejsou v záškubu
+      if (Math.random() > 0.05) {
+        if (this.leftArm) {
+          this.leftArm.rotation.x *= 0.9;
+          this.leftArm.rotation.y *= 0.9;
+          if (Math.abs(this.leftArm.rotation.z) < Math.PI/2) {
+            this.leftArm.rotation.z *= 0.9;
+          }
+        }
+        if (this.rightArm) {
+          this.rightArm.rotation.x *= 0.9;
+          this.rightArm.rotation.y *= 0.9;
+          if (Math.abs(this.rightArm.rotation.z) < Math.PI/2) {
+            this.rightArm.rotation.z *= 0.9;
           }
         }
       }
       
-      if (this.lyingTimer <= 0 || (this.lyingTimer <= 120 && !this.isStunned)) {
-        this.isLyingDown = false;
-        this.group.rotation.x = 0;
-        this.group.position.y = 0.65;
-        this.lyingTimer = 0;
-      }
+      // FIX A: DŮLEŽITÉ - synchronizovat position i při ležení!
+      this.position.copy(this.group.position);
+      
+      // KONEC UPDATE při ležení - nic dalšího nedělat!
+      return;
     }
     
-    // Pokud je omráčený, počítat čas
-    if (this.isStunned && this.stunnedTimer > 0) {
-      this.stunnedTimer--;
-      if (this.stunnedTimer <= 0) {
-        this.isStunned = false;
-      }
-    }
+    // === NORMÁLNÍ UPDATE (když NELEŽÍ) ===
     
     // Regenerace staminy (pouze když nestojí nebo není v akci)
     if (this.stamina < 100 && !this.isPerformingMove && !this.isPunching && !this.isBlocking) {
@@ -408,8 +468,8 @@ class Wrestler {
       }
     }
     
-    // Plynulé otáčení k cílové rotaci (pokud neleží)
-    if (this.targetRotation !== undefined && !this.isLyingDown) {
+    // Plynulé otáčení k cílové rotaci
+    if (this.targetRotation !== undefined) {
       // Vypočítat nejkratší cestu k cílové rotaci
       let angleDiff = this.targetRotation - this.rotation;
       
@@ -425,26 +485,39 @@ class Wrestler {
       }
     }
     
-    // Aplikace gravitace (pokud neleží)
-    if (this.isJumping && !this.isLyingDown) {
+    // Aplikace gravitace
+    if (this.isJumping) {
       this.velocity.y -= 0.00375; // Gravitace zpomalena 4x (původně 0.015)
     }
     
-    // Kontrola kolizí s ostatními wrestlery PŘED pohybem (pokud neleží a neprovádí chvat)
-    if (!this.isLyingDown && !this.isApproachingForMove && !this.isPerformingMove) {
+    // Kontrola kolizí s ostatními wrestlery PŘED pohybem
+    // EXTRA podmínka - nekontrolovat kolize vůbec pokud někdo dělá chvat
+    let shouldCheckCollisions = true;
+    
+    if (this.isApproachingForMove || this.isPerformingMove || this.isBeingGrabbed) {
+      shouldCheckCollisions = false;
+    }
+    
+    // Zkontrolovat i ostatní wrestlery
+    for (let other of otherWrestlers) {
+      if (other && (other.isApproachingForMove || other.isPerformingMove || other.isBeingGrabbed || other.isLyingDown)) {
+        shouldCheckCollisions = false;
+        break;
+      }
+    }
+    
+    if (shouldCheckCollisions) {
       for (let other of otherWrestlers) {
-        if (other && other !== this) {
+        if (other && other !== this && !other.isLyingDown) {
           this.resolveCollisionWith(other);
         }
       }
     }
     
-    // Aktualizace pozice (pokud neleží)
-    if (!this.isLyingDown) {
-      this.group.position.x += this.velocity.x;
-      this.group.position.y += this.velocity.y;
-      this.group.position.z += this.velocity.z;
-    }
+    // Aktualizace pozice
+    this.group.position.x += this.velocity.x;
+    this.group.position.y += this.velocity.y;
+    this.group.position.z += this.velocity.z;
     
     // Omezení pohybu v ringu (10x10) - měkké omezení
     const ringLimit = 4.2; // Trochu menší kvůli větším wrestlerům
@@ -514,14 +587,98 @@ const WrestlerCharacter = React.forwardRef(({ scene, onUpdate, aiWrestlerRef }, 
     }
   }, [ref]);
   
+  // Uložit pozici při unmount (pro React Strict Mode)
+  const savedPositionRef = useRef(null);
+  const savedHealthRef = useRef(100);
+  const savedStaminaRef = useRef(100);
+  const lastUpdateRef = useRef({ health: 100, stamina: 100 });
+  const updateCounterRef = useRef(0);
+  
   useEffect(() => {
     if (!scene) return;
+    
+    // DŮLEŽITÉ: Uložit pozici staré instance před odstraněním
+    if (playerInternalRef.current && playerInternalRef.current.group) {
+      savedPositionRef.current = {
+        x: playerInternalRef.current.group.position.x,
+        y: playerInternalRef.current.group.position.y,
+        z: playerInternalRef.current.group.position.z,
+        rotation: playerInternalRef.current.rotation,
+        targetRotation: playerInternalRef.current.targetRotation || playerInternalRef.current.rotation,
+        // Uložit i důležité stavy
+        isLyingDown: playerInternalRef.current.isLyingDown,
+        lyingTimer: playerInternalRef.current.lyingTimer,
+        isStunned: playerInternalRef.current.isStunned,
+        stunnedTimer: playerInternalRef.current.stunnedTimer,
+        isPerformingMove: playerInternalRef.current.isPerformingMove,
+        isBeingGrabbed: playerInternalRef.current.isBeingGrabbed,
+        isApproachingForMove: playerInternalRef.current.isApproachingForMove,
+        // NEUKLÁDAT velocity pokud wrestler provádí chvat nebo je v chvatu!
+        // Velocity ukládáme jen při normálním pohybu
+        velocity: (!playerInternalRef.current.isPerformingMove && 
+                   !playerInternalRef.current.isBeingGrabbed && 
+                   !playerInternalRef.current.isApproachingForMove &&
+                   !playerInternalRef.current.isLyingDown &&
+                   !playerInternalRef.current.isStunned &&
+                   Math.abs(playerInternalRef.current.velocity.x) < 0.2 &&
+                   Math.abs(playerInternalRef.current.velocity.z) < 0.2) ? {
+          x: playerInternalRef.current.velocity.x * 0.3, // Ještě víc snížit pro bezpečnost
+          y: 0, // Vždy vynulovat Y
+          z: playerInternalRef.current.velocity.z * 0.3
+        } : null,
+        walkCycle: playerInternalRef.current.walkCycle || 0
+      };
+      savedHealthRef.current = playerInternalRef.current.health;
+      savedStaminaRef.current = playerInternalRef.current.stamina;
+      
+      scene.remove(playerInternalRef.current.group);
+      playerInternalRef.current = null;
+    }
     
     // Vytvoření hráče
     playerInternalRef.current = new Wrestler(scene, 0xff0000, "Litvínov Lancer");
     
-    // Nastavení počáteční pozice hráče (vlevo) - zvýšeno kvůli větší postavě
-    playerInternalRef.current.group.position.set(-2, 0.65, 0);
+    // Obnovit pozici pokud existuje, jinak použít výchozí
+    if (savedPositionRef.current) {
+      playerInternalRef.current.group.position.set(
+        savedPositionRef.current.x,
+        savedPositionRef.current.y,
+        savedPositionRef.current.z
+      );
+      playerInternalRef.current.position.set(
+        savedPositionRef.current.x,
+        savedPositionRef.current.y,
+        savedPositionRef.current.z
+      );
+      playerInternalRef.current.rotation = savedPositionRef.current.rotation;
+      playerInternalRef.current.targetRotation = savedPositionRef.current.targetRotation || savedPositionRef.current.rotation;
+      playerInternalRef.current.group.rotation.y = savedPositionRef.current.rotation;
+      
+      // Ujistit se, že rotace jsou v rozumných mezích
+      while (playerInternalRef.current.rotation > Math.PI) playerInternalRef.current.rotation -= 2 * Math.PI;
+      while (playerInternalRef.current.rotation < -Math.PI) playerInternalRef.current.rotation += 2 * Math.PI;
+      while (playerInternalRef.current.targetRotation > Math.PI) playerInternalRef.current.targetRotation -= 2 * Math.PI;
+      while (playerInternalRef.current.targetRotation < -Math.PI) playerInternalRef.current.targetRotation += 2 * Math.PI;
+      playerInternalRef.current.health = savedHealthRef.current;
+      playerInternalRef.current.stamina = savedStaminaRef.current;
+      
+      // Obnovit i důležité stavy
+      playerInternalRef.current.isLyingDown = savedPositionRef.current.isLyingDown || false;
+      playerInternalRef.current.lyingTimer = savedPositionRef.current.lyingTimer || 0;
+      playerInternalRef.current.isStunned = savedPositionRef.current.isStunned || false;
+      playerInternalRef.current.stunnedTimer = savedPositionRef.current.stunnedTimer || 0;
+      playerInternalRef.current.isPerformingMove = savedPositionRef.current.isPerformingMove || false;
+      playerInternalRef.current.isBeingGrabbed = savedPositionRef.current.isBeingGrabbed || false;
+      playerInternalRef.current.isApproachingForMove = savedPositionRef.current.isApproachingForMove || false;
+      
+      // Velocity VŽDY vynulovat při re-mountu (bezpečnější než obnovovat)
+      playerInternalRef.current.velocity.set(0, 0, 0);
+      playerInternalRef.current.walkCycle = savedPositionRef.current.walkCycle || 0;
+    } else {
+      // Výchozí pozice pouze při prvním vytvoření
+      playerInternalRef.current.group.position.set(-2, 0.65, 0);
+      playerInternalRef.current.position.set(-2, 0.65, 0);
+    }
     
     // Expose to parent ref
     if (ref) {
@@ -545,6 +702,7 @@ const WrestlerCharacter = React.forwardRef(({ scene, onUpdate, aiWrestlerRef }, 
       if (event.key.toLowerCase() === 'f') {
         // Iniciovat chvat na AI (wrestler si sám dojde k cíli)
         if (aiWrestlerRef && aiWrestlerRef.current && playerInternalRef.current) {
+          console.log('Hráč zkouší chvat!');
           wrestlingMoves.initiateMove(playerInternalRef.current, aiWrestlerRef.current);
         }
       }
@@ -566,8 +724,17 @@ const WrestlerCharacter = React.forwardRef(({ scene, onUpdate, aiWrestlerRef }, 
       frameRef.current = requestAnimationFrame(gameLoop);
       
       if (playerInternalRef.current) {
-        // Pohyb podle stisknutých kláves - pouze pokud se nepřibližuje k chvatu
-        if (!playerInternalRef.current.isApproachingForMove) {
+        // DŮLEŽITÉ: Zajistit, že parent ref má vždy aktuální instanci
+        if (ref && ref.current !== playerInternalRef.current) {
+          ref.current = playerInternalRef.current;
+        }
+        
+        // Pohyb podle stisknutých kláves - pouze pokud wrestler může chodit
+        if (!playerInternalRef.current.isApproachingForMove && 
+            !playerInternalRef.current.isLyingDown && 
+            !playerInternalRef.current.isStunned &&
+            !playerInternalRef.current.isPerformingMove &&
+            !playerInternalRef.current.isBeingGrabbed) {
           const direction = new THREE.Vector3(0, 0, 0);
           
           // Vertikální pohyb (W/S)
@@ -593,16 +760,27 @@ const WrestlerCharacter = React.forwardRef(({ scene, onUpdate, aiWrestlerRef }, 
         }
         playerInternalRef.current.update(otherWrestlers);
         
-        // Update wrestling chvatů
-        wrestlingMoves.update();
+        // FIX C: ODSTRANĚNO volání wrestlingMoves.update() - už se volá jen v AI smyčce!
+        // wrestlingMoves.update();  // TOTO JE ODSTRANĚNO
         
-        // Callback pro aktualizaci UI
-        if (onUpdate) {
-          onUpdate({
-            health: playerInternalRef.current.getHealth(),
-            stamina: playerInternalRef.current.stamina,
-            position: playerInternalRef.current.getPosition()
-          });
+        // Callback pro aktualizaci UI - throttled a pouze při změně
+        updateCounterRef.current++;
+        if (onUpdate && updateCounterRef.current % 10 === 0) { // Volat jen každý 10. frame
+          const currentHealth = playerInternalRef.current.getHealth();
+          const currentStamina = playerInternalRef.current.stamina;
+          
+          // Volat pouze pokud se hodnoty změnily
+          if (lastUpdateRef.current.health !== currentHealth || 
+              lastUpdateRef.current.stamina !== currentStamina) {
+            lastUpdateRef.current.health = currentHealth;
+            lastUpdateRef.current.stamina = currentStamina;
+            
+            onUpdate({
+              health: currentHealth,
+              stamina: currentStamina,
+              position: playerInternalRef.current.getPosition()
+            });
+          }
         }
       }
     };
@@ -616,6 +794,9 @@ const WrestlerCharacter = React.forwardRef(({ scene, onUpdate, aiWrestlerRef }, 
       }
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
+      
+      // NERUŠÍME aktivní chvat při cleanup - necháme ho dokončit s novými instancemi
+      // Pouze uložíme stav pro obnovení
       
       // Odstranění wrestlera ze scény
       if (playerInternalRef.current && playerInternalRef.current.group) {

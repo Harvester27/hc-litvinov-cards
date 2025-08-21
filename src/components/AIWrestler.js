@@ -13,7 +13,7 @@ class AIWrestler extends Wrestler {
     // AI specifické vlastnosti
     this.aiState = 'idle'; // idle, chasing, attacking, retreating, blocking
     this.target = null;
-    this.attackRange = 2;
+    this.attackRange = 2.5; // Zvýšeno pro lepší dosah chvatů
     this.chaseRange = 8;
     this.retreatHealth = 30;
     this.decisionCooldown = 0;
@@ -23,34 +23,34 @@ class AIWrestler extends Wrestler {
     this.dodgeChance = 0.3;
     
     // Taktické parametry
-    this.preferredDistance = 2.0; // Ideální vzdálenost od soupeře (zvýšeno z 1.5 pro lepší chvaty)
+    this.preferredDistance = 2.2; // Ideální vzdálenost od soupeře (upraveno pro chvaty)
     this.circleDirection = 1; // 1 nebo -1 pro kroužívý pohyb
     this.comboCounter = 0;
     this.lastActionTime = 0;
     
-    // Přidáme flagy pro ležení a přibližování (zdědí se z Wrestler, ale pro jistotu)
-    this.isApproachingForMove = false;
-    this.isLyingDown = false;
-    this.lyingTimer = 0;
+    // Flagy pro ležení a přibližování se zdědí z Wrestler třídy
+    // NEPREPISOVAT je zde! (byly zde redundantní definice které způsobovaly problémy)
   }
   
   setTarget(target) {
     this.target = target;
   }
   
+  // FIX B: Používat group.position místo this.position
   getDistanceToTarget() {
-    if (!this.target) return Infinity;
+    if (!this.target || !this.group || !this.target.group) return Infinity;
     
-    const dx = this.target.position.x - this.position.x;
-    const dz = this.target.position.z - this.position.z;
+    const dx = this.target.group.position.x - this.group.position.x;
+    const dz = this.target.group.position.z - this.group.position.z;
     return Math.sqrt(dx * dx + dz * dz);
   }
   
+  // FIX B: Používat group.position místo this.position
   getAngleToTarget() {
-    if (!this.target) return 0;
+    if (!this.target || !this.group || !this.target.group) return 0;
     
-    const dx = this.target.position.x - this.position.x;
-    const dz = this.target.position.z - this.position.z;
+    const dx = this.target.group.position.x - this.group.position.x;
+    const dz = this.target.group.position.z - this.group.position.z;
     return Math.atan2(dx, dz);
   }
   
@@ -58,6 +58,12 @@ class AIWrestler extends Wrestler {
     // DŮLEŽITÉ: Nepřerušovat AI pokud se přibližuje pro chvat!
     if (this.isApproachingForMove) {
       return; // Nedělat žádná rozhodnutí během přibližování k chvatu
+    }
+    
+    // SPECIÁLNÍ: Pokud soupeř leží, automaticky taunt
+    if (this.target && this.target.isLyingDown) {
+      this.aiState = 'taunting';
+      return;
     }
     
     if (this.decisionCooldown > 0) {
@@ -99,6 +105,11 @@ class AIWrestler extends Wrestler {
   }
   
   executeAIBehavior() {
+    // Debug výpis stavu soupeře
+    if (this.target && Math.random() < 0.05) { // 5% šance na výpis
+      console.log(`AI vidí soupeře: isLyingDown=${this.target.isLyingDown}, lyingTimer=${this.target.lyingTimer}`);
+    }
+    
     // Pokud AI leží, pouze čekat až vstane
     if (this.isLyingDown) {
       return;
@@ -117,6 +128,14 @@ class AIWrestler extends Wrestler {
     
     if (!this.target) {
       this.aiState = 'idle';
+      return;
+    }
+    
+    // KRITICKÉ: Pokud soupeř leží, VŽDY dělat taunt
+    if (this.target.isLyingDown) {
+      console.log(`AI: Soupeř leží (timer: ${this.target.lyingTimer}), dělám taunt!`);
+      this.aiState = 'taunting';
+      this.taunt();
       return;
     }
     
@@ -142,6 +161,9 @@ class AIWrestler extends Wrestler {
       case 'idle':
         this.idle();
         break;
+      case 'taunting':
+        this.taunt();
+        break;
     }
     
     // Náhodné úhybné manévry
@@ -151,7 +173,125 @@ class AIWrestler extends Wrestler {
     }
   }
   
+  taunt() {
+    // Taunt animace když soupeř leží
+    if (Math.random() < 0.03) { // 3% šance každý frame
+      const tauntType = Math.floor(Math.random() * 5);
+      
+      switch(tauntType) {
+        case 0:
+          // Zvednutí rukou nad hlavu (vítězné gesto)
+          if (this.leftArm && this.rightArm) {
+            this.leftArm.rotation.z = Math.PI;
+            this.rightArm.rotation.z = -Math.PI;
+            setTimeout(() => {
+              if (this.leftArm && this.rightArm) {
+                this.leftArm.rotation.z = 0;
+                this.rightArm.rotation.z = 0;
+              }
+            }, 1000);
+            console.log(`${this.name}: "YEAH! Jsem vítěz!"`);
+          }
+          break;
+          
+        case 1:
+          // Flexing (napínání svalů)
+          if (this.leftArm && this.rightArm) {
+            this.leftArm.rotation.x = -1.5;
+            this.rightArm.rotation.x = -1.5;
+            this.leftArm.rotation.z = 0.7;
+            this.rightArm.rotation.z = -0.7;
+            setTimeout(() => {
+              if (this.leftArm && this.rightArm) {
+                this.leftArm.rotation.x = 0;
+                this.rightArm.rotation.x = 0;
+                this.leftArm.rotation.z = 0;
+                this.rightArm.rotation.z = 0;
+              }
+            }, 800);
+            console.log(`${this.name}: "Podívejte na ty svaly!"`);
+          }
+          break;
+          
+        case 2:
+          // Skok radosti
+          if (!this.isJumping) {
+            this.jump();
+            // Při skoku roztáhnout ruce
+            if (this.leftArm && this.rightArm) {
+              this.leftArm.rotation.z = Math.PI / 2;
+              this.rightArm.rotation.z = -Math.PI / 2;
+              setTimeout(() => {
+                if (this.leftArm && this.rightArm) {
+                  this.leftArm.rotation.z = 0;
+                  this.rightArm.rotation.z = 0;
+                }
+              }, 500);
+            }
+            console.log(`${this.name}: "WOO HOO!"`);
+          }
+          break;
+          
+        case 3:
+          // Otočení se k publiku s poklonou
+          this.targetRotation = Math.random() * Math.PI * 2;
+          if (this.torso) {
+            this.torso.rotation.x = 0.3; // Mírná úklona
+            setTimeout(() => {
+              if (this.torso) {
+                this.torso.rotation.x = 0;
+              }
+            }, 600);
+          }
+          console.log(`${this.name}: "Děkuji, děkuji publiku!"`);
+          break;
+          
+        case 4:
+          // Provokativní gesto - ukázání na ležícího soupeře
+          if (this.rightArm && this.rightFist) {
+            const angleToTarget = this.getAngleToTarget();
+            this.targetRotation = angleToTarget;
+            this.rightArm.rotation.x = -Math.PI / 2;
+            this.rightArm.rotation.y = 0.5;
+            this.rightFist.position.z = 1.0;
+            setTimeout(() => {
+              if (this.rightArm && this.rightFist) {
+                this.rightArm.rotation.x = 0;
+                this.rightArm.rotation.y = 0;
+                this.rightFist.position.z = 0;
+              }
+            }, 1200);
+            console.log(`${this.name}: "Tohle je váš šampion? Ha!"`);
+          }
+          break;
+      }
+    }
+    
+    // Pomalu kroužit kolem ležícího soupeře
+    if (Math.random() < 0.7) {
+      const angleToTarget = this.getAngleToTarget();
+      const circleAngle = angleToTarget + (Math.PI / 2) * this.circleDirection;
+      const circleDirection = new THREE.Vector3(
+        Math.sin(circleAngle) * 0.3,
+        0,
+        Math.cos(circleAngle) * 0.3
+      );
+      this.move(circleDirection);
+      
+      // Občas změnit směr kroužení
+      if (Math.random() < 0.02) {
+        this.circleDirection *= -1;
+      }
+    }
+  }
+  
   chase() {
+    // NIKDY nepronásledovat ležícího soupeře
+    if (this.target && this.target.isLyingDown) {
+      this.aiState = 'taunting';
+      return;
+    }
+    
     const distance = this.getDistanceToTarget();
     
     // Pokud se přibližujeme pro chvat, nechat wrestling moves řídit pohyb
@@ -160,9 +300,9 @@ class AIWrestler extends Wrestler {
     }
     
     if (distance > this.preferredDistance) {
-      // Vypočítat směr k cíli
-      const dx = this.target.position.x - this.position.x;
-      const dz = this.target.position.z - this.position.z;
+      // Vypočítat směr k cíli - opraveno na group.position
+      const dx = this.target.group.position.x - this.group.position.x;
+      const dz = this.target.group.position.z - this.group.position.z;
       const length = Math.sqrt(dx * dx + dz * dz);
       
       if (length > 0) {
@@ -182,34 +322,44 @@ class AIWrestler extends Wrestler {
     const distance = this.getDistanceToTarget();
     
     if (distance <= this.attackRange) {
-      // Šance na chvat místo normálního útoku (pouze s dostatkem staminy)
-      // ZVÝŠENÁ ŠANCE a upravená vzdálenost pro lepší fungování
-      if (Math.random() < 0.15 && !this.isPerformingMove && !this.isApproachingForMove && 
-          !this.target.isBeingGrabbed && !this.target.isLyingDown && this.stamina > 25) {
+      // DŮLEŽITÉ: NIKDY se nepokoušet o chvat když soupeř leží!
+      if (this.target && this.target.isLyingDown) {
+        console.log(`${this.name}: Soupeř leží, nedělám chvat!`);
+        // Místo útoku přejít na taunt
+        this.aiState = 'taunting';
+        return;
+      }
+      
+      // Šance na chvat místo normálního útoku
+      if (Math.random() < 0.25 && !this.isPerformingMove && !this.isApproachingForMove && 
+          !this.target.isBeingGrabbed && !this.target.isLyingDown && 
+          !this.target.isStunned && this.stamina > 20) {
         // Iniciovat chvat (AI si sama dojde k cíli)
-        console.log('AI pokouší se o chvat!'); // Debug
+        console.log('AI pokouší se o chvat! Vzdálenost:', distance.toFixed(2));
         if (wrestlingMoves.initiateMove(this, this.target)) {
-          console.log('Chvat úspěšně zahájen!'); // Debug
+          console.log('Chvat úspěšně zahájen!');
           return; // Chvat byl úspěšně zahájen
         } else {
-          console.log('Chvat se nepodařilo zahájit'); // Debug
+          console.log('Chvat se nepodařilo zahájit');
         }
       }
       
-      // Combo útok
-      if (this.comboCounter === 0) {
-        this.punch();
-        this.comboCounter++;
-      } else if (this.comboCounter === 1 && this.punchCooldown < 10) {
-        this.punch();
-        this.comboCounter++;
-      } else if (this.comboCounter === 2 && this.punchCooldown < 5) {
-        // Finisher - skok a úder
-        if (!this.isJumping) {
-          this.jump();
+      // Combo útok - pouze pokud soupeř neleží
+      if (!this.target.isLyingDown) {
+        if (this.comboCounter === 0) {
+          this.punch();
+          this.comboCounter++;
+        } else if (this.comboCounter === 1 && this.punchCooldown < 10) {
+          this.punch();
+          this.comboCounter++;
+        } else if (this.comboCounter === 2 && this.punchCooldown < 5) {
+          // Finisher - skok a úder
+          if (!this.isJumping) {
+            this.jump();
+          }
+          this.punch();
+          this.comboCounter = 0;
         }
-        this.punch();
-        this.comboCounter = 0;
       }
       
       // Po útoku trochu ustoupit
@@ -223,9 +373,9 @@ class AIWrestler extends Wrestler {
   }
   
   retreat() {
-    // Couvání od soupeře
-    const dx = this.position.x - this.target.position.x;
-    const dz = this.position.z - this.target.position.z;
+    // Couvání od soupeře - opraveno na group.position
+    const dx = this.group.position.x - this.target.group.position.x;
+    const dz = this.group.position.z - this.target.group.position.z;
     const length = Math.sqrt(dx * dx + dz * dz);
     
     if (length > 0) {
@@ -266,11 +416,11 @@ class AIWrestler extends Wrestler {
     let moveX = Math.sin(circleAngle) * 0.7;
     let moveZ = Math.cos(circleAngle) * 0.7;
     
-    // Upravit vzdálenost
+    // Upravit vzdálenost - opraveno na group.position
     if (distance > this.preferredDistance + 0.5) {
       // Přiblížit se
-      const dx = this.target.position.x - this.position.x;
-      const dz = this.target.position.z - this.position.z;
+      const dx = this.target.group.position.x - this.group.position.x;
+      const dz = this.target.group.position.z - this.group.position.z;
       const length = Math.sqrt(dx * dx + dz * dz);
       if (length > 0) {
         moveX += (dx / length) * 0.3;
@@ -278,8 +428,8 @@ class AIWrestler extends Wrestler {
       }
     } else if (distance < this.preferredDistance - 0.5) {
       // Oddálit se
-      const dx = this.position.x - this.target.position.x;
-      const dz = this.position.z - this.target.position.z;
+      const dx = this.group.position.x - this.target.group.position.x;
+      const dz = this.group.position.z - this.target.group.position.z;
       const length = Math.sqrt(dx * dx + dz * dz);
       if (length > 0) {
         moveX += (dx / length) * 0.3;
@@ -397,6 +547,14 @@ const AIWrestlerComponent = React.forwardRef(({ scene, playerRef, difficulty = '
   const aiInternalRef = useRef(null);
   const frameRef = useRef(null);
   
+  // Uložit pozici při unmount (pro React Strict Mode)
+  const savedPositionRef = useRef(null);
+  const savedHealthRef = useRef(100);
+  const savedStaminaRef = useRef(100);
+  const savedStateRef = useRef('idle');
+  const lastUpdateRef = useRef({ health: 100, stamina: 100 });
+  const updateCounterRef = useRef(0);
+  
   // Expose AI to parent component through ref
   useEffect(() => {
     if (ref) {
@@ -406,6 +564,35 @@ const AIWrestlerComponent = React.forwardRef(({ scene, playerRef, difficulty = '
   
   useEffect(() => {
     if (!scene || !playerRef) return;
+    
+    // DŮLEŽITÉ: Uložit stav staré instance před odstraněním
+    if (aiInternalRef.current && aiInternalRef.current.group) {
+      savedPositionRef.current = {
+        x: aiInternalRef.current.group.position.x,
+        y: aiInternalRef.current.group.position.y,
+        z: aiInternalRef.current.group.position.z,
+        rotation: aiInternalRef.current.rotation,
+        targetRotation: aiInternalRef.current.targetRotation || aiInternalRef.current.rotation,
+        // Uložit všechny důležité stavy
+        isLyingDown: aiInternalRef.current.isLyingDown,
+        lyingTimer: aiInternalRef.current.lyingTimer,
+        isStunned: aiInternalRef.current.isStunned,
+        stunnedTimer: aiInternalRef.current.stunnedTimer,
+        isPerformingMove: aiInternalRef.current.isPerformingMove,
+        isBeingGrabbed: aiInternalRef.current.isBeingGrabbed,
+        isApproachingForMove: aiInternalRef.current.isApproachingForMove,
+        // Velocity raději VŮBEC neukládat - způsobuje problémy při re-mountu
+        // Wrestler začne stát na místě, což je lepší než odlétat pryč
+        velocity: null,
+        walkCycle: aiInternalRef.current.walkCycle || 0
+      };
+      savedHealthRef.current = aiInternalRef.current.health;
+      savedStaminaRef.current = aiInternalRef.current.stamina;
+      savedStateRef.current = aiInternalRef.current.aiState;
+      
+      scene.remove(aiInternalRef.current.group);
+      aiInternalRef.current = null;
+    }
     
     // Nastavení obtížnosti
     let aiColor = 0x0000ff;
@@ -445,8 +632,48 @@ const AIWrestlerComponent = React.forwardRef(({ scene, playerRef, difficulty = '
     aiInternalRef.current.aggressiveness = aggressiveness;
     aiInternalRef.current.reactionTime = reactionTime;
     
-    // Nastavení počáteční pozice (na pravé straně ringu) - zvýšeno kvůli větší postavě
-    aiInternalRef.current.group.position.set(2, 0.65, 0);
+    // Obnovit pozici a stav pokud existuje, jinak použít výchozí
+    if (savedPositionRef.current) {
+      aiInternalRef.current.group.position.set(
+        savedPositionRef.current.x,
+        savedPositionRef.current.y,
+        savedPositionRef.current.z
+      );
+      aiInternalRef.current.position.set(
+        savedPositionRef.current.x,
+        savedPositionRef.current.y,
+        savedPositionRef.current.z
+      );
+      aiInternalRef.current.rotation = savedPositionRef.current.rotation;
+      aiInternalRef.current.targetRotation = savedPositionRef.current.targetRotation || savedPositionRef.current.rotation;
+      aiInternalRef.current.group.rotation.y = savedPositionRef.current.rotation;
+      
+      // Ujistit se, že rotace jsou v rozumných mezích
+      while (aiInternalRef.current.rotation > Math.PI) aiInternalRef.current.rotation -= 2 * Math.PI;
+      while (aiInternalRef.current.rotation < -Math.PI) aiInternalRef.current.rotation += 2 * Math.PI;
+      while (aiInternalRef.current.targetRotation > Math.PI) aiInternalRef.current.targetRotation -= 2 * Math.PI;
+      while (aiInternalRef.current.targetRotation < -Math.PI) aiInternalRef.current.targetRotation += 2 * Math.PI;
+      aiInternalRef.current.health = savedHealthRef.current;
+      aiInternalRef.current.stamina = savedStaminaRef.current;
+      aiInternalRef.current.aiState = savedStateRef.current;
+      
+      // Obnovit všechny důležité stavy
+      aiInternalRef.current.isLyingDown = savedPositionRef.current.isLyingDown || false;
+      aiInternalRef.current.lyingTimer = savedPositionRef.current.lyingTimer || 0;
+      aiInternalRef.current.isStunned = savedPositionRef.current.isStunned || false;
+      aiInternalRef.current.stunnedTimer = savedPositionRef.current.stunnedTimer || 0;
+      aiInternalRef.current.isPerformingMove = savedPositionRef.current.isPerformingMove || false;
+      aiInternalRef.current.isBeingGrabbed = savedPositionRef.current.isBeingGrabbed || false;
+      aiInternalRef.current.isApproachingForMove = savedPositionRef.current.isApproachingForMove || false;
+      
+      // Velocity VŽDY vynulovat při re-mountu (bezpečnější než obnovovat)
+      aiInternalRef.current.velocity.set(0, 0, 0);
+      aiInternalRef.current.walkCycle = savedPositionRef.current.walkCycle || 0;
+    } else {
+      // Výchozí pozice pouze při prvním vytvoření
+      aiInternalRef.current.group.position.set(2, 0.65, 0);
+      aiInternalRef.current.position.set(2, 0.65, 0);
+    }
     
     // Nastavení hráče jako cíl
     if (playerRef.current) {
@@ -463,41 +690,116 @@ const AIWrestlerComponent = React.forwardRef(({ scene, playerRef, difficulty = '
       frameRef.current = requestAnimationFrame(aiLoop);
       
       if (aiInternalRef.current && playerRef.current) {
+        // DŮLEŽITÉ: Zajistit, že parent ref má vždy aktuální instanci
+        if (ref && ref.current !== aiInternalRef.current) {
+          ref.current = aiInternalRef.current;
+        }
+        
         // Aktualizace cíle
         aiInternalRef.current.setTarget(playerRef.current);
+        
+        // FAILSAFE: Omezit maximální rychlost pro případ bugů
+        if (aiInternalRef.current.velocity) {
+          const maxSpeed = 0.15;
+          const vel = aiInternalRef.current.velocity;
+          const speed = Math.sqrt(vel.x * vel.x + vel.z * vel.z);
+          
+          if (speed > maxSpeed * 2) {
+            console.warn(`AI velocity příliš vysoká! x:${vel.x.toFixed(3)}, z:${vel.z.toFixed(3)}, speed:${speed.toFixed(3)}`);
+          }
+          
+          if (Math.abs(vel.x) > maxSpeed) {
+            vel.x = Math.sign(vel.x) * maxSpeed;
+          }
+          if (Math.abs(vel.z) > maxSpeed) {
+            vel.z = Math.sign(vel.z) * maxSpeed;
+          }
+          // Y velocity by neměla být moc velká (skok)
+          if (vel.y > 0.3) {
+            vel.y = 0.3;
+          }
+          if (vel.y < -0.5) {
+            vel.y = -0.5; // Omezit i pád
+          }
+        }
         
         // Update AI s kolizní detekcí
         const otherWrestlers = playerRef.current ? [playerRef.current] : [];
         aiInternalRef.current.update(otherWrestlers);
         
-        // Update wrestling chvatů
-        wrestlingMoves.update();
+        // Update wrestling chvatů - musí být PŘED kontrolou úderů
+        // FIX: Aktualizovat reference ve wrestlingMoves na aktuální instance
+        if (aiInternalRef.current && playerRef.current && 
+            aiInternalRef.current.group && playerRef.current.group) {
+          
+          // Aktualizovat reference pokud se změnily
+          if (wrestlingMoves.activeMove) {
+            // Pokud probíhá chvat, zkontrolovat a aktualizovat reference
+            if (wrestlingMoves.moveInitiator) {
+              // Pokud je iniciátor AI, aktualizovat na novou instanci
+              if (wrestlingMoves.moveInitiator.name === aiInternalRef.current.name) {
+                wrestlingMoves.moveInitiator = aiInternalRef.current;
+              }
+              // Pokud je iniciátor hráč, aktualizovat na novou instanci
+              else if (wrestlingMoves.moveInitiator.name === playerRef.current.name) {
+                wrestlingMoves.moveInitiator = playerRef.current;
+              }
+            }
+            
+            if (wrestlingMoves.moveTarget) {
+              // Pokud je cíl AI, aktualizovat na novou instanci
+              if (wrestlingMoves.moveTarget.name === aiInternalRef.current.name) {
+                wrestlingMoves.moveTarget = aiInternalRef.current;
+              }
+              // Pokud je cíl hráč, aktualizovat na novou instanci
+              else if (wrestlingMoves.moveTarget.name === playerRef.current.name) {
+                wrestlingMoves.moveTarget = playerRef.current;
+              }
+            }
+          }
+          
+          // Nyní můžeme bezpečně volat update
+          wrestlingMoves.update();
+        }
         
-        // Kontrola kolizí a úderů
-        const distance = aiInternalRef.current.getDistanceToTarget();
-        
-        // Pokud je hráč blízko a AI útočí
-        if (distance < 1.5 && aiInternalRef.current.isPunching && !playerRef.current.isBlocking) {
-          // Zasáhnout hráče
-          if (Math.random() < 0.125) { // 12.5% šance na zásah (zpomaleno)
-            playerRef.current.takeDamage(10);
+        // Kontrola kolizí a úderů - POUZE pokud nikdo neleží
+        if (!playerRef.current.isLyingDown && !aiInternalRef.current.isLyingDown) {
+          const distance = aiInternalRef.current.getDistanceToTarget();
+          
+          // Pokud je hráč blízko a AI útočí
+          if (distance < 1.5 && aiInternalRef.current.isPunching && !playerRef.current.isBlocking) {
+            // Zasáhnout hráče
+            if (Math.random() < 0.125) { // 12.5% šance na zásah (zpomaleno)
+              playerRef.current.takeDamage(10);
+            }
+          }
+          
+          // Pokud hráč útočí a je blízko AI
+          if (distance < 1.5 && playerRef.current.isPunching && !aiInternalRef.current.isBlocking) {
+            // AI dostane zásah
+            if (Math.random() < 0.15) { // 15% šance že hráč zasáhne (zpomaleno)
+              aiInternalRef.current.onHit(15);
+            }
           }
         }
         
-        // Pokud hráč útočí a je blízko AI
-        if (distance < 1.5 && playerRef.current.isPunching && !aiInternalRef.current.isBlocking) {
-          // AI dostane zásah
-          if (Math.random() < 0.15) { // 15% šance že hráč zasáhne (zpomaleno)
-            aiInternalRef.current.onHit(15);
+        // Callback pro aktualizaci UI - throttled a pouze při změně
+        updateCounterRef.current++;
+        if (onUpdate && updateCounterRef.current % 10 === 0) { // Volat jen každý 10. frame
+          const currentHealth = aiInternalRef.current.getHealth();
+          const currentStamina = aiInternalRef.current.stamina;
+          
+          // Volat pouze pokud se hodnoty změnily
+          if (lastUpdateRef.current.health !== currentHealth || 
+              lastUpdateRef.current.stamina !== currentStamina) {
+            lastUpdateRef.current.health = currentHealth;
+            lastUpdateRef.current.stamina = currentStamina;
+            
+            onUpdate({
+              health: currentHealth,
+              stamina: currentStamina
+            });
           }
-        }
-        
-        // Callback pro aktualizaci UI
-        if (onUpdate) {
-          onUpdate({
-            health: aiInternalRef.current.getHealth(),
-            stamina: aiInternalRef.current.stamina
-          });
         }
       }
     };
@@ -509,7 +811,10 @@ const AIWrestlerComponent = React.forwardRef(({ scene, playerRef, difficulty = '
       if (frameRef.current) {
         cancelAnimationFrame(frameRef.current);
       }
+      // NERUÍME aktivní chvat při cleanup - necháme ho dokončit s novými instancemi
+      // Pouze uložíme stav pro obnovení
       if (aiInternalRef.current && aiInternalRef.current.group) {
+        // Stav se uloží automaticky na začátku useEffect
         scene.remove(aiInternalRef.current.group);
       }
     };

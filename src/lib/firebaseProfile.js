@@ -20,6 +20,8 @@ const DEFAULT_PROFILE = {
   level: 1,
   xp: 0,
   credits: 12000,
+  collectedCards: [], // Přidáno pro sbírku karet
+  totalQuizzesCompleted: 0, // Přidáno pro kvízy
   createdAt: null,
   lastLogin: null
 };
@@ -52,6 +54,9 @@ export const getLevelFromXP = (xp) => {
   
   return level;
 };
+
+// Alias pro kompatibilitu s quiz funkcemi
+export const calculateLevelFromXP = getLevelFromXP;
 
 // ========================================
 // PROFIL FUNKCE
@@ -245,6 +250,41 @@ export const addXP = async (uid, amount) => {
 };
 
 // ========================================
+// SBÍRKA KARET FUNKCE
+// ========================================
+
+// Přidat kartu do sbírky
+export const addCardToCollection = async (uid, cardId) => {
+  try {
+    const profile = await getUserProfile(uid);
+    const currentCards = profile?.collectedCards || [];
+    
+    // Přidat kartu pouze pokud ji ještě nemá
+    if (!currentCards.includes(cardId)) {
+      const updatedCards = [...currentCards, cardId];
+      await updateUserProfile(uid, { collectedCards: updatedCards });
+      return updatedCards;
+    }
+    
+    return currentCards;
+  } catch (error) {
+    console.error('Error adding card to collection:', error);
+    throw error;
+  }
+};
+
+// Získat všechny karty uživatele
+export const getUserCards = async (uid) => {
+  try {
+    const profile = await getUserProfile(uid);
+    return profile?.collectedCards || [];
+  } catch (error) {
+    console.error('Error getting user cards:', error);
+    return [];
+  }
+};
+
+// ========================================
 // AUTENTIZACE
 // ========================================
 
@@ -293,7 +333,7 @@ export const validateDisplayName = (name) => {
   }
   
   // Povolené znaky: písmena, čísla, mezery, pomlčky, podtržítka
-  const validPattern = /^[a-zA-Z0-9čďěňřšťžýáéíóúůĎŇŤČŘŠŽÝÁÉÍÓÚŮ\s\-_]+$/;
+  const validPattern = /^[a-zA-Z0-9áčďéěíňóřšťúůýžÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ\s\-_]+$/;
   if (!validPattern.test(name)) {
     return 'Jméno obsahuje nepovolené znaky';
   }

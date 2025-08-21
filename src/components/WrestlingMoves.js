@@ -58,38 +58,53 @@ export class WrestlingMovesSystem {
   
   // Iniciovat chvat - wrestler si sám dojde k cíli
   initiateMove(attacker, target) {
+    console.log('=== POKUS O CHVAT ===');
+    
     if (!attacker || !target) {
-      console.log('Chvat: chybí attacker nebo target');
+      console.log('Chvat ZRUŠEN: chybí attacker nebo target');
       return false;
     }
     if (this.activeMove) {
-      console.log('Chvat: už probíhá jiný chvat');
+      console.log('Chvat ZRUŠEN: už probíhá jiný chvat');
       return false;
     }
     if (target.isBeingGrabbed) {
-      console.log('Chvat: cíl už je chycený');
+      console.log('Chvat ZRUŠEN: cíl už je chycený');
       return false;
     }
     if (target.isLyingDown) {
-      console.log('Chvat: cíl leží');
+      console.log('Chvat ZRUŠEN: cíl leží');
+      return false;
+    }
+    if (target.isStunned) {
+      console.log('Chvat ZRUŠEN: cíl je omráčený');
       return false;
     }
     if (attacker.isLyingDown) {
-      console.log('Chvat: útočník leží');
+      console.log('Chvat ZRUŠEN: útočník leží');
+      return false;
+    }
+    if (attacker.isStunned) {
+      console.log('Chvat ZRUŠEN: útočník je omráčený');
       return false;
     }
     if (attacker.isPerformingMove) {
-      console.log('Chvat: útočník už provádí chvat');
+      console.log('Chvat ZRUŠEN: útočník už provádí chvat');
+      return false;
+    }
+    if (attacker.isBeingGrabbed) {
+      console.log('Chvat ZRUŠEN: útočník je chycený');
       return false;
     }
     
     // Kontrola staminy - potřeba alespoň 20 staminy pro chvat
     if (attacker.stamina !== undefined && attacker.stamina < 20) {
-      console.log('Chvat: nedostatek staminy');
+      console.log(`Chvat ZRUŠEN: nedostatek staminy (${attacker.stamina})`);
       return false;
     }
     
-    console.log('Chvat INICIOVÁN! Začíná přibližování...');
+    const distance = this.getDistance(attacker, target);
+    console.log(`Chvat INICIOVÁN! Začíná přibližování... Vzdálenost: ${distance.toFixed(2)}`);
     
     // Nastavit přípravu na chvat
     this.activeMove = 'approaching';
@@ -100,6 +115,7 @@ export class WrestlingMovesSystem {
     
     attacker.isApproachingForMove = true;
     
+    console.log('===================');
     return true;
   }
   
@@ -107,12 +123,31 @@ export class WrestlingMovesSystem {
   updateApproaching() {
     // Kontrola že objekty stále existují
     if (!this.moveInitiator || !this.moveTarget || !this.moveInitiator.group || !this.moveTarget.group) {
+      console.log('Chvat zrušen - chybí objekty');
+      this.cancelMove();
+      return;
+    }
+    
+    // DŮLEŽITÉ: Zrušit chvat pokud cíl mezitím začal ležet nebo je omráčený
+    if (this.moveTarget.isLyingDown || this.moveTarget.isStunned) {
+      console.log('Chvat zrušen - cíl leží nebo je omráčený');
+      this.cancelMove();
+      return;
+    }
+    
+    // DŮLEŽITÉ: Zrušit chvat pokud útočník mezitím začal ležet nebo je omráčený
+    if (this.moveInitiator.isLyingDown || this.moveInitiator.isStunned) {
+      console.log('Chvat zrušen - útočník leží nebo je omráčený');
       this.cancelMove();
       return;
     }
     
     const distance = this.getDistance(this.moveInitiator, this.moveTarget);
-    const executeDistance = 2.5; // ZVÝŠENÁ vzdálenost pro provedení chvatu (bylo 2.0)
+    const executeDistance = 2.2; // Vzdálenost pro provedení chvatu
+    
+    if (this.moveTimer % 10 === 0) { // Každých 10 framů
+      console.log(`Přibližování: vzdálenost ${distance.toFixed(2)}, potřeba ${executeDistance}`);
+    }
     
     if (distance > executeDistance) {
       // Přiblížit se k cíli
@@ -125,36 +160,36 @@ export class WrestlingMovesSystem {
         Math.cos(angle)
       );
       
-      // RYCHLEJŠÍ přiblížení při chvatu pro zajištění dosažení cíle
-      this.moveInitiator.velocity.x = moveDirection.x * 0.1; // Zvýšeno z 0.06
-      this.moveInitiator.velocity.z = moveDirection.z * 0.1; // Zvýšeno z 0.06
+      // RYCHLEJŠÍ přiblížení při chvatu
+      this.moveInitiator.velocity.x = moveDirection.x * 0.12;
+      this.moveInitiator.velocity.z = moveDirection.z * 0.12;
       
       // Otočit se směrem k cíli
       this.moveInitiator.targetRotation = angle;
       
       // Animace rychlé chůze/běhu
-      this.moveInitiator.walkCycle += 0.08; // Rychlejší animace
+      this.moveInitiator.walkCycle += 0.1;
       if (this.moveInitiator.animateWalk) {
         this.moveInitiator.animateWalk();
       }
       
-      // BEZ TIMEOUTU - wrestler se bude přibližovat dokud nedosáhne cíle
       this.moveTimer++;
       
-      // Debug výpis
-      if (this.moveTimer % 30 === 0) {
-        console.log(`Přibližování: vzdálenost ${distance.toFixed(2)}, čas ${this.moveTimer}`);
+      // Timeout pro zrušení pokud se nedaří přiblížit
+      if (this.moveTimer > 300) { // 5 sekund
+        console.log('Přibližování timeout - zrušeno');
+        this.cancelMove();
       }
     } else {
       // Jsme dost blízko - rozhodnout který chvat provést
-      console.log('Dosažena vzdálenost pro chvat!');
+      console.log('DOSAŽENA VZDÁLENOST PRO CHVAT!');
       const isBehind = this.isBehindTarget(this.moveInitiator, this.moveTarget);
       
       if (isBehind) {
-        console.log('Provádím German Suplex (ze zadu)');
+        console.log('>>> PROVÁDÍM GERMAN SUPLEX (ze zadu) <<<');
         this.startGermanSuplex();
       } else {
-        console.log('Provádím Chokeslam (zepředu)');
+        console.log('>>> PROVÁDÍM CHOKESLAM (zepředu) <<<');
         this.startChokeslam();
       }
     }
@@ -167,6 +202,7 @@ export class WrestlingMovesSystem {
       return;
     }
     
+    console.log('CHOKESLAM ZAHÁJEN!');
     this.activeMove = 'chokeslam';
     this.movePhase = 1;
     this.moveTimer = 0;
@@ -194,6 +230,7 @@ export class WrestlingMovesSystem {
       return;
     }
     
+    console.log('GERMAN SUPLEX ZAHÁJEN!');
     this.activeMove = 'germanSuplex';
     this.movePhase = 1;
     this.moveTimer = 0;
@@ -220,6 +257,7 @@ export class WrestlingMovesSystem {
       case 1: // Fáze chycení za krk (1.5x pomaleji)
         this.animateGrab();
         if (this.moveTimer > 45) {  // Bylo 30
+          console.log('Chokeslam: Fáze 2 - zvedání');
           this.movePhase = 2;
           this.moveTimer = 0;
         }
@@ -228,6 +266,7 @@ export class WrestlingMovesSystem {
       case 2: // Fáze zvednutí (1.5x pomaleji)
         this.animateLift();
         if (this.moveTimer > 60) {  // Bylo 40
+          console.log('Chokeslam: Fáze 3 - hození dolů');
           this.movePhase = 3;
           this.moveTimer = 0;
         }
@@ -236,6 +275,7 @@ export class WrestlingMovesSystem {
       case 3: // Fáze hození dolů (1.5x pomaleji)
         this.animateSlam();
         if (this.moveTimer > 45) {  // Bylo 30
+          console.log('Chokeslam: Fáze 4 - ležení');
           this.movePhase = 4;
           this.moveTimer = 0;
         }
@@ -244,6 +284,7 @@ export class WrestlingMovesSystem {
       case 4: // Ležení na zemi - nechat jak je
         this.animateLyingDown();
         if (this.moveTimer > 60) {
+          console.log('CHOKESLAM DOKONČEN!');
           this.finishChokeslam();
         }
         break;
@@ -264,6 +305,7 @@ export class WrestlingMovesSystem {
       case 1: // Chycení ze zadu (1.5x pomaleji)
         this.animateBackGrab();
         if (this.moveTimer > 38) {  // Bylo 25
+          console.log('Suplex: Fáze 2 - zvednutí');
           this.movePhase = 2;
           this.moveTimer = 0;
         }
@@ -272,6 +314,7 @@ export class WrestlingMovesSystem {
       case 2: // Zvednutí a převrácení dozadu (1.5x pomaleji)
         this.animateSuplex();
         if (this.moveTimer > 52) {  // Bylo 35
+          console.log('Suplex: Fáze 3 - dopad');
           this.movePhase = 3;
           this.moveTimer = 0;
         }
@@ -280,6 +323,7 @@ export class WrestlingMovesSystem {
       case 3: // Dopad (1.5x pomaleji)
         this.animateSuplexImpact();
         if (this.moveTimer > 30) {  // Bylo 20
+          console.log('Suplex: Fáze 4 - ležení');
           this.movePhase = 4;
           this.moveTimer = 0;
         }
@@ -288,6 +332,7 @@ export class WrestlingMovesSystem {
       case 4: // Ležení na zemi
         this.animateLyingDown();
         if (this.moveTimer > 50) {
+          console.log('GERMAN SUPLEX DOKONČEN!');
           this.finishGermanSuplex();
         }
         break;
@@ -363,10 +408,16 @@ export class WrestlingMovesSystem {
       this.moveInitiator.rightFist.position.z = 0.5 - 0.5 * progress;
     }
     
-    // Cíl rychle padá
+    // Cíl rychle padá NA SVÉ AKTUÁLNÍ X,Z POZICI
     const fallSpeed = progress * progress;
     if (this.moveTarget.group) {
+      // POUZE měníme Y pozici pro pád, X a Z ZŮSTÁVAJÍ!
+      const currentX = this.moveTarget.group.position.x;
+      const currentZ = this.moveTarget.group.position.z;
       this.moveTarget.group.position.y = 3.15 - (3.15 - 0.65) * fallSpeed;
+      // Ujistit se že X a Z se NEMĚNÍ
+      this.moveTarget.group.position.x = currentX;
+      this.moveTarget.group.position.z = currentZ;
       
       // Rotace při pádu
       this.moveTarget.group.rotation.x = -0.2 - 0.3 * progress;
@@ -376,6 +427,7 @@ export class WrestlingMovesSystem {
     // Efekt dopadu
     if (progress > 0.9 && !this.moveTarget.slamImpacted) {
       this.moveTarget.slamImpacted = true;
+      console.log('💥 SLAM IMPACT!');
       this.createImpactEffect();
     }
   }
@@ -383,10 +435,11 @@ export class WrestlingMovesSystem {
   animateLyingDown() {
     if (!this.moveTarget || !this.moveTarget.group) return;
     
-    // Cíl leží na zádech na své aktuální pozici - NEPŘESOUVAT!
-    // Pouze zajistit správnou rotaci pro ležení
+    // Cíl leží na zádech NA SVÉ AKTUÁLNÍ POZICI - ABSOLUTNĚ ŽÁDNÉ PŘESOUVÁNÍ!
+    // Pouze zajistit správnou rotaci pro ležení, pozici NEMĚNÍME!
     this.moveTarget.group.rotation.x = -Math.PI / 2; // 90 stupňů - leží na zádech
     this.moveTarget.group.rotation.z = 0;
+    // this.moveTarget.group.position VŮBEC NEMĚNÍME!
     
     // Občasné záškuby (reakce na bolest) - vydýchávání
     if (Math.random() < 0.05) {  // 5% šance na záškub
@@ -492,6 +545,7 @@ export class WrestlingMovesSystem {
     
     if (progress > 0.5 && !this.moveTarget.suplexImpacted) {
       this.moveTarget.suplexImpacted = true;
+      console.log('💥 SUPLEX IMPACT!');
       this.createImpactEffect();
     }
   }
@@ -514,42 +568,72 @@ export class WrestlingMovesSystem {
       return;
     }
     
+    console.log('💀 CHOKESLAM DAMAGE: 35 HP');
+    console.log(`${this.moveTarget.name} LEŽÍ NA ZEMI!`);
+    
+    // DŮLEŽITÉ: Uložit reference PŘED resetem!
+    const attacker = this.moveInitiator;
+    const victim = this.moveTarget;
+    
     // Útočník pouze vrátí ruku do normální pozice
-    if (this.moveInitiator.rightArm) {
-      this.moveInitiator.rightArm.rotation.x = 0;
-      this.moveInitiator.rightArm.rotation.z = 0;
+    if (attacker.rightArm) {
+      attacker.rightArm.rotation.x = 0;
+      attacker.rightArm.rotation.z = 0;
     }
-    if (this.moveInitiator.rightFist) {
-      this.moveInitiator.rightFist.position.set(0.45, 1.2, 0);
+    if (attacker.rightFist) {
+      attacker.rightFist.position.set(0.45, 1.2, 0);
     }
-    this.moveInitiator.isPerformingMove = false;
+    
+    // Resetovat všechny flagy útočníka
+    attacker.isPerformingMove = false;
+    attacker.isApproachingForMove = false;
+    attacker.isBeingGrabbed = false;
     
     // Útočník ztratí staminu
-    if (this.moveInitiator.stamina !== undefined) {
-      this.moveInitiator.stamina -= 25; // Chokeslam je náročný
-      this.moveInitiator.stamina = Math.max(0, this.moveInitiator.stamina);
+    if (attacker.stamina !== undefined) {
+      attacker.stamina -= 25;
+      attacker.stamina = Math.max(0, attacker.stamina);
     }
     
-    // Cíl ZŮSTÁVÁ ležet na své pozici - NEresetujeme pozici!
-    this.moveTarget.isBeingGrabbed = false;
-    this.moveTarget.slamImpacted = false;
+    // KRITICKÉ: Nastavit stav oběti SPRÁVNĚ
+    victim.isBeingGrabbed = false;
+    victim.isPerformingMove = false;
+    victim.isApproachingForMove = false;
+    victim.slamImpacted = false;
     
     // Masivní poškození
-    if (this.moveTarget.takeDamage) {
-      this.moveTarget.takeDamage(35);
+    if (victim.takeDamage) {
+      victim.takeDamage(35);
     }
     
-    // Cíl zůstane omráčený a ležící
-    this.moveTarget.isStunned = true;
-    this.moveTarget.isLyingDown = true;
-    this.moveTarget.stunnedTimer = 120; // 2 sekundy omráčení
-    this.moveTarget.lyingTimer = 240; // 4 sekundy ležení (může vstát dřív sám)
+    // NASTAVIT LEŽENÍ - oběť zůstane TAM KDE JE!
+    victim.isLyingDown = true;
+    victim.isStunned = true;
+    victim.stunnedTimer = 90; // 1.5 sekundy omráčení
+    victim.lyingTimer = 300; // 5 sekund celkově ležení
     
-    // Zastavit veškerý pohyb
-    this.moveTarget.velocity.set(0, 0, 0);
-    this.moveTarget.isJumping = false;
+    // Ujistit se že leží správně NA SVÉ POZICI - ŽÁDNÝ TELEPORT!
+    if (victim.group) {
+      victim.group.rotation.x = -Math.PI / 2; // Leží na zádech
+      // victim.group.position NEMĚNÍME! Zůstane tam kde je!
+      console.log(`${victim.name} leží na pozici: x=${victim.group.position.x.toFixed(2)}, z=${victim.group.position.z.toFixed(2)}`);
+    }
     
-    this.resetMove();
+    // Zastavit veškerý pohyb oběti
+    if (victim.velocity) {
+      victim.velocity.set(0, 0, 0);
+    }
+    victim.isJumping = false;
+    
+    console.log(`${victim.name} bude ležet ${victim.lyingTimer} framů (omráčen: ${victim.stunnedTimer})`);
+    console.log(`Kontrola: isLyingDown=${victim.isLyingDown}, lyingTimer=${victim.lyingTimer}`);
+    
+    // AŽ NAKONEC resetovat systém chvatů
+    this.activeMove = null;
+    this.movePhase = 0;
+    this.moveTimer = 0;
+    this.moveInitiator = null;
+    this.moveTarget = null;
   }
   
   finishGermanSuplex() {
@@ -558,46 +642,68 @@ export class WrestlingMovesSystem {
       return;
     }
     
+    console.log('💀 GERMAN SUPLEX DAMAGE: 30 HP');
+    console.log(`${this.moveTarget.name} LEŽÍ NA ZEMI!`);
+    
+    // DŮLEŽITÉ: Uložit reference PŘED resetem!
+    const attacker = this.moveInitiator;
+    const victim = this.moveTarget;
+    
     // Útočník pouze vrátí ruce do normální pozice
-    if (this.moveInitiator.leftArm) {
-      this.moveInitiator.leftArm.rotation.x = 0;
-      this.moveInitiator.leftArm.rotation.y = 0;
+    if (attacker.leftArm) {
+      attacker.leftArm.rotation.x = 0;
+      attacker.leftArm.rotation.y = 0;
     }
-    if (this.moveInitiator.rightArm) {
-      this.moveInitiator.rightArm.rotation.x = 0;
-      this.moveInitiator.rightArm.rotation.y = 0;
+    if (attacker.rightArm) {
+      attacker.rightArm.rotation.x = 0;
+      attacker.rightArm.rotation.y = 0;
     }
-    this.moveInitiator.isPerformingMove = false;
+    
+    // Resetovat všechny flagy útočníka
+    attacker.isPerformingMove = false;
+    attacker.isApproachingForMove = false;
+    attacker.isBeingGrabbed = false;
     
     // Útočník ztratí staminu
-    if (this.moveInitiator.stamina !== undefined) {
-      this.moveInitiator.stamina -= 20; // Suplex je o trochu méně náročný
-      this.moveInitiator.stamina = Math.max(0, this.moveInitiator.stamina);
+    if (attacker.stamina !== undefined) {
+      attacker.stamina -= 20;
+      attacker.stamina = Math.max(0, attacker.stamina);
     }
     
-    // Cíl ZŮSTÁVÁ ležet kde je - NEresetujeme pozici!
-    this.moveTarget.isBeingGrabbed = false;
-    this.moveTarget.suplexImpacted = false;
+    // KRITICKÉ: Nastavit stav oběti SPRÁVNĚ
+    victim.isBeingGrabbed = false;
+    victim.isPerformingMove = false;
+    victim.isApproachingForMove = false;
+    victim.suplexImpacted = false;
     
     // Velké poškození
-    if (this.moveTarget.takeDamage) {
-      this.moveTarget.takeDamage(30);
+    if (victim.takeDamage) {
+      victim.takeDamage(30);
     }
     
-    // Omráčení a ležení
-    this.moveTarget.isStunned = true;
-    this.moveTarget.isLyingDown = true;
-    this.moveTarget.stunnedTimer = 100;
-    this.moveTarget.lyingTimer = 200; // 3.3 sekundy ležení
+    // NASTAVIT LEŽENÍ - oběť zůstane TAM KDE JE!
+    victim.isLyingDown = true;
+    victim.isStunned = true;
+    victim.stunnedTimer = 75; // 1.25 sekundy omráčení
+    victim.lyingTimer = 250; // 4+ sekund celkově ležení
     
-    // Zastavit veškerý pohyb
-    this.moveTarget.velocity.set(0, 0, 0);
-    this.moveTarget.isJumping = false;
+    // Ujistit se že leží správně NA SVÉ POZICI - ŽÁDNÝ TELEPORT!
+    if (victim.group) {
+      victim.group.rotation.x = -Math.PI / 2; // Leží na zádech
+      // victim.group.position NEMĚNÍME! Zůstane tam kde je!
+      console.log(`${victim.name} leží na pozici: x=${victim.group.position.x.toFixed(2)}, z=${victim.group.position.z.toFixed(2)}`);
+    }
     
-    this.resetMove();
-  }
-  
-  resetMove() {
+    // Zastavit veškerý pohyb oběti
+    if (victim.velocity) {
+      victim.velocity.set(0, 0, 0);
+    }
+    victim.isJumping = false;
+    
+    console.log(`${victim.name} bude ležet ${victim.lyingTimer} framů (omráčen: ${victim.stunnedTimer})`);
+    console.log(`Kontrola: isLyingDown=${victim.isLyingDown}, lyingTimer=${victim.lyingTimer}`);
+    
+    // AŽ NAKONEC resetovat systém chvatů
     this.activeMove = null;
     this.movePhase = 0;
     this.moveTimer = 0;
@@ -605,7 +711,22 @@ export class WrestlingMovesSystem {
     this.moveTarget = null;
   }
   
+  resetMove() {
+    console.log('Reset systému chvatů');
+    this.activeMove = null;
+    this.movePhase = 0;
+    this.moveTimer = 0;
+    
+    // DŮLEŽITÉ: Vyčistit reference ale neresetovat flagy wrestlerů
+    // (ty se resetují v finish funkcích)
+    this.moveInitiator = null;
+    this.moveTarget = null;
+  }
+  
   cancelMove() {
+    console.log('❌ CHVAT ZRUŠEN');
+    
+    // Resetovat flagy útočníka
     if (this.moveInitiator) {
       this.moveInitiator.isPerformingMove = false;
       this.moveInitiator.isApproachingForMove = false;
@@ -623,13 +744,22 @@ export class WrestlingMovesSystem {
         this.moveInitiator.leftArm.rotation.y = 0;
       }
     }
+    
+    // Resetovat flagy cíle
     if (this.moveTarget) {
       this.moveTarget.isBeingGrabbed = false;
+      this.moveTarget.isPerformingMove = false;
+      this.moveTarget.isApproachingForMove = false;
+      
       if (this.moveTarget.group) {
-        this.moveTarget.group.rotation.x = 0;
-        this.moveTarget.group.rotation.z = 0;
+        // Pokud cíl neleží, vrátit ho do normální pozice
+        if (!this.moveTarget.isLyingDown) {
+          this.moveTarget.group.rotation.x = 0;
+          this.moveTarget.group.rotation.z = 0;
+        }
       }
     }
+    
     this.resetMove();
   }
   

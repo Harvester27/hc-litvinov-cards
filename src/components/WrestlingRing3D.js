@@ -68,7 +68,7 @@ const WrestlingRing3D = () => {
 
     // Ring dimensions
     const ringSize = 10;
-    const postHeight = 4;
+    const postHeight = 3.2; // Snížená výška sloupků
     const postRadius = 0.15;
 
     // Ring platform (base)
@@ -163,11 +163,13 @@ const WrestlingRing3D = () => {
       posts.push(post);
     });
 
-    // Turnbuckles (rope connectors)
+    // Turnbuckles (rope connectors) - SNÍŽENÉ VÝŠKY PROVAZŮ
     const turnbuckleMaterial = new THREE.MeshPhongMaterial({ color: 0x1a1a1a });
     const turnbuckleGeometry = new THREE.SphereGeometry(0.2, 8, 8);
 
-    const ropeHeights = [1.5, 2.2, 2.9];
+    // SNÍŽENÉ VÝŠKY PROVAZŮ - reálnější pro wrestling
+    const ropeHeights = [1.0, 1.5, 2.0]; // Původně bylo [1.5, 2.2, 2.9]
+    
     posts.forEach(post => {
       ropeHeights.forEach(height => {
         const turnbuckle = new THREE.Mesh(turnbuckleGeometry, turnbuckleMaterial);
@@ -258,6 +260,37 @@ const WrestlingRing3D = () => {
       window.removeEventListener('resize', handleResize);
       renderer.dispose();
     };
+  }, []);
+
+  // Debug info update interval
+  useEffect(() => {
+    const debugInterval = setInterval(() => {
+      if (playerRef.current && aiRef.current) {
+        const playerPos = playerRef.current.group?.position;
+        const aiPos = aiRef.current.group?.position;
+        
+        if (playerPos && aiPos) {
+          const distance = Math.sqrt(
+            Math.pow(playerPos.x - aiPos.x, 2) + 
+            Math.pow(playerPos.z - aiPos.z, 2)
+          );
+          
+          console.log(`=== STAV HRY ===`);
+          console.log(`Hráč: x=${playerPos.x.toFixed(2)}, z=${playerPos.z.toFixed(2)}`);
+          console.log(`  Leží: ${playerRef.current.isLyingDown}, Timer: ${playerRef.current.lyingTimer}`);
+          console.log(`  Omráčen: ${playerRef.current.isStunned}, Timer: ${playerRef.current.stunnedTimer}`);
+          console.log(`AI: x=${aiPos.x.toFixed(2)}, z=${aiPos.z.toFixed(2)}`);
+          console.log(`  Stav: ${aiRef.current.aiState}`);
+          console.log(`  Leží: ${aiRef.current.isLyingDown}, Timer: ${aiRef.current.lyingTimer}`);
+          console.log(`  Omráčen: ${aiRef.current.isStunned}, Timer: ${aiRef.current.stunnedTimer}`);
+          console.log(`  Přibližuje: ${aiRef.current.isApproachingForMove}`);
+          console.log(`Vzdálenost: ${distance.toFixed(2)}`);
+          console.log(`----------------`);
+        }
+      }
+    }, 1000); // Každou sekundu
+
+    return () => clearInterval(debugInterval);
   }, []);
 
   return (
