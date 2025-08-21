@@ -217,7 +217,6 @@ export default function Navigation() {
                               <Package size={18} />
                               <span>Sbírka karet</span>
                             </Link>
-                            {/* HC Cards hra ODSTRANĚNO */}
                             <Link
                               href="/profil"
                               className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-red-50 transition-all text-gray-700 hover:text-red-600"
@@ -249,14 +248,17 @@ export default function Navigation() {
                     // Načítání profilu
                     <div className="flex items-center gap-2 px-4 py-2 text-gray-400">
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-400"></div>
-                      <span className="text-sm">Načítání.</span>
+                      <span className="text-sm">Načítání...</span>
                     </div>
                   ) : (
-                    // Registrace / login vypnut
-                    <div className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-gray-400 rounded-lg cursor-not-allowed">
-                      <AlertCircle size={18} />
-                      <span className="text-sm">Registrace dočasně nedostupná</span>
-                    </div>
+                    // OPRAVENO: Tlačítko pro přihlášení/registraci
+                    <Link
+                      href="/auth"
+                      className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg hover:from-red-700 hover:to-red-800 transition-all font-semibold shadow-lg hover:shadow-xl transform hover:scale-105"
+                    >
+                      <LogIn size={18} />
+                      <span>Přihlásit se</span>
+                    </Link>
                   )}
                 </>
               )}
@@ -331,7 +333,6 @@ export default function Navigation() {
                       <Package size={18} />
                       <span>Sbírka karet</span>
                     </Link>
-                    {/* HC Cards hra ODSTRANĚNO */}
                     <Link
                       href="/profil"
                       className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
@@ -357,10 +358,15 @@ export default function Navigation() {
                     </button>
                   </>
                 ) : (
-                  <div className="flex items-center justify-center gap-2 mx-4 px-4 py-3 bg-gray-100 text-gray-500 rounded-lg cursor-not-allowed">
-                    <AlertCircle size={18} />
-                    <span className="text-sm font-semibold">Registrace dočasně nedostupná</span>
-                  </div>
+                  // OPRAVENO: Tlačítko pro přihlášení v mobilním menu
+                  <Link
+                    href="/auth"
+                    className="flex items-center justify-center gap-2 mx-4 px-4 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg hover:from-red-700 hover:to-red-800 transition-all font-semibold shadow-lg"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <LogIn size={18} />
+                    <span>Přihlásit se / Registrovat</span>
+                  </Link>
                 )}
               </div>
             </div>

@@ -1,19 +1,166 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Navigation from '@/components/Navigation';
 import { 
   Gamepad2, Sparkles, Clock, Trophy, Users, TrendingUp, 
-  ChevronRight, Rocket, Target, Shield, Zap, Swords, Heart, Dumbbell, Award, Flame 
+  ChevronRight, Rocket, Target, Shield, Zap, Swords, Heart, 
+  Dumbbell, Award, Flame, Lock, X, Eye, EyeOff, AlertCircle, CheckCircle
 } from 'lucide-react';
 
 export default function GamesPage() {
   const router = useRouter();
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [selectedGame, setSelectedGame] = useState(null);
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
+  const [isChecking, setIsChecking] = useState(false);
+
+  // Správné heslo pro všechny hry
+  const GAME_PASSWORD = '1234567';
+
+  // Funkce pro otevření modalu s heslem
+  const handleGameClick = (gameUrl, gameName) => {
+    setSelectedGame({ url: gameUrl, name: gameName });
+    setShowPasswordModal(true);
+    setPassword('');
+    setError('');
+    setShowPassword(false);
+  };
+
+  // Funkce pro ověření hesla
+  const handlePasswordSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setIsChecking(true);
+
+    // Simulace kontroly (můžeš později nahradit API voláním)
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    if (password === GAME_PASSWORD) {
+      // Správné heslo - přesměruj na hru
+      setIsChecking(false);
+      setShowPasswordModal(false);
+      router.push(selectedGame.url);
+    } else {
+      // Špatné heslo
+      setError('Nesprávné heslo. Zkuste to znovu.');
+      setIsChecking(false);
+      setPassword('');
+    }
+  };
+
+  // Funkce pro zavření modalu
+  const handleCloseModal = () => {
+    setShowPasswordModal(false);
+    setPassword('');
+    setError('');
+    setSelectedGame(null);
+    setShowPassword(false);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
       <Navigation />
+      
+      {/* Password Modal */}
+      {showPasswordModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+          <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 animate-slideUp">
+            
+            {/* Close button */}
+            <button
+              onClick={handleCloseModal}
+              className="absolute top-6 right-6 text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <X size={24} />
+            </button>
+
+            {/* Icon */}
+            <div className="flex justify-center mb-6">
+              <div className="w-20 h-20 bg-gradient-to-br from-red-600 to-red-700 rounded-2xl flex items-center justify-center shadow-lg">
+                <Lock className="text-white" size={36} />
+              </div>
+            </div>
+
+            {/* Title */}
+            <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">
+              Zadejte heslo pro vstup
+            </h2>
+            <p className="text-gray-600 text-center mb-6">
+              Pro spuštění hry <span className="font-semibold text-red-600">{selectedGame?.name}</span> je vyžadováno heslo
+            </p>
+
+            {/* Error message */}
+            {error && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl flex items-center gap-2 animate-shake">
+                <AlertCircle className="text-red-600" size={20} />
+                <span className="text-red-700 text-sm">{error}</span>
+              </div>
+            )}
+
+            {/* Password form */}
+            <form onSubmit={handlePasswordSubmit}>
+              <div className="relative mb-6">
+                <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Zadejte heslo"
+                  className="w-full pl-12 pr-12 py-4 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition-all text-lg"
+                  autoFocus
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
+
+              {/* Buttons */}
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={handleCloseModal}
+                  className="flex-1 py-3 px-6 border-2 border-gray-200 text-gray-700 rounded-2xl font-semibold hover:bg-gray-50 transition-all"
+                >
+                  Zrušit
+                </button>
+                <button
+                  type="submit"
+                  disabled={!password || isChecking}
+                  className="flex-1 py-3 px-6 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-2xl font-semibold hover:from-red-700 hover:to-red-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {isChecking ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                      <span>Ověřuji...</span>
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle size={20} />
+                      <span>Potvrdit</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+
+            {/* Hint */}
+            <div className="mt-6 p-3 bg-gray-50 rounded-xl">
+              <p className="text-xs text-gray-500 text-center">
+                💡 Heslo získáte od správce nebo na oficiálních stránkách HC Litvínov
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* Main Content */}
       <div className="pt-32 pb-20">
@@ -30,6 +177,11 @@ export default function GamesPage() {
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Vítejte v herní sekci HC Litvínov Lancers
             </p>
+            {/* Lock info */}
+            <div className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-yellow-50 text-yellow-800 rounded-full text-sm">
+              <Lock size={16} />
+              <span>Hry jsou chráněny heslem</span>
+            </div>
           </div>
 
           {/* Games Grid - NYNÍ 3 HRY! */}
@@ -37,9 +189,14 @@ export default function GamesPage() {
             
             {/* Lancers Dynasty Game Card */}
             <div 
-              onClick={() => router.push('/games/lancers-dynasty')}
+              onClick={() => handleGameClick('/games/lancers-dynasty', 'Lancers Dynasty')}
               className="group relative bg-gradient-to-br from-red-600 to-red-800 rounded-3xl overflow-hidden cursor-pointer transform transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl"
             >
+              {/* Lock icon overlay */}
+              <div className="absolute top-6 left-6 w-8 h-8 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center">
+                <Lock className="text-white" size={16} />
+              </div>
+
               {/* Background Pattern */}
               <div className="absolute inset-0 opacity-10">
                 <div className="absolute inset-0" style={{
@@ -95,9 +252,14 @@ export default function GamesPage() {
 
             {/* Space Odyssey Game Card */}
             <div 
-              onClick={() => router.push('/games/space-odyssey')}
+              onClick={() => handleGameClick('/games/space-odyssey', 'Vesmírná Odysea')}
               className="group relative bg-gradient-to-br from-purple-900 via-blue-900 to-black rounded-3xl overflow-hidden cursor-pointer transform transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl"
             >
+              {/* Lock icon overlay */}
+              <div className="absolute top-6 left-6 w-8 h-8 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center">
+                <Lock className="text-white" size={16} />
+              </div>
+
               {/* Animated stars background */}
               <div className="absolute inset-0">
                 <div className="absolute inset-0 opacity-30" style={{
@@ -160,9 +322,14 @@ export default function GamesPage() {
 
             {/* NOVÁ HRA: Lancers Wrestling Game Card */}
             <div 
-              onClick={() => router.push('/games/lancers-wrestling')}
+              onClick={() => handleGameClick('/games/lancers-wrestling', 'Lancers Wrestling')}
               className="group relative bg-gradient-to-br from-black via-red-900 to-black rounded-3xl overflow-hidden cursor-pointer transform transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl"
             >
+              {/* Lock icon overlay */}
+              <div className="absolute top-6 left-6 w-8 h-8 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center">
+                <Lock className="text-white" size={16} />
+              </div>
+
               {/* Wrestling ring pattern background */}
               <div className="absolute inset-0">
                 <div className="absolute inset-0 opacity-30" style={{
@@ -257,6 +424,31 @@ export default function GamesPage() {
           </p>
         </div>
       </footer>
+
+      <style jsx>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes slideUp {
+          from { 
+            opacity: 0; 
+            transform: translateY(20px);
+          }
+          to { 
+            opacity: 1; 
+            transform: translateY(0);
+          }
+        }
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
+          20%, 40%, 60%, 80% { transform: translateX(2px); }
+        }
+        .animate-fadeIn { animation: fadeIn 0.3s ease-out; }
+        .animate-slideUp { animation: slideUp 0.3s ease-out; }
+        .animate-shake { animation: shake 0.5s ease-out; }
+      `}</style>
     </div>
   );
 }
