@@ -25,24 +25,24 @@ export default function ClankyPage() {
     : articles.filter(a => a.category === selectedCategory);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-amber-900/10 to-slate-900">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
       <Navigation />
       
       {/* Header */}
       <div className="pt-32 pb-12 px-4">
         <div className="max-w-7xl mx-auto">
-          <Link href="/" className="inline-flex items-center gap-2 text-amber-400 hover:text-amber-300 mb-6">
+          <Link href="/" className="inline-flex items-center gap-2 text-red-600 hover:text-red-700 mb-6 font-semibold">
             <ArrowLeft size={20} />
             <span>Zpět na hlavní stránku</span>
           </Link>
           
           <div className="flex items-center gap-4 mb-8">
-            <div className="w-16 h-16 bg-gradient-to-br from-amber-600 to-orange-700 rounded-full flex items-center justify-center shadow-lg">
+            <div className="w-16 h-16 bg-gradient-to-br from-red-600 to-red-700 rounded-full flex items-center justify-center shadow-lg">
               <FileText className="text-white" size={32} />
             </div>
             <div>
-              <h1 className="text-4xl font-bold text-white">Články a novinky</h1>
-              <p className="text-gray-300 mt-1">Nejnovější zprávy z klubu</p>
+              <h1 className="text-4xl font-bold text-gray-900">Články a novinky</h1>
+              <p className="text-gray-600 mt-1">Nejnovější zprávy z klubu</p>
             </div>
           </div>
 
@@ -54,8 +54,8 @@ export default function ClankyPage() {
                 onClick={() => setSelectedCategory(cat.id)}
                 className={`px-4 py-2 rounded-full font-semibold transition-all ${
                   selectedCategory === cat.id
-                    ? 'bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-lg'
-                    : 'bg-white/10 text-gray-300 hover:bg-white/20'
+                    ? 'bg-gradient-to-r from-red-600 to-red-700 text-white shadow-lg'
+                    : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
                 }`}
               >
                 {cat.label}
@@ -75,7 +75,7 @@ export default function ClankyPage() {
                 href={`/clanky/${article.slug}`}
                 className="block"
               >
-                <article className="bg-white/5 backdrop-blur rounded-2xl p-6 border border-white/10 hover:bg-white/10 transition-all cursor-pointer group">
+                <article className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all cursor-pointer group border border-gray-200">
                   <div className="flex gap-4">
                     {article.featuredImage ? (
                       <div className="w-32 h-32 flex-shrink-0 rounded-lg overflow-hidden">
@@ -92,17 +92,17 @@ export default function ClankyPage() {
                     )}
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <span className="bg-amber-600/20 text-amber-400 px-2 py-0.5 rounded-full text-xs font-semibold">
+                        <span className="bg-red-100 text-red-700 px-2 py-0.5 rounded-full text-xs font-semibold">
                           {article.category}
                         </span>
-                        <span className="text-gray-400 text-xs">{article.date}</span>
+                        <span className="text-gray-500 text-xs">{article.date}</span>
                       </div>
-                      <h3 className="text-lg font-bold text-white mb-2 group-hover:text-amber-400 transition-colors">
+                      <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-red-600 transition-colors">
                         {article.title}
                       </h3>
-                      <p className="text-gray-300 text-sm mb-3">{article.excerpt}</p>
+                      <p className="text-gray-600 text-sm mb-3 line-clamp-2">{article.excerpt}</p>
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4 text-xs text-gray-400">
+                        <div className="flex items-center gap-4 text-xs text-gray-500">
                           <span className="flex items-center gap-1">
                             <Eye size={12} />
                             {article.views}
@@ -116,10 +116,10 @@ export default function ClankyPage() {
                             5 min čtení
                           </span>
                         </div>
-                        <button className="text-amber-400 hover:text-amber-300 text-sm flex items-center gap-1">
+                        <span className="text-red-600 hover:text-red-700 text-sm flex items-center gap-1 font-semibold">
                           Číst
                           <ChevronRight size={14} />
-                        </button>
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -128,16 +128,16 @@ export default function ClankyPage() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-20">
-            <div className="text-6xl mb-4">📝</div>
-            <h2 className="text-2xl font-bold text-white mb-2">Zatím žádné články</h2>
-            <p className="text-gray-400">V této kategorii zatím nejsou žádné články.</p>
+          <div className="text-center py-20 bg-white rounded-2xl shadow-lg">
+            <div className="text-6xl mb-4">📰</div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Zatím žádné články</h2>
+            <p className="text-gray-600">V této kategorii zatím nejsou žádné články.</p>
           </div>
         )}
       </div>
 
       {/* Footer */}
-      <footer className="bg-black/50 backdrop-blur border-t border-white/10 mt-20">
+      <footer className="bg-gray-900 text-white border-t border-gray-200 mt-20">
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="text-center text-gray-400">
             <p>© 2025 HC Litvínov Lancers • Oficiální stránky</p>

@@ -42,7 +42,7 @@ import {
         completedAt: serverTimestamp(),
         rewardClaimed: false, // Odměna zatím nevyzvednutá
         creditsEarned: 1000,
-        xpEarned: 500,
+        xpEarned: 150,  // ZMĚNĚNO NA 150 XP
         selectedCard: null // Zatím žádná karta
       });
       
@@ -52,7 +52,7 @@ import {
       
       if (userSnap.exists()) {
         const currentData = userSnap.data();
-        const newXP = (currentData.xp || 0) + 500;
+        const newXP = (currentData.xp || 0) + 150;  // ZMĚNĚNO NA 150 XP
         const newLevel = calculateLevelFromXP(newXP);
         
         await updateDoc(userRef, {
@@ -281,7 +281,7 @@ import {
     ],
     rewards: {
       credits: 1000,
-      xp: 500,
+      xp: 150,  // ZMĚNĚNO NA 150 XP
       cards: [
         {
           id: 'turecek-straubing-2025',
@@ -322,7 +322,7 @@ import {
       questions: 5,
       rewards: {
         credits: 1000,
-        xp: 500,
+        xp: 150,  // ZMĚNĚNO NA 150 XP
         specialCard: true
       }
     }

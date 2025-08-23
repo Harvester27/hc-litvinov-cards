@@ -123,14 +123,7 @@ export default function RewardsPage() {
           
           setUserCards(prev => [...prev, card.id]);
           
-          // Po 3 sekundách zavřít modal
-          setTimeout(() => {
-            setSelectedQuiz(null);
-            setSelectedCard(null);
-            setCardRevealing(false);
-            setClaimSuccess(false);
-            setClaiming(false);
-          }, 3000);
+          // ODSTRANĚNO automatické zavření - hráč musí kliknout sám
         }
       } catch (error) {
         console.error('Error claiming reward:', error);
@@ -138,6 +131,15 @@ export default function RewardsPage() {
         setClaiming(false);
       }
     }, 2000);
+  };
+  
+  // Funkce pro zavření modalu po úspěšném vyzvednutí
+  const closeModalAfterSuccess = () => {
+    setSelectedQuiz(null);
+    setSelectedCard(null);
+    setCardRevealing(false);
+    setClaimSuccess(false);
+    setClaiming(false);
   };
   
   // Formátovat datum
@@ -236,7 +238,7 @@ export default function RewardsPage() {
               <div className="flex items-center justify-between mb-2">
                 <Zap className="text-purple-600" size={24} />
                 <span className="text-2xl font-black text-gray-900">
-                  {completedQuizzes.length * 500}
+                  {completedQuizzes.length * 150}
                 </span>
               </div>
               <div className="text-gray-600">Získané XP</div>
@@ -295,7 +297,7 @@ export default function RewardsPage() {
                             </div>
                             <div className="flex items-center gap-2 text-sm">
                               <Check className="text-green-600" size={14} />
-                              <span>500 XP (již připsáno)</span>
+                              <span>150 XP (již připsáno)</span>
                             </div>
                             <div className="flex items-center gap-2 text-sm">
                               <Star className="text-yellow-500" size={14} />
@@ -373,7 +375,7 @@ export default function RewardsPage() {
                           </div>
                           <div className="flex items-center gap-2 text-sm">
                             <Zap className="text-purple-600" size={14} />
-                            <span>500 XP</span>
+                            <span>150 XP</span>
                           </div>
                           {cardDetails && (
                             <div className="flex items-center gap-2 text-sm">
@@ -534,16 +536,26 @@ export default function RewardsPage() {
                   <h3 className="text-2xl font-bold text-gray-900 mb-2">
                     Odměna vyzvednuta!
                   </h3>
-                  <p className="text-gray-600 mb-4">
+                  <p className="text-gray-600 mb-6">
                     Karta {selectedCard?.name} byla přidána do vaší sbírky.
                   </p>
-                  <button
-                    onClick={() => router.push('/sbirka-karet')}
-                    className="px-6 py-3 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition-all inline-flex items-center gap-2"
-                  >
-                    <Package size={20} />
-                    Zobrazit sbírku
-                  </button>
+                  
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button
+                      onClick={() => router.push('/sbirka-karet')}
+                      className="px-6 py-3 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition-all inline-flex items-center justify-center gap-2"
+                    >
+                      <Package size={20} />
+                      Zobrazit sbírku
+                    </button>
+                    
+                    <button
+                      onClick={closeModalAfterSuccess}
+                      className="px-6 py-3 bg-gray-800 text-white rounded-xl font-bold hover:bg-gray-900 transition-all inline-flex items-center justify-center gap-2"
+                    >
+                      Pokračovat
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

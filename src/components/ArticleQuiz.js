@@ -107,10 +107,7 @@ export default function ArticleQuiz({ quizId = 'straubing-2025-quiz' }) {
       setSavingCompletion(true);
       try {
         await saveQuizCompletion(user.uid, quizId);
-        // Po uložení počkáme 2 sekundy a pak redirect
-        setTimeout(() => {
-          router.push('/profil/odmeny');
-        }, 2000);
+        // ODSTRANĚNO automatické přesměrování - hráč musí kliknout sám
       } catch (error) {
         console.error('Error saving quiz completion:', error);
       } finally {
@@ -251,7 +248,7 @@ export default function ArticleQuiz({ quizId = 'straubing-2025-quiz' }) {
           {/* Rewards info */}
           <div className="bg-white rounded-2xl p-6 mb-6 max-w-md mx-auto">
             <h3 className="text-lg font-bold text-gray-900 mb-4">
-              Vaše odměny čekají:
+              Vaše odměny:
             </h3>
             
             <div className="space-y-3">
@@ -274,7 +271,7 @@ export default function ArticleQuiz({ quizId = 'straubing-2025-quiz' }) {
                     <Star className="text-white" size={20} />
                   </div>
                   <div className="text-left">
-                    <div className="font-semibold text-gray-900">500 XP</div>
+                    <div className="font-semibold text-gray-900">150 XP</div>
                     <div className="text-xs text-gray-600">Pro postup na další level</div>
                   </div>
                 </div>
@@ -298,20 +295,30 @@ export default function ArticleQuiz({ quizId = 'straubing-2025-quiz' }) {
             </div>
           </div>
           
-          {savingCompletion ? (
-            <div className="flex items-center justify-center gap-2 text-gray-600 mb-4">
-              <Loader className="animate-spin" size={20} />
-              <span>Přesměrování na odměny...</span>
-            </div>
-          ) : (
+          {/* Tlačítka pro akce - hráč musí kliknout sám */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
               onClick={goToRewards}
-              className="px-8 py-4 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl font-black text-lg hover:from-red-700 hover:to-red-800 transition-all inline-flex items-center gap-2 shadow-xl hover:shadow-2xl transform hover:scale-105"
+              className="px-8 py-4 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl font-black text-lg hover:from-red-700 hover:to-red-800 transition-all inline-flex items-center justify-center gap-2 shadow-xl hover:shadow-2xl transform hover:scale-105"
             >
               <Gift size={24} />
-              Vybrat odměny
+              Vybrat speciální kartu
               <ArrowRight size={24} />
             </button>
+            
+            <button
+              onClick={() => router.push('/clanky')}
+              className="px-6 py-4 bg-gray-800 text-white rounded-xl font-bold hover:bg-gray-900 transition-all inline-flex items-center justify-center gap-2"
+            >
+              Zpět na články
+            </button>
+          </div>
+          
+          {savingCompletion && (
+            <div className="mt-4 text-sm text-gray-500">
+              <Loader className="animate-spin inline mr-2" size={16} />
+              Ukládám dokončení kvízu...
+            </div>
           )}
         </div>
       </div>
@@ -488,7 +495,7 @@ export default function ArticleQuiz({ quizId = 'straubing-2025-quiz' }) {
                 <Star className="text-yellow-300" size={20} />
               </div>
               <span className="font-bold">
-                +500 XP pro další level
+                +150 XP pro další level
               </span>
             </div>
             <div className="flex items-center gap-3">
