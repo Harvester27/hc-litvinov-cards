@@ -4,7 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Navigation from '@/components/Navigation';
 import ArticleQuiz from '@/components/ArticleQuiz';
+import ArticleContent from '@/components/ArticleContent';
 import { getArticleBySlug } from '@/data/articleData';
+import { findPlayersInArticle } from '@/data/articleUtils';
 import { 
   addComment, 
   subscribeToComments, 
@@ -17,7 +19,7 @@ import { getUserProfile } from '@/lib/firebaseProfile';
 import { 
   ArrowLeft, Calendar, User, Eye, Heart, Share2, 
   MessageCircle, Send, Trash2, Edit2, AlertCircle,
-  Loader, CheckCircle
+  Loader, CheckCircle, Users
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -29,6 +31,7 @@ export default function ArticleDetailPage() {
   
   const [article, setArticle] = useState(null);
   const [profile, setProfile] = useState(null);
+  const [mentionedPlayers, setMentionedPlayers] = useState([]);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(true);
@@ -45,6 +48,11 @@ export default function ArticleDetailPage() {
         return;
       }
       setArticle(articleData);
+      
+      // Najít hráče zmíněné v článku
+      const players = findPlayersInArticle(articleData.content);
+      setMentionedPlayers(players);
+      
       setLoading(false);
     };
     
@@ -213,13 +221,33 @@ export default function ArticleDetailPage() {
               </div>
             </div>
 
-            {/* Obsah článku */}
+            {/* Obsah článku s proklikovými jmény */}
             <div className="p-8">
-              <div 
-                className="prose prose-lg max-w-none"
-                dangerouslySetInnerHTML={{ __html: article.content }}
-              />
+              <ArticleContent content={article.content} />
             </div>
+
+            {/* Zmínění hráči */}
+            {mentionedPlayers.length > 0 && (
+              <div className="mx-8 mb-8 p-6 bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border border-amber-200">
+                <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                  <Users className="text-amber-600" />
+                  Hráči zmínění v článku
+                </h3>
+                <div className="flex flex-wrap gap-3">
+                  {mentionedPlayers.map((player) => (
+                    <Link
+                      key={player.id}
+                      href={`/profil/${player.id}`}
+                      className="bg-white hover:bg-amber-100 px-4 py-2 rounded-full border border-amber-300 text-gray-900 hover:text-amber-700 transition-all flex items-center gap-2 shadow-sm hover:shadow-md"
+                    >
+                      <span className="text-lg font-bold text-amber-600">#{player.number}</span>
+                      <span className="font-semibold">{player.name}</span>
+                      <span className="text-sm text-gray-500">({player.position})</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Tagy */}
             {article.tags && article.tags.length > 0 && (

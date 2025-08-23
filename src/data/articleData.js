@@ -41,7 +41,7 @@ export const articles = [
         <div class="bg-gray-100 rounded-lg p-4 my-4">
           <p class="font-semibold text-gray-800 mb-2">🏒 Naše sestava na turnaj:</p>
           <ul class="text-sm text-gray-700 space-y-1">
-            <li>• <strong>8 hráčů z Lancers</strong> (Tomáš Tureček, Jiří Šalanda, Luboš Coufal, Oliver Štěpanovský, Jiří a Lukáš Matuškovi, Michal Koreš, Jan Hanuš)</li>
+            <li>• <strong>9 hráčů z Lancers</strong> (Tomáš Tureček, Jiří Šalanda, Luboš Coufal, Oliver Štěpanovský, Jiří a Lukáš Matuškovi, Michal Koreš, Jan Hanuš a brankář Kuba Seidler)</li>
             <li>• Dan Kačeňák a Lukáš Zmeškal (Gurmáni)</li>
             <li>• Pepa (Kuby kamarád)</li>
           </ul>
@@ -135,7 +135,7 @@ export const articles = [
         </p>
 
         <div class="rounded-lg overflow-hidden shadow-md my-6">
-          <img src="/images/Straubing/dobrotyuhanusus.jpg" alt="Oběd u Hanušů" class="w-full h-auto" />
+          <img src="/images/Straubing/dobrotyuhanusu.jpg" alt="Oběd u Hanušů" class="w-full h-auto" />
           <p class="text-xs text-gray-500 text-center p-2 bg-gray-50">Výborný oběd u Hanušů - děkujeme Olčo! 🍽️</p>
         </div>
         
