@@ -91,8 +91,13 @@ export const articles = [
         </div>
         
         <div class="bg-red-50 border-l-4 border-red-600 p-4 my-4">
-          <p class="font-semibold">1. zápas: Lancers vs Bayern Rangers - <span class="text-red-600">0:3</span></p>
-          <p class="text-sm text-gray-600 mt-1">Bohužel přišla hned v prvním zápase prohra. Po zápase převládal názor, že jsme na ně měli, ale hold nepoštěstilo se.</p>
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="font-semibold">1. zápas: Lancers vs Bayern Rangers - <span class="text-red-600">0:3</span></p>
+              <p class="text-sm text-gray-600 mt-1">Bohužel přišla hned v prvním zápase prohra. Po zápase převládal názor, že jsme na ně měli, ale hold nepoštěstilo se.</p>
+            </div>
+            <img src="/images/loga/BayernRangers.png" alt="Bayern Rangers" class="w-16 h-16 object-contain opacity-50" />
+          </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
@@ -111,8 +116,13 @@ export const articles = [
         </p>
         
         <div class="bg-green-50 border-l-4 border-green-600 p-4 my-4">
-          <p class="font-semibold">2. zápas: Lancers vs Cologne Ravens - <span class="text-green-600">2:1</span> ✅</p>
-          <p class="text-sm text-gray-600 mt-1">Důležitá výhra! Otočili jsme nepříznivý stav.</p>
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="font-semibold">2. zápas: Lancers vs Cologne Ravens - <span class="text-green-600">2:1</span> ✅</p>
+              <p class="text-sm text-gray-600 mt-1">Důležitá výhra! Otočili jsme nepříznivý stav.</p>
+            </div>
+            <img src="/images/loga/cologne-ravens.png" alt="Cologne Ravens" class="w-16 h-16 object-contain opacity-50" />
+          </div>
         </div>
 
         <div class="rounded-lg overflow-hidden shadow-md my-6">
@@ -134,13 +144,110 @@ export const articles = [
         </p>
         
         <div class="bg-red-50 border-l-4 border-red-600 p-4 my-4">
-          <p class="font-semibold">3. zápas: Lancers vs RSC Pilnach - <span class="text-red-600">1:4</span></p>
-          <p class="text-sm text-gray-600 mt-1">Nejlepší tým naší skupiny. Za stavu 2:1 jsme měli dvě velké šance na vyrovnání, ale pak nás zlomili.</p>
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="font-semibold">3. zápas: Lancers vs RSC Pilnach - <span class="text-red-600">1:4</span></p>
+              <p class="text-sm text-gray-600 mt-1">Nejlepší tým naší skupiny. Za stavu 2:1 jsme měli dvě velké šance na vyrovnání, ale pak nás zlomili.</p>
+            </div>
+            <img src="/images/loga/RSCPilnach.png" alt="RSC Pilnach" class="w-16 h-16 object-contain opacity-50" />
+          </div>
         </div>
 
         <div class="rounded-lg overflow-hidden shadow-md my-6">
           <img src="/images/Straubing/fotkazezapasu4.jpg" alt="Boj o puk" class="w-full h-auto" />
           <p class="text-xs text-gray-500 text-center p-2 bg-gray-50">Tvrdý boj o každý puk</p>
+        </div>
+
+        <h3 class="text-xl font-bold text-gray-900 mt-6 mb-3">📊 Konečná tabulka skupiny B</h3>
+        
+        <div class="bg-white rounded-lg shadow-lg p-4 my-6 overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="border-b-2 border-gray-300">
+                <th class="text-left p-2 font-bold text-gray-800">Pořadí</th>
+                <th class="text-left p-2 font-bold text-gray-800">Tým</th>
+                <th class="text-center p-2 font-bold text-gray-800">Z</th>
+                <th class="text-center p-2 font-bold text-gray-800">Skóre</th>
+                <th class="text-center p-2 font-bold text-gray-800">+/-</th>
+                <th class="text-center p-2 font-bold text-gray-800">Body</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-gray-200 hover:bg-gray-50">
+                <td class="p-2">
+                  <div class="flex items-center gap-2">
+                    <span class="bg-gradient-to-r from-yellow-400 to-yellow-500 text-white px-2 py-1 rounded font-bold text-sm">1.</span>
+                  </div>
+                </td>
+                <td class="p-2">
+                  <div class="flex items-center gap-3">
+                    <img src="/images/loga/RSCPilnach.png" alt="RSC Pilnach" class="w-8 h-8 object-contain" />
+                    <span class="font-semibold">RSC Pilnach</span>
+                  </div>
+                </td>
+                <td class="text-center p-2">3</td>
+                <td class="text-center p-2 font-semibold">9:2</td>
+                <td class="text-center p-2 text-green-600 font-bold">+7</td>
+                <td class="text-center p-2 font-bold text-lg">6</td>
+              </tr>
+              <tr class="border-b border-gray-200 hover:bg-gray-50">
+                <td class="p-2">
+                  <div class="flex items-center gap-2">
+                    <span class="bg-gradient-to-r from-gray-400 to-gray-500 text-white px-2 py-1 rounded font-bold text-sm">2.</span>
+                  </div>
+                </td>
+                <td class="p-2">
+                  <div class="flex items-center gap-3">
+                    <img src="/images/loga/BayernRangers.png" alt="Bayern Rangers" class="w-8 h-8 object-contain" />
+                    <span class="font-semibold">Bayern Rangers</span>
+                  </div>
+                </td>
+                <td class="text-center p-2">3</td>
+                <td class="text-center p-2 font-semibold">8:2</td>
+                <td class="text-center p-2 text-green-600 font-bold">+6</td>
+                <td class="text-center p-2 font-bold text-lg">4</td>
+              </tr>
+              <tr class="border-b border-gray-200 hover:bg-gray-50 bg-red-50">
+                <td class="p-2">
+                  <div class="flex items-center gap-2">
+                    <span class="bg-gradient-to-r from-orange-600 to-orange-700 text-white px-2 py-1 rounded font-bold text-sm">3.</span>
+                  </div>
+                </td>
+                <td class="p-2">
+                  <div class="flex items-center gap-3">
+                    <img src="/images/loga/lancers-logo.png" alt="Litvínov Lancers" class="w-8 h-8 object-contain" />
+                    <span class="font-semibold">Litvínov Lancers</span>
+                    <span class="bg-red-600 text-white text-xs px-2 py-0.5 rounded">NÁŠ TÝM</span>
+                  </div>
+                </td>
+                <td class="text-center p-2">3</td>
+                <td class="text-center p-2 font-semibold">3:8</td>
+                <td class="text-center p-2 text-red-600 font-bold">-5</td>
+                <td class="text-center p-2 font-bold text-lg">2</td>
+              </tr>
+              <tr class="border-b border-gray-200 hover:bg-gray-50">
+                <td class="p-2">
+                  <div class="flex items-center gap-2">
+                    <span class="bg-gray-600 text-white px-2 py-1 rounded font-bold text-sm">4.</span>
+                  </div>
+                </td>
+                <td class="p-2">
+                  <div class="flex items-center gap-3">
+                    <img src="/images/loga/cologne-ravens.png" alt="Cologne Ravens" class="w-8 h-8 object-contain" />
+                    <span class="font-semibold">Cologne Ravens</span>
+                  </div>
+                </td>
+                <td class="text-center p-2">3</td>
+                <td class="text-center p-2 font-semibold">1:9</td>
+                <td class="text-center p-2 text-red-600 font-bold">-8</td>
+                <td class="text-center p-2 font-bold text-lg">0</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="mt-4 p-3 bg-gray-100 rounded text-sm text-gray-600">
+            <p><strong>Vysvětlivky:</strong> Z = Zápasy, +/- = Rozdíl branek, Body = Počet bodů (2 za výhru)</p>
+            <p class="mt-1 text-xs">Ze skupiny postupovali první dva týmy do semifinále o 1.-4. místo.</p>
+          </div>
         </div>
         
         <p>
@@ -154,8 +261,13 @@ export const articles = [
         </p>
         
         <div class="bg-yellow-50 border-l-4 border-yellow-600 p-4 my-4">
-          <p class="font-semibold">Semifinále: Lancers vs Bayern Rangers - <span class="text-green-600">Výhra po nájezdech!</span> 🎯</p>
-          <p class="text-sm text-gray-600 mt-1">Zápas byl velmi vyrovnaný a tak došlo na nájezdy. Po třech nájezdech na každé straně to bylo 1:1 a tak došlo na náhlou smrt. Soupeř při svém nájezdu neproměnil, ale náš <strong>Michal Koreš</strong> už jo!</p>
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="font-semibold">Semifinále: Lancers vs Bayern Rangers - <span class="text-green-600">Výhra po nájezdech!</span> 🎯</p>
+              <p class="text-sm text-gray-600 mt-1">Zápas byl velmi vyrovnaný a tak došlo na nájezdy. Po třech nájezdech na každé straně to bylo 1:1 a tak došlo na náhlou smrt. Soupeř při svém nájezdu neproměnil, ale náš <strong>Michal Koreš</strong> už jo!</p>
+            </div>
+            <img src="/images/loga/BayernRangers.png" alt="Bayern Rangers" class="w-16 h-16 object-contain opacity-50" />
+          </div>
         </div>
 
         <div class="rounded-lg overflow-hidden shadow-md my-6">
@@ -168,8 +280,13 @@ export const articles = [
         </p>
         
         <div class="bg-red-50 border-l-4 border-red-600 p-4 my-4">
-          <p class="font-semibold">O 5. místo: Lancers vs Bruno der Bär - <span class="text-red-600">2:6</span></p>
-          <p class="text-sm text-gray-600 mt-1">Bohužel největší prohra na turnaji, ale nám to radost nezkazilo!</p>
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="font-semibold">O 5. místo: Lancers vs Bruno der Bär - <span class="text-red-600">2:6</span></p>
+              <p class="text-sm text-gray-600 mt-1">Bohužel největší prohra na turnaji, ale nám to radost nezkazilo!</p>
+            </div>
+            <img src="/images/loga/Bruno.png" alt="Bruno der Bär" class="w-16 h-16 object-contain opacity-50" />
+          </div>
         </div>
 
         <div class="rounded-lg overflow-hidden shadow-md my-6">
