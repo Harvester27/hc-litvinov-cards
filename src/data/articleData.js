@@ -35,14 +35,14 @@ export const articles = [
         </p>
         
         <p>
-          Naštěstí nebylo těžké najít hráče, aby nás doplnili. Stačila jedna zpráva přes WhatsApp Danu Kačeňákovi a ten s radostí dorazil hned i se Zmeškalem! Tímto jsme byli kompletní:
+          Naštěstí nebylo těžké najít hráče, aby nás doplnili. Stačila jedna zpráva přes WhatsApp Danu Kačenákovi a ten s radostí dorazil hned i se Zmeškalem! Tímto jsme byli kompletní:
         </p>
         
         <div class="bg-gray-100 rounded-lg p-4 my-4">
           <p class="font-semibold text-gray-800 mb-2">🏒 Naše sestava na turnaj:</p>
           <ul class="text-sm text-gray-700 space-y-1">
             <li>• <strong>9 hráčů z Lancers</strong> (Tomáš Tureček, Jiří Šalanda, Luboš Coufal, Oliver Štěpanovský, Jiří a Lukáš Matuškovi, Michal Koreš, Jan Hanuš a brankář Kuba Seidler)</li>
-            <li>• Dan Kačeňák a Lukáš Zmeškal (Gurmáni)</li>
+            <li>• Dan Kačenák a Lukáš Zmeškal (Gurmáni)</li>
             <li>• Pepa (Kuby kamarád)</li>
           </ul>
         </div>
