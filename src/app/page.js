@@ -80,7 +80,7 @@ export default function HomePage() {
       />
       
       {/* Hero Section - Modern minimalist */}
-      <section className="relative h-[650px] overflow-hidden bg-gradient-to-br from-black via-gray-900 to-black">
+      <section className="relative h-[750px] overflow-hidden bg-gradient-to-br from-black via-gray-900 to-black mt-28">
         <div className="absolute inset-0 bg-[url('/images/stadium-bg.jpg')] bg-cover bg-center opacity-20"></div>
         
         {/* Animated red accent */}
