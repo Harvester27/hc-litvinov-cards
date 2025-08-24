@@ -6,7 +6,7 @@ import Navigation from '@/components/Navigation';
 import ArticleQuiz from '@/components/ArticleQuiz';
 import ArticleContent from '@/components/ArticleContent';
 import { getArticleBySlug } from '@/data/articleData';
-import { findPlayersInArticle } from '@/data/articleUtils';
+import { findPlayersInArticle } from '@/data/ArticleUtils';
 import { 
   addComment, 
   subscribeToComments, 

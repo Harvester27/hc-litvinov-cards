@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { createPlayerLinks } from '@/data/articleUtils';
+import { createPlayerLinks } from '@/data/ArticleUtils';
 
 export default function ArticleContent({ content }) {
   const [processedContent, setProcessedContent] = useState('');

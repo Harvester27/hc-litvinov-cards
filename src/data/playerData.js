@@ -510,7 +510,7 @@ export const playerData = [
     joinedTeam: '2025 (host)',
     shoots: 'L',
     description: 'Kamarád Jakuba Seidlera, který pomohl týmu na turnaji ve Straubingu 2025. Technický hráč s dobrým zakončením.'
-  }
+  },
   
   // Hostující hráči (guest players)
   { 
