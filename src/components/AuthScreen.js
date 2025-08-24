@@ -21,7 +21,7 @@ import {
 import { auth, googleProvider } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 
-export default function EnhancedAuthScreen() {
+export default function EnhancedAuthScreen({ onLoginSuccess }) {
   // Základní state
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -32,6 +32,7 @@ export default function EnhancedAuthScreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   
   // Magic link state
   const [emailForSignIn, setEmailForSignIn] = useState('');
@@ -120,7 +121,7 @@ export default function EnhancedAuthScreen() {
         
         // Kontrola email verifikace
         if (!userCredential.user.emailVerified) {
-          setError('Prosím nejdřív potvrďte svůj email (zkontrolujte schránku včetně spamu)');
+          setError('Prosím nejdříve potvrďte svůj email (zkontrolujte schránku včetně spamu)');
           
           // Znovu poslat verifikační email
           await sendEmailVerification(userCredential.user);
@@ -131,9 +132,22 @@ export default function EnhancedAuthScreen() {
         
         // Úspěšné přihlášení
         setSuccess('✅ Úspěšně přihlášeno!');
-        setTimeout(() => {
-          router.push('/dashboard');
-        }, 1000);
+        setIsLoggedIn(true);
+        
+        // Vyčistit formulář
+        setEmail('');
+        setPassword('');
+        
+        // Zavolat callback pokud existuje (pro parent komponentu)
+        if (onLoginSuccess) {
+          setTimeout(() => {
+            onLoginSuccess(userCredential.user);
+          }, 1000);
+        }
+        
+        // NEPŘESMĚROVÁVAT - zůstat na stejné stránce
+        // Pokud bys chtěl přesměrovat, odkomentuj tento řádek a uprav cestu:
+        // setTimeout(() => router.push('/'), 1500);
         
       } else if (mode === 'register') {
         // Registrace
@@ -180,7 +194,7 @@ export default function EnhancedAuthScreen() {
       const methods = await fetchSignInMethodsForEmail(auth, email);
       
       if (methods.length === 0) {
-        setError('Tento email není registrovaný. Nejdřív se zaregistrujte.');
+        setError('Tento email není registrovaný. Nejdříve se zaregistrujte.');
         setLoading(false);
         return;
       }
@@ -230,13 +244,19 @@ export default function EnhancedAuthScreen() {
       window.localStorage.removeItem('emailForSignIn');
       
       setSuccess('✅ Úspěšně přihlášeno přes odkaz!');
+      setIsLoggedIn(true);
       
       // Vyčistit URL
       window.history.replaceState({}, document.title, window.location.pathname);
       
-      setTimeout(() => {
-        router.push('/dashboard');
-      }, 1000);
+      // Zavolat callback pokud existuje
+      if (onLoginSuccess) {
+        setTimeout(() => {
+          onLoginSuccess(result.user);
+        }, 1000);
+      }
+      
+      // NEPŘESMĚROVÁVAT - zůstat na stejné stránce
       
     } catch (err) {
       console.error('Magic link sign in error:', err);
@@ -282,11 +302,19 @@ export default function EnhancedAuthScreen() {
     setError('');
     
     try {
-      await signInWithPopup(auth, googleProvider);
+      const result = await signInWithPopup(auth, googleProvider);
       setSuccess('✅ Úspěšně přihlášeno přes Google!');
-      setTimeout(() => {
-        router.push('/dashboard');
-      }, 1000);
+      setIsLoggedIn(true);
+      
+      // Zavolat callback pokud existuje
+      if (onLoginSuccess) {
+        setTimeout(() => {
+          onLoginSuccess(result.user);
+        }, 1000);
+      }
+      
+      // NEPŘESMĚROVÁVAT - zůstat na stejné stránce
+      
     } catch (err) {
       console.error('Google sign in error:', err);
       handleAuthError(err);
@@ -358,6 +386,30 @@ export default function EnhancedAuthScreen() {
   };
 
   const passwordStrength = getPasswordStrength();
+
+  // Pokud je uživatel přihlášen, zobrazit úspěšnou zprávu
+  if (isLoggedIn) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-red-600 flex items-center justify-center p-4">
+        <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 w-full max-w-md border border-blue-200 animate-fadeIn">
+          <div className="text-center">
+            <div className="w-20 h-20 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse shadow-lg">
+              <CheckCircle className="text-white" size={40} />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">
+              Úspěšně přihlášeno!
+            </h2>
+            <p className="text-gray-600 mb-4">
+              Vítejte v aplikaci HC Litvínov
+            </p>
+            <p className="text-sm text-gray-500">
+              Nyní můžete používat všechny funkce aplikace
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-red-600 flex items-center justify-center p-4">
