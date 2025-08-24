@@ -116,11 +116,11 @@ export default function HomePage() {
           </div>
         </div>
         
-        {/* Příští zápas widget - modernější */}
+        {/* Poslední zápas widget - modernější */}
         <div className="absolute bottom-8 right-8 bg-white rounded-2xl p-6 text-black max-w-sm shadow-2xl">
           <div className="flex items-center gap-2 mb-3">
-            <div className="w-2 h-2 bg-red-600 rounded-full animate-pulse"></div>
-            <span className="text-red-600 font-bold text-sm uppercase tracking-wider">Příští zápas</span>
+            <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+            <span className="text-green-600 font-bold text-sm uppercase tracking-wider">Poslední zápas - VÝHRA!</span>
           </div>
           <div className="flex items-center gap-3 mb-2">
             <Image 
@@ -130,7 +130,9 @@ export default function HomePage() {
               height={80}
               className="object-contain"
             />
-            <span className="text-xl font-black">vs</span>
+            <div className="text-center">
+              <div className="text-3xl font-black text-green-600">13:4</div>
+            </div>
             <Image 
               src="/images/loga/HCKopyta.png" 
               alt="HC Kopyta"
@@ -144,9 +146,9 @@ export default function HomePage() {
             <MapPin size={16} />
             Venkovní zápas • Teplice
           </div>
-          <div className="bg-gradient-to-r from-red-600 to-red-700 rounded-xl px-4 py-3 text-center">
-            <div className="text-white text-sm font-semibold">23. srpna • 18:15</div>
-            <div className="text-3xl font-black text-white">{timeToNextGame}</div>
+          <div className="bg-gradient-to-r from-green-600 to-green-700 rounded-xl px-4 py-3 text-center">
+            <div className="text-white text-sm font-semibold">23. srpna 2025 • 18:15</div>
+            <div className="text-2xl font-black text-white">Vítězství o 9 gólů!</div>
           </div>
         </div>
       </section>
@@ -170,6 +172,254 @@ export default function HomePage() {
             <div>
               <div className="text-4xl font-black text-yellow-400">14</div>
               <div className="text-sm font-light uppercase tracking-wider opacity-90">Bodů</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Nadcházející zápasy - nová sekce */}
+      <section className="max-w-7xl mx-auto px-4 py-12">
+        <div className="bg-gradient-to-br from-gray-50 to-white rounded-3xl p-8 border border-gray-200 shadow-xl">
+          <h2 className="text-3xl font-black text-black mb-8 flex items-center gap-3">
+            <div className="w-12 h-12 bg-red-600 rounded-xl flex items-center justify-center">
+              <Calendar className="text-white" size={24} />
+            </div>
+            Nadcházející zápasy
+          </h2>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* 29.8 ALPHA Team B */}
+            <div className="bg-white rounded-xl p-4 border border-gray-200 hover:shadow-lg transition-all">
+              <div className="bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold uppercase mb-3 inline-block">
+                Turnaj Litvínov
+              </div>
+              <div className="flex items-center gap-3 mb-3">
+                <Image 
+                  src="/images/loga/lancers-logo.png" 
+                  alt="Lancers"
+                  width={40}
+                  height={40}
+                  className="object-contain"
+                />
+                <span className="font-black text-lg">vs</span>
+                <Image 
+                  src="/images/loga/AlphaB.png" 
+                  alt="ALPHA Team B"
+                  width={40}
+                  height={40}
+                  className="object-contain"
+                />
+              </div>
+              <div className="font-bold text-black">ALPHA Team B</div>
+              <div className="text-sm text-gray-600 mt-2">
+                <div className="flex items-center gap-2">
+                  <Calendar size={14} />
+                  29. srpna 2025
+                </div>
+                <div className="flex items-center gap-2 mt-1">
+                  <Clock size={14} />
+                  20:30
+                </div>
+                <div className="flex items-center gap-2 mt-1">
+                  <MapPin size={14} />
+                  Litvínov
+                </div>
+              </div>
+            </div>
+
+            {/* 30.8 ALPHA Team A */}
+            <div className="bg-white rounded-xl p-4 border border-gray-200 hover:shadow-lg transition-all">
+              <div className="bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold uppercase mb-3 inline-block">
+                Turnaj Litvínov
+              </div>
+              <div className="flex items-center gap-3 mb-3">
+                <Image 
+                  src="/images/loga/lancers-logo.png" 
+                  alt="Lancers"
+                  width={40}
+                  height={40}
+                  className="object-contain"
+                />
+                <span className="font-black text-lg">vs</span>
+                <Image 
+                  src="/images/loga/AlphaA.png" 
+                  alt="ALPHA Team A"
+                  width={40}
+                  height={40}
+                  className="object-contain"
+                />
+              </div>
+              <div className="font-bold text-black">ALPHA Team A</div>
+              <div className="text-sm text-gray-600 mt-2">
+                <div className="flex items-center gap-2">
+                  <Calendar size={14} />
+                  30. srpna 2025
+                </div>
+                <div className="flex items-center gap-2 mt-1">
+                  <Clock size={14} />
+                  8:00
+                </div>
+                <div className="flex items-center gap-2 mt-1">
+                  <MapPin size={14} />
+                  Litvínov
+                </div>
+              </div>
+            </div>
+
+            {/* 30.8 Stars Chodov */}
+            <div className="bg-white rounded-xl p-4 border border-gray-200 hover:shadow-lg transition-all">
+              <div className="bg-amber-600 text-white px-3 py-1 rounded-full text-xs font-bold uppercase mb-3 inline-block">
+                Kynšperský pohár
+              </div>
+              <div className="flex items-center gap-3 mb-3">
+                <Image 
+                  src="/images/loga/lancers-logo.png" 
+                  alt="Lancers"
+                  width={40}
+                  height={40}
+                  className="object-contain"
+                />
+                <span className="font-black text-lg">vs</span>
+                <Image 
+                  src="/images/loga/StarsChodov.png" 
+                  alt="Stars Chodov"
+                  width={40}
+                  height={40}
+                  className="object-contain"
+                />
+              </div>
+              <div className="font-bold text-black">Stars Chodov</div>
+              <div className="text-sm text-gray-600 mt-2">
+                <div className="flex items-center gap-2">
+                  <Calendar size={14} />
+                  30. srpna 2025
+                </div>
+                <div className="flex items-center gap-2 mt-1">
+                  <Clock size={14} />
+                  8:50
+                </div>
+                <div className="flex items-center gap-2 mt-1">
+                  <MapPin size={14} />
+                  Ostrov nad Ohří
+                </div>
+              </div>
+            </div>
+
+            {/* 30.8 Kocouři Hrušice */}
+            <div className="bg-white rounded-xl p-4 border border-gray-200 hover:shadow-lg transition-all">
+              <div className="bg-amber-600 text-white px-3 py-1 rounded-full text-xs font-bold uppercase mb-3 inline-block">
+                Kynšperský pohár
+              </div>
+              <div className="flex items-center gap-3 mb-3">
+                <Image 
+                  src="/images/loga/lancers-logo.png" 
+                  alt="Lancers"
+                  width={40}
+                  height={40}
+                  className="object-contain"
+                />
+                <span className="font-black text-lg">vs</span>
+                <Image 
+                  src="/images/loga/Hrusice.png" 
+                  alt="Kocouři Hrušice"
+                  width={40}
+                  height={40}
+                  className="object-contain"
+                />
+              </div>
+              <div className="font-bold text-black">Kocouři Hrušice</div>
+              <div className="text-sm text-gray-600 mt-2">
+                <div className="flex items-center gap-2">
+                  <Calendar size={14} />
+                  30. srpna 2025
+                </div>
+                <div className="flex items-center gap-2 mt-1">
+                  <Clock size={14} />
+                  9:55
+                </div>
+                <div className="flex items-center gap-2 mt-1">
+                  <MapPin size={14} />
+                  Ostrov nad Ohří
+                </div>
+              </div>
+            </div>
+
+            {/* 30.8 Berlín */}
+            <div className="bg-white rounded-xl p-4 border border-gray-200 hover:shadow-lg transition-all">
+              <div className="bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold uppercase mb-3 inline-block">
+                Turnaj Litvínov
+              </div>
+              <div className="flex items-center gap-3 mb-3">
+                <Image 
+                  src="/images/loga/lancers-logo.png" 
+                  alt="Lancers"
+                  width={40}
+                  height={40}
+                  className="object-contain"
+                />
+                <span className="font-black text-lg">vs</span>
+                <Image 
+                  src="/images/loga/Berlin.png" 
+                  alt="Berlín"
+                  width={40}
+                  height={40}
+                  className="object-contain"
+                />
+              </div>
+              <div className="font-bold text-black">Berlín</div>
+              <div className="text-sm text-gray-600 mt-2">
+                <div className="flex items-center gap-2">
+                  <Calendar size={14} />
+                  30. srpna 2025
+                </div>
+                <div className="flex items-center gap-2 mt-1">
+                  <Clock size={14} />
+                  10:00
+                </div>
+                <div className="flex items-center gap-2 mt-1">
+                  <MapPin size={14} />
+                  Litvínov
+                </div>
+              </div>
+            </div>
+
+            {/* 30.8 Dynamo Klatovy */}
+            <div className="bg-white rounded-xl p-4 border border-gray-200 hover:shadow-lg transition-all">
+              <div className="bg-amber-600 text-white px-3 py-1 rounded-full text-xs font-bold uppercase mb-3 inline-block">
+                Kynšperský pohár
+              </div>
+              <div className="flex items-center gap-3 mb-3">
+                <Image 
+                  src="/images/loga/lancers-logo.png" 
+                  alt="Lancers"
+                  width={40}
+                  height={40}
+                  className="object-contain"
+                />
+                <span className="font-black text-lg">vs</span>
+                <Image 
+                  src="/images/loga/DynamoKlatovy.png" 
+                  alt="Dynamo Klatovy"
+                  width={40}
+                  height={40}
+                  className="object-contain"
+                />
+              </div>
+              <div className="font-bold text-black">Dynamo Klatovy</div>
+              <div className="text-sm text-gray-600 mt-2">
+                <div className="flex items-center gap-2">
+                  <Calendar size={14} />
+                  30. srpna 2025
+                </div>
+                <div className="flex items-center gap-2 mt-1">
+                  <Clock size={14} />
+                  12:55
+                </div>
+                <div className="flex items-center gap-2 mt-1">
+                  <MapPin size={14} />
+                  Ostrov nad Ohří
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -424,19 +674,6 @@ export default function HomePage() {
               Celá soupiska →
             </Link>
           </div>
-
-          {/* CTA HC Cards */}
-          <div className="bg-gradient-to-br from-black to-gray-900 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 text-8xl opacity-10">🃏</div>
-            <h3 className="text-2xl font-black mb-3 text-yellow-400">HC Cards</h3>
-            <p className="text-gray-300 mb-4">
-              Sbírej hokejové kartičky svých oblíbených hráčů!
-            </p>
-            <Link href="/games/cards" className="block w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg text-center transition-all transform hover:scale-105">
-              Hrát teď
-              <Flame className="inline ml-2" size={20} />
-            </Link>
-          </div>
         </div>
       </div>
 
@@ -478,7 +715,6 @@ export default function HomePage() {
             <div>
               <h4 className="font-bold mb-4 text-red-500">Pro fanoušky</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><Link href="/games/cards" className="hover:text-white transition-colors">HC Cards hra</Link></li>
                 <li><Link href="/vstupenky" className="hover:text-white transition-colors">Vstupenky</Link></li>
                 <li><Link href="/fanshop" className="hover:text-white transition-colors">Fan Shop</Link></li>
                 <li><Link href="/fanklub" className="hover:text-white transition-colors">Fan klub</Link></li>
