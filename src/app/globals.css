@@ -324,3 +324,74 @@ body {
 .animate-shooting-star {
   animation: shootingStar linear infinite;
 }
+
+/* ========================================
+   🏒 ANIMACE PRO HRÁČE V ČLÁNCÍCH
+   ======================================== */
+
+/* Fade in zleva pro levý panel */
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px) rotate(-5deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) rotate(0deg);
+  }
+}
+
+.animate-fadeInLeft {
+  animation: fadeInLeft 0.8s ease-out forwards;
+}
+
+/* Fade in zprava pro pravý panel */
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px) rotate(5deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) rotate(0deg);
+  }
+}
+
+.animate-fadeInRight {
+  animation: fadeInRight 0.8s ease-out forwards;
+}
+
+/* Floating animace pro karty hráčů */
+@keyframes floatCard {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1));
+  }
+  50% {
+    transform: translateY(-10px) scale(1.02);
+    filter: drop-shadow(0 20px 30px rgba(0,0,0,0.15));
+  }
+}
+
+.animate-floatCard {
+  animation: floatCard 4s ease-in-out infinite;
+}
+
+/* Hover glow pro karty hráčů */
+@keyframes hoverGlow {
+  0% {
+    box-shadow: 0 5px 15px rgba(220, 38, 38, 0);
+  }
+  100% {
+    box-shadow: 0 5px 30px rgba(220, 38, 38, 0.3);
+  }
+}
+
+.player-card-hover:hover {
+  animation: hoverGlow 0.3s ease forwards;
+}
+
+/* Parallax scroll efekt */
+.parallax-scroll {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}

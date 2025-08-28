@@ -37,6 +37,17 @@ export default function ArticleDetailClient({ slug }) {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  
+  // Pro boční panely
+  const [windowWidth, setWindowWidth] = useState(0);
+  const [scrollY, setScrollY] = useState(0);
+
+  // Seznam fotek hráčů
+  const playerPhotos = [
+    '/images/clanky/1.svg',
+    '/images/clanky/3.svg',
+    // Můžeš přidat další fotky které máš
+  ];
 
   // Načíst článek
   useEffect(() => {
@@ -57,6 +68,27 @@ export default function ArticleDetailClient({ slug }) {
     
     loadArticle();
   }, [slug, router]);
+
+  // Sledovat šířku okna
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+    
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Sledovat scroll pro parallax efekt
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Načíst profil uživatele
   useEffect(() => {
@@ -178,7 +210,107 @@ export default function ArticleDetailClient({ slug }) {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
       <Navigation />
       
-      <div className="pt-32 pb-20">
+      <div className="pt-32 pb-20 relative">
+        {/* LEVÝ PANEL S FOTKAMI - pouze na desktopu */}
+        {windowWidth >= 1280 && mentionedPlayers.length > 0 && (
+          <div 
+            className="hidden xl:block fixed left-4 w-52 space-y-5 z-10"
+            style={{
+              top: `${Math.max(150, 150 - scrollY * 0.05)}px`,
+              opacity: Math.max(0.3, 1 - scrollY * 0.0008),
+              transform: `translateY(${scrollY * 0.02}px)`
+            }}
+          >
+            {mentionedPlayers.slice(0, 3).map((player, index) => (
+              <Link
+                key={player.id}
+                href={`/profil/${player.id}`}
+                className="block"
+              >
+                <div 
+                  className="bg-white rounded-2xl shadow-xl p-4 transform hover:scale-105 transition-all duration-300 cursor-pointer player-card-hover animate-fadeInLeft animate-floatCard"
+                  style={{
+                    animationDelay: `${index * 0.2}s`,
+                    animationDuration: '4s',
+                    animationIterationCount: 'infinite'
+                  }}
+                >
+                  <div className="relative h-48 mb-3 rounded-xl overflow-hidden bg-gradient-to-br from-red-50 to-amber-50">
+                    <img 
+                      src={playerPhotos[index % playerPhotos.length]} 
+                      alt={player.name}
+                      className="w-full h-full object-contain p-4"
+                    />
+                    <div className="absolute top-2 right-2 bg-red-600 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold text-sm">
+                      #{player.number}
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <p className="font-bold text-gray-900 text-sm">{player.name}</p>
+                    <p className="text-xs text-gray-500 mt-1">{player.position}</p>
+                    <div className="mt-2 flex justify-center gap-2">
+                      <span className="text-xs bg-red-100 text-red-600 px-2 py-1 rounded-full">
+                        {player.age ? `${player.age} let` : 'Věk neznámý'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+
+        {/* PRAVÝ PANEL S FOTKAMI - pouze na desktopu */}
+        {windowWidth >= 1280 && mentionedPlayers.length > 3 && (
+          <div 
+            className="hidden xl:block fixed right-4 w-52 space-y-5 z-10"
+            style={{
+              top: `${Math.max(150, 150 - scrollY * 0.05)}px`,
+              opacity: Math.max(0.3, 1 - scrollY * 0.0008),
+              transform: `translateY(${scrollY * 0.02}px)`
+            }}
+          >
+            {mentionedPlayers.slice(3, 6).map((player, index) => (
+              <Link
+                key={player.id}
+                href={`/profil/${player.id}`}
+                className="block"
+              >
+                <div 
+                  className="bg-white rounded-2xl shadow-xl p-4 transform hover:scale-105 transition-all duration-300 cursor-pointer player-card-hover animate-fadeInRight animate-floatCard"
+                  style={{
+                    animationDelay: `${(index + 3) * 0.2}s`,
+                    animationDuration: '4s',
+                    animationIterationCount: 'infinite',
+                    animationDelay: `${index * 0.5}s`
+                  }}
+                >
+                  <div className="relative h-48 mb-3 rounded-xl overflow-hidden bg-gradient-to-br from-blue-50 to-purple-50">
+                    <img 
+                      src={playerPhotos[(index + 1) % playerPhotos.length]} 
+                      alt={player.name}
+                      className="w-full h-full object-contain p-4"
+                    />
+                    <div className="absolute top-2 right-2 bg-red-600 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold text-sm">
+                      #{player.number}
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <p className="font-bold text-gray-900 text-sm">{player.name}</p>
+                    <p className="text-xs text-gray-500 mt-1">{player.position}</p>
+                    <div className="mt-2 flex justify-center gap-2">
+                      <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full">
+                        {player.nationality || '🇨🇿'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+
+        {/* HLAVNÍ OBSAH ČLÁNKU */}
         <div className="max-w-4xl mx-auto px-4">
           {/* Navigace zpět */}
           <Link href="/clanky" className="inline-flex items-center gap-2 text-red-600 hover:text-red-700 mb-6">
