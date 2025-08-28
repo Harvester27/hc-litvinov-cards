@@ -1,6 +1,198 @@
 // Databáze článků HC Litvínov Lancers
 export const articles = [
   {
+    id: 'dva-turnaje-litvinov-ostrov-2025',
+    title: 'Víkend nabitý turnaji!',
+    slug: 'dva-turnaje-litvinov-ostrov-2025',
+    excerpt: 'Čeká nás náročný víkend! Rozdělíme síly na dva fronty - turnaj v Litvínově proti německým týmům a výjezd do Ostrova nad Ohří proti českým soupeřům.',
+    category: 'Turnaje',
+    author: {
+      name: 'Tým HC Lancers',
+      id: 'hc-lancers'
+    },
+    date: '27. srpna 2025',
+    publishedAt: new Date('2025-08-27T10:00:00'),
+    image: '👑',
+    featuredImage: null,
+    featured: true,
+    views: 0,
+    likes: 0,
+    content: `
+      <div class="space-y-4">
+        <div class="bg-gradient-to-r from-red-50 to-gray-50 rounded-xl p-6 mb-6">
+          <p class="text-xl font-bold text-gray-800 mb-2">
+            🗓️ Turnajový dvojmaraton 29.-31. srpna 2025
+          </p>
+          <p class="text-gray-600">
+            <strong>🏠 Domácí turnaj:</strong> Litvínov (pátek - neděle)<br/>
+            <strong>🚗 Výjezd:</strong> Ostrov nad Ohří (sobota)<br/>
+            <strong>📊 Celkem zápasů:</strong> 11 zápasů! 5 v Litvínově a 6 v Ostrově nad Ohří
+          </p>
+        </div>
+        
+        <p>
+          Čeká nás opravdu <strong>náročný víkend plný hokeje</strong>! Rozdělíme síly na dva fronty - zatímco jedna část týmu bude bojovat na domácím turnaji v Litvínově proti týmům z Německa, včetně <strong>Berlína</strong>, druhá půlka kádru vyrazí reprezentovat klub do <strong>Ostrova nad Ohří</strong>, kde na nás čekají české týmy s kterými jsme nikdy v historii nehráli jako Slavia Karlovy Vary, Dynamo Klatovy, Osli Příbram či Kocouři Hrušice.
+        </p>
+
+        <h3 class="text-2xl font-bold text-gray-900 mt-8 mb-4">🏟️ Domácí turnaj v Litvínově</h3>
+        
+        <p>
+          Od pátečního večera do nedělního dopoledne hostíme na našem ledě <strong>mezinárodní turnaj</strong> s účastí tří německých týmů. Jedním z nich bude tým z <strong>Berlína</strong>, což slibuje zajímavé mezinárodní konfrontace. Turnaj bude probíhat systémem každý s každým, následovat budou semifinále a zápasy o umístění.
+        </p>
+
+        <div class="bg-blue-50 rounded-lg p-4 my-6">
+          <h4 class="font-semibold text-blue-900 mb-3">📅 Rozpis zápasů v Litvínově:</h4>
+          <ul class="space-y-2 text-sm">
+            <li class="flex items-center gap-2">
+              <span class="bg-red-600 text-white px-2 py-0.5 rounded text-xs font-bold">PÁ</span>
+              <strong>29.8. 20:00</strong> - První zápas turnaje
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="bg-green-600 text-white px-2 py-0.5 rounded text-xs font-bold">SO</span>
+              <strong>30.8. 8:00</strong> - Ranní zápas
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="bg-green-600 text-white px-2 py-0.5 rounded text-xs font-bold">SO</span>
+              <strong>30.8. 10:00</strong> - Druhý sobotní zápas
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="bg-purple-600 text-white px-2 py-0.5 rounded text-xs font-bold">SO</span>
+              <strong>30.8. 15:00-16:00</strong> - Semifinále
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="bg-amber-600 text-white px-2 py-0.5 rounded text-xs font-bold">NE</span>
+              <strong>31.8. 8:00-10:00</strong> - Zápasy o umístění
+            </li>
+          </ul>
+        </div>
+
+        <h4 class="text-xl font-bold text-gray-900 mt-6 mb-3">📋 Sestava pro Litvínov</h4>
+        
+        <p class="mb-4">
+          Pro oba turnaje máme vyrovnanou sestavu, takže bude zajímavé sledovat, kterému týmu se povede lepší umístění :)
+        </p>
+
+        <div class="grid md:grid-cols-2 gap-4 mb-6">
+          <div class="bg-white rounded-lg p-4 border border-gray-200">
+            <h5 class="font-bold text-gray-900 mb-3 flex items-center gap-2">
+              🥅 Brankáři
+            </h5>
+            <ul class="space-y-1 text-sm">
+              <li>• <strong>Tomáš Kodrle</strong> (brankář SO-NE)</li>
+              <li>• <strong>Jiří Morávek</strong> (páteční zápas)</li>
+            </ul>
+          </div>
+
+          <div class="bg-white rounded-lg p-4 border border-gray-200">
+            <h5 class="font-bold text-gray-900 mb-3 flex items-center gap-2">
+              🛡️ Obránci
+            </h5>
+            <ul class="space-y-1 text-sm">
+              <li>• <a href="/profil/kocourek-ondrej" class="text-amber-400 hover:text-amber-300 underline">Ondřej Kocourek</a></li>
+              <li>• <a href="/profil/belinger-jindrich" class="text-amber-400 hover:text-amber-300 underline">Jindřich Belinger</a></li>
+              <li>• <a href="/profil/belinger-jiri" class="text-amber-400 hover:text-amber-300 underline">Jiří Belinger</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-lg p-4 border border-gray-200 mb-6">
+          <h5 class="font-bold text-gray-900 mb-3 flex items-center gap-2">
+            ⚡ Útočníci
+          </h5>
+          <div class="grid md:grid-cols-2 gap-3">
+            <ul class="space-y-1 text-sm">
+              <li>• <a href="/profil/svarc-stanislav" class="text-amber-400 hover:text-amber-300 underline">Stanislav Švarc</a></li>
+              <li>• <a href="/profil/svarc-jan" class="text-amber-400 hover:text-amber-300 underline">Jan Švarc</a></li>
+              <li>• <a href="/profil/toman-gustav" class="text-amber-400 hover:text-amber-300 underline">Gustav Toman</a></li>
+              <li>• <strong>Václav Matějovič</strong></li>
+            </ul>
+            <ul class="space-y-1 text-sm">
+              <li>• <a href="/profil/cerny-ladislav" class="text-amber-400 hover:text-amber-300 underline">Ladislav Černý</a></li>
+              <li>• <a href="/profil/materna-vaclav" class="text-amber-400 hover:text-amber-300 underline">Václav Materna</a> (pátek)</li>
+              <li>• <a href="/profil/salanda-jiri" class="text-amber-400 hover:text-amber-300 underline">Jiří Šalanda</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-2xl p-6 my-8">
+          <h3 class="text-2xl font-bold mb-4">🏔️ Turnaj v Ostrově nad Ohří</h3>
+          
+          <p class="mb-4">
+            Paralelně s domácím turnajem vyšleme <strong>výběr hráčů</strong> na turnaj do Ostrova nad Ohří. Je to pro nás <strong>premiéra na tomto turnaji</strong>, takže jsme zvědaví, na jakou úroveň českých týmů narazíme.
+          </p>
+
+          <div class="bg-white/10 backdrop-blur rounded-lg p-4">
+            <p class="font-semibold mb-2">📍 Turnaj Ostrov nad Ohří</p>
+            <p class="text-sm">
+              <strong>Datum:</strong> Sobota 30. srpna 2025<br/>
+              <strong>Místo:</strong> Zimní stadion Ostrov nad Ohří<br/>
+              <strong>Soupeři:</strong> České týmy (Slavia Karlovy Vary, Dynamo Klatovy, Osli Příbram, Kocouři Hrušice)
+            </p>
+          </div>
+        </div>
+
+        <h4 class="text-xl font-bold text-gray-900 mt-6 mb-3">🚌 Výprava do Ostrova</h4>
+        
+        <p class="mb-4">
+          Do Ostrova vyrazí speciální sestava složená z hráčů, kteří nebudou v sobotu potřeba na domácím turnaji:
+        </p>
+
+        <div class="grid md:grid-cols-3 gap-4 mb-6">
+          <div class="bg-amber-50 rounded-lg p-4 border border-amber-300">
+            <h5 class="font-bold text-amber-900 mb-2">🥅 Brankář</h5>
+            <p class="text-sm">• <strong>Michal Florian</strong></p>
+          </div>
+
+          <div class="bg-amber-50 rounded-lg p-4 border border-amber-300">
+            <h5 class="font-bold text-amber-900 mb-2">🛡️ Obránci</h5>
+            <ul class="text-sm space-y-1">
+              <li>• <a href="/profil/simek-roman" class="text-amber-600 hover:text-amber-700 underline">Roman Šimek</a></li>
+              <li>• <a href="/profil/coufal-lubos" class="text-amber-600 hover:text-amber-700 underline">Luboš Coufal</a></li>
+              <li>• <a href="/profil/hanus-jan" class="text-amber-600 hover:text-amber-700 underline">Jan Hanuš</a></li>
+              <li>• <a href="/profil/turecek-tomas" class="text-amber-600 hover:text-amber-700 underline">Tomáš Tureček</a></li>
+            </ul>
+          </div>
+
+          <div class="bg-amber-50 rounded-lg p-4 border border-amber-300">
+            <h5 class="font-bold text-amber-900 mb-2">⚡ Útočníci</h5>
+            <ul class="text-sm space-y-1">
+              <li>• <strong>Petr Štěpanovský</strong></li>
+              <li>• <a href="/profil/kuritka-ales" class="text-amber-600 hover:text-amber-700 underline">Aleš Kuřitka</a></li>
+              <li>• <a href="/profil/stepanovsky-oliver" class="text-amber-600 hover:text-amber-700 underline">Oliver Štěpanovský</a></li>
+              <li>• <strong>Najmy</strong></li>
+              <li>• <a href="/profil/schubada-jan" class="text-amber-600 hover:text-amber-700 underline">Jan Schubada</a></li>
+              <li>• <a href="/profil/dlugopolsky-marian" class="text-amber-600 hover:text-amber-700 underline">Marian Dlugopolský</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="bg-red-50 border-l-4 border-red-600 p-4 my-6">
+          <p class="font-semibold text-red-900 mb-2">⚠️ Náročná logistika</p>
+          <p class="text-red-800 text-sm">
+            Někteří hráči budou muset během soboty <strong>pendlovat mezi turnaji</strong>. Například <a href="/profil/schubada-jan" class="text-amber-600 hover:text-amber-700 underline">Jan Schubada</a> odehraje ranní zápasy v Litvínově a pak pojede do Ostrova, kde také nastoupí v útoku!
+          </p>
+        </div>
+
+        <h3 class="text-xl font-bold text-gray-900 mt-8 mb-4">💪 Těšíme se na výzvu!</h3>
+        
+        <p>
+          Bude to <strong>opravdová zkouška sil</strong> - hrát paralelně dva turnaje vyžaduje široký kádr a dobrou organizaci. Věříme ale, že si s tím poradíme a na obou turnajích zanecháme dobrý dojem!
+        </p>
+
+        <p class="mt-4">
+          <strong>Držte nám palce!</strong> Průběžné informace z obou turnajů budeme přinášet na našich sociálních sítích a samozřejmě i zde na webu.
+        </p>
+
+        <div class="bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl p-6 mt-8 text-center">
+          <p class="text-2xl font-black mb-2">POJĎME NA TO, LANCERS!</p>
+          <p class="text-sm opacity-90">Sledujte nás celý víkend • 29.-31. srpna 2025</p>
+        </div>
+      </div>
+    `,
+    allowComments: true,
+    tags: ['turnaj', 'Litvínov', 'Ostrov nad Ohří', 'mezinárodní hokej', 'Německo', 'Berlín', 'víkend', 'dvojmaraton']
+  },
+  {
     id: 'straubing-2025-hokejovy-vikend',
     title: 'Straubing 2025: Hokejový víkend plný zážitků',
     slug: 'straubing-2025-hokejovy-vikend',
@@ -31,7 +223,7 @@ export const articles = [
         </div>
         
         <p>
-          Tým se o turnaji dozvěděl cca měsíc předem, protože se to manažer týmu dozvěděl až když zahlédnul už rozlosování turnaje. 😅 Hráče to oslovilo, ale ne v dostačujícím počtu. Když ale generální manažer viděl, jak se hráči těší, tak se musel snažit! 
+          Tým se o turnaji dozvěděl cca měsíc předem, protože se to manažer týmu dozvěděl až když zahlédnul už rozlosování turnaje. 😅 Hráče to oslovilo, ale ne v dostatečném počtu. Když ale generální manažer viděl, jak se hráči těší, tak se musel snažit! 
         </p>
         
         <p>
@@ -50,7 +242,7 @@ export const articles = [
         <h3 class="text-xl font-bold text-gray-900 mt-6 mb-3">🚗 Páteční příjezd</h3>
         
         <p>
-          Do Straubingu jsme vyráželi všichni už v pátek, protože jsme se chtěli dobře vyspat a vlastně poznat trochu město. Jako první do Straubingu na hotel dorazilo auto s Turym, Šalim, Coufim a Ondrou. Pak následovali Dan se Zmeškalem, bratři Matuškovi atd.
+          Do Straubingu jsme vyrazeli všichni už v pátek, protože jsme se chtěli dobře vyspat a vlastně poznat trochu město. Jako první do Straubingu na hotel dorazilo auto s Turym, Šalim, Coufim a Ondrou. Pak následovali Dan se Zmeškalem, bratři Matuškovi atd.
         </p>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
@@ -140,7 +332,7 @@ export const articles = [
         </div>
         
         <p>
-          Pak jsme se zase vrátili na stadion, kde nás ve skupině B čekal tým <strong>RSC Pilnach</strong>. Už jsme věděli, že i když bychom vyhráli, tak to na vítězství v turnaji už nebude, protože do semifinále postupovali 4 nejlepší týmy z 12 a nám vycházelo nejlépe 5. místo.
+          Pak jsme se zase vrátili na stadion, kde nás ve skupině B čekal tým <strong>RSC Pilnach</strong>. Už jsme věděli, že i kdybychom vyhráli, tak to na vítězství v turnaji už nebude, protože do semifinále postupovali 4 nejlepší týmy z 12 a nám vycházelo nejlépe 5. místo.
         </p>
         
         <div class="bg-red-50 border-l-4 border-red-600 p-4 my-4">
@@ -251,7 +443,7 @@ export const articles = [
         </div>
         
         <p>
-          Po zápase jsme šli zase na náměstí dát si pivo a jídlo a brzo spát, protože nás v neděli čekalo semifinále o 5. až 8. místo na turnaji.
+          Po zápase jsme šli zase na náměstí dát si pivo a jídlo a brzy spát, protože nás v neděli čekalo semifinále o 5. až 8. místo na turnaji.
         </p>
         
         <h3 class="text-xl font-bold text-gray-900 mt-6 mb-3">🥇 Nedělní boje o umístění</h3>
@@ -264,7 +456,7 @@ export const articles = [
           <div class="flex items-center justify-between">
             <div>
               <p class="font-semibold">Semifinále: Lancers vs Bayern Rangers - <span class="text-green-600">Výhra po nájezdech!</span> 🎯</p>
-              <p class="text-sm text-gray-600 mt-1">Zápas byl velmi vyrovnaný a tak došlo na nájezdy. Po třech nájezdech na každé straně to bylo 1:1 a tak došlo na náhlou smrt. Soupeř při svém nájezdu neproměnil, ale náš <strong>Michal Koreš</strong> už jo!</p>
+              <p class="text-sm text-gray-600 mt-1">Zápas byl velmi vyrovnaný a tak došlo na nájezdy. Po třech nájezdech na každé straně to bylo 1:1 a tak došlo na náhlou smrt. Soupeř při svém nájezdu nepromělil, ale náš <strong>Michal Koreš</strong> už jo!</p>
             </div>
             <img src="/images/loga/BayernRangers.png" alt="Bayern Rangers" class="w-16 h-16 object-contain opacity-50" />
           </div>
@@ -356,206 +548,12 @@ export const articles = [
         </div>
         
         <p class="text-center text-gray-600 italic mt-6">
-          Děkujeme všem hráčům za skvělou reprezentaci klubu! 🏒❤️
+          Děkujeme všem hráčům za skvělou reprezentaci klubu! 👏❤️
         </p>
       </div>
     `,
     allowComments: true,
     tags: ['výjezd', 'Německo', 'Straubing', 'turnaj', 'Bayern Rangers', 'mezinárodní hokej']
-  },
-  {
-    id: 'dva-turnaje-litvinov-ostrov-2025',
-    title: 'O víkendu nás čekají dva turnaje',
-    slug: 'dva-turnaje-litvinov-ostrov-2025',
-    excerpt: 'Čeká nás náročný víkend! V pátek až neděli hostíme mezinárodní turnaj v Litvínově s týmy z Německa, v sobotu navíc vyrazíme na turnaj do Ostrova nad Ohří.',
-    category: 'Turnaje',
-    author: {
-      name: 'Tým HC Lancers',
-      id: 'hc-lancers'
-    },
-    date: '27. srpna 2025',
-    publishedAt: new Date('2025-08-27T10:00:00'),
-    image: '🏒',
-    featuredImage: null,
-    featured: true,
-    views: 0,
-    likes: 0,
-    content: `
-      <div class="space-y-4">
-        <div class="bg-gradient-to-r from-red-50 to-gray-50 rounded-xl p-6 mb-6">
-          <p class="text-xl font-bold text-gray-800 mb-2">
-            🗓️ Turnajový maraton 29.-31. srpna 2025
-          </p>
-          <p class="text-gray-600">
-            <strong>🏠 Domácí turnaj:</strong> Litvínov (pátek - neděle)<br/>
-            <strong>🚗 Výjezd:</strong> Ostrov nad Ohří (sobota)<br/>
-            <strong>📊 Celkem zápasů:</strong> Až 6 utkání během víkendu!
-          </p>
-        </div>
-        
-        <p class="text-lg">
-          Čeká nás opravdu <strong>náročný víkend plný hokeje</strong>! Rozdělíme síly na dva fronty - zatímco hlavní část týmu bude bojovat na domácím turnaji v Litvínově proti týmům z Německa, včetně <strong>Berlína</strong>, část kádru vyrazí reprezentovat klub do <strong>Ostrova nad Ohří</strong>, kde na nás čekají české týmy.
-        </p>
-
-        <h3 class="text-2xl font-bold text-gray-900 mt-8 mb-4">🏟️ Domácí turnaj v Litvínově</h3>
-        
-        <p>
-          Od pátečního večera do nedělního dopoledne hostíme na našem ledě <strong>mezinárodní turnaj</strong> s účastí tří německých týmů. Jedním z nich bude tým z <strong>Berlína</strong>, což slibuje zajímavé mezinárodní konfrontace. Turnaj bude probíhat systémem každý s každým, následovat budou semifinále a zápasy o umístění.
-        </p>
-
-        <div class="bg-blue-50 rounded-lg p-4 my-6">
-          <h4 class="font-semibold text-blue-900 mb-3">📅 Rozpis zápasů v Litvínově:</h4>
-          <ul class="space-y-2 text-sm">
-            <li class="flex items-center gap-2">
-              <span class="bg-red-600 text-white px-2 py-0.5 rounded text-xs font-bold">PÁ</span>
-              <strong>29.8. 20:00</strong> - První zápas turnaje
-            </li>
-            <li class="flex items-center gap-2">
-              <span class="bg-green-600 text-white px-2 py-0.5 rounded text-xs font-bold">SO</span>
-              <strong>30.8. 8:00</strong> - Ranní zápas
-            </li>
-            <li class="flex items-center gap-2">
-              <span class="bg-green-600 text-white px-2 py-0.5 rounded text-xs font-bold">SO</span>
-              <strong>30.8. 10:00</strong> - Druhý sobotní zápas
-            </li>
-            <li class="flex items-center gap-2">
-              <span class="bg-purple-600 text-white px-2 py-0.5 rounded text-xs font-bold">SO</span>
-              <strong>30.8. 15:00-16:00</strong> - Semifinále
-            </li>
-            <li class="flex items-center gap-2">
-              <span class="bg-amber-600 text-white px-2 py-0.5 rounded text-xs font-bold">NE</span>
-              <strong>31.8. 8:00-10:00</strong> - Zápasy o umístění
-            </li>
-          </ul>
-        </div>
-
-        <h4 class="text-xl font-bold text-gray-900 mt-6 mb-3">📋 Sestava pro Litvínov</h4>
-        
-        <p class="mb-4">
-          Pro domácí turnaj máme připravenou silnou sestavu, která se bude mírně obměňovat podle jednotlivých zápasů:
-        </p>
-
-        <div class="grid md:grid-cols-2 gap-4 mb-6">
-          <div class="bg-white rounded-lg p-4 border border-gray-200">
-            <h5 class="font-bold text-gray-900 mb-3 flex items-center gap-2">
-              🥅 Brankáři
-            </h5>
-            <ul class="space-y-1 text-sm">
-              <li>• <strong>Tomáš Kodrle</strong> (hlavní brankář SO-NE)</li>
-              <li>• <strong>Jiří Morávek</strong> (páteční zápas)</li>
-            </ul>
-          </div>
-
-          <div class="bg-white rounded-lg p-4 border border-gray-200">
-            <h5 class="font-bold text-gray-900 mb-3 flex items-center gap-2">
-              🛡️ Obránci
-            </h5>
-            <ul class="space-y-1 text-sm">
-              <li>• <a href="/profil/kocourek-ondrej" class="text-amber-400 hover:text-amber-300 underline">Ondřej Kocourek</a></li>
-              <li>• <a href="/profil/belinger-jindrich" class="text-amber-400 hover:text-amber-300 underline">Jindřich Belinger</a></li>
-              <li>• <a href="/profil/belinger-jiri" class="text-amber-400 hover:text-amber-300 underline">Jiří Belinger</a></li>
-              <li>• <a href="/profil/toman-gustav" class="text-amber-400 hover:text-amber-300 underline">Gustav Toman</a> (pátek)</li>
-              <li>• <a href="/profil/schubada-jan" class="text-amber-400 hover:text-amber-300 underline">Jan Schubada</a> (neděle)</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-lg p-4 border border-gray-200 mb-6">
-          <h5 class="font-bold text-gray-900 mb-3 flex items-center gap-2">
-            ⚡ Útočníci
-          </h5>
-          <div class="grid md:grid-cols-2 gap-3">
-            <ul class="space-y-1 text-sm">
-              <li>• <a href="/profil/svarc-stanislav" class="text-amber-400 hover:text-amber-300 underline">Stanislav Švarc</a></li>
-              <li>• <a href="/profil/svarc-jan" class="text-amber-400 hover:text-amber-300 underline">Jan Švarc</a></li>
-              <li>• <a href="/profil/toman-gustav" class="text-amber-400 hover:text-amber-300 underline">Gustav Toman</a></li>
-              <li>• <strong>Václav Matějovič</strong></li>
-            </ul>
-            <ul class="space-y-1 text-sm">
-              <li>• <a href="/profil/cerny-ladislav" class="text-amber-400 hover:text-amber-300 underline">Ladislav Černý</a></li>
-              <li>• <a href="/profil/materna-vaclav" class="text-amber-400 hover:text-amber-300 underline">Václav Materna</a> (pátek)</li>
-              <li>• <a href="/profil/salanda-jiri" class="text-amber-400 hover:text-amber-300 underline">Jiří Šalanda</a></li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-2xl p-6 my-8">
-          <h3 class="text-2xl font-bold mb-4">🏔️ Turnaj v Ostrově nad Ohří</h3>
-          
-          <p class="mb-4">
-            Paralelně s domácím turnajem vyšleme <strong>výběr hráčů</strong> na turnaj do Ostrova nad Ohří. Je to pro nás <strong>premiéra na tomto turnaji</strong>, takže jsme zvědaví, na jakou úroveň českých týmů narazíme.
-          </p>
-
-          <div class="bg-white/10 backdrop-blur rounded-lg p-4">
-            <p class="font-semibold mb-2">📍 Turnaj Ostrov nad Ohří</p>
-            <p class="text-sm">
-              <strong>Datum:</strong> Sobota 30. srpna 2025<br/>
-              <strong>Místo:</strong> Zimní stadion Ostrov nad Ohří<br/>
-              <strong>Soupeři:</strong> České týmy (Stars Chodov, Kocouři Hrušice, Dynamo Klatovy)
-            </p>
-          </div>
-        </div>
-
-        <h4 class="text-xl font-bold text-gray-900 mt-6 mb-3">🚌 Výprava do Ostrova</h4>
-        
-        <p class="mb-4">
-          Do Ostrova vyrazí speciální sestava složená z hráčů, kteří nebudou v sobotu potřeba na domácím turnaji:
-        </p>
-
-        <div class="grid md:grid-cols-3 gap-4 mb-6">
-          <div class="bg-amber-50 rounded-lg p-4 border border-amber-300">
-            <h5 class="font-bold text-amber-900 mb-2">🥅 Brankář</h5>
-            <p class="text-sm">• <strong>Michal Florian</strong></p>
-          </div>
-
-          <div class="bg-amber-50 rounded-lg p-4 border border-amber-300">
-            <h5 class="font-bold text-amber-900 mb-2">🛡️ Obránci</h5>
-            <ul class="text-sm space-y-1">
-              <li>• <a href="/profil/simek-roman" class="text-amber-600 hover:text-amber-700 underline">Roman Šimek</a></li>
-              <li>• <a href="/profil/coufal-lubos" class="text-amber-600 hover:text-amber-700 underline">Luboš Coufal</a></li>
-              <li>• <a href="/profil/hanus-jan" class="text-amber-600 hover:text-amber-700 underline">Jan Hanuš</a></li>
-              <li>• <a href="/profil/turecek-tomas" class="text-amber-600 hover:text-amber-700 underline">Tomáš Tureček</a></li>
-            </ul>
-          </div>
-
-          <div class="bg-amber-50 rounded-lg p-4 border border-amber-300">
-            <h5 class="font-bold text-amber-900 mb-2">⚡ Útočníci</h5>
-            <ul class="text-sm space-y-1">
-              <li>• <strong>Petr Štěpanovský</strong></li>
-              <li>• <a href="/profil/kuritka-ales" class="text-amber-600 hover:text-amber-700 underline">Aleš Kuřitka</a></li>
-              <li>• <a href="/profil/stepanovsky-oliver" class="text-amber-600 hover:text-amber-700 underline">Oliver Štěpanovský</a></li>
-              <li>• <strong>Najmy</strong></li>
-              <li>• <a href="/profil/schubada-jan" class="text-amber-600 hover:text-amber-700 underline">Jan Schubada</a></li>
-              <li>• <a href="/profil/dlugopolsky-marian" class="text-amber-600 hover:text-amber-700 underline">Marian Dlugopolský</a></li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="bg-red-50 border-l-4 border-red-600 p-4 my-6">
-          <p class="font-semibold text-red-900 mb-2">⚠️ Náročná logistika</p>
-          <p class="text-red-800 text-sm">
-            Někteří hráči budou muset během soboty <strong>pendlovat mezi turnaji</strong>. Například <a href="/profil/schubada-jan" class="text-amber-600 hover:text-amber-700 underline">Jan Schubada</a> odehraje ranní zápasy v Litvínově a pak pojede do Ostrova, kde také nastoupí v útoku!
-          </p>
-        </div>
-
-        <h3 class="text-xl font-bold text-gray-900 mt-8 mb-4">💪 Těšíme se na výzvu!</h3>
-        
-        <p>
-          Bude to <strong>opravdová zkouška sil</strong> - hrát paralelně dva turnaje vyžaduje široký kádr a dobrou organizaci. Věříme ale, že si s tím poradíme a na obou turnajích zanecháme dobrý dojem!
-        </p>
-
-        <p class="mt-4">
-          <strong>Držte nám palce!</strong> 🏒❤️ Průběžné informace z obou turnajů budeme přinášet na našich sociálních sítích a samozřejmě i zde na webu.
-        </p>
-
-        <div class="bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl p-6 mt-8 text-center">
-          <p class="text-2xl font-black mb-2">POJĎME NA TO, LANCERS! 💪</p>
-          <p class="text-sm opacity-90">Sledujte nás celý víkend • 29.-31. srpna 2025</p>
-        </div>
-      </div>
-    `,
-    allowComments: true,
-    tags: ['turnaj', 'Litvínov', 'Ostrov nad Ohří', 'mezinárodní hokej', 'Německo', 'Berlín', 'víkend']
   }
 ];
 

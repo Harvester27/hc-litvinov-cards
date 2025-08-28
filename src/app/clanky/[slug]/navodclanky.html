@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📚 Návod - Přidávání článků HC Litvínov Lancers</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #dc2626 0%, #7f1d1d 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        h2 {
+            color: #dc2626;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        h3 {
+            color: #374151;
+            margin: 20px 0 15px;
+            font-size: 1.3rem;
+        }
+        
+        .code-block {
+            background: #1f2937;
+            color: #10b981;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .code-block .comment {
+            color: #6b7280;
+        }
+        
+        .code-block .string {
+            color: #fbbf24;
+        }
+        
+        .code-block .keyword {
+            color: #f472b6;
+        }
+        
+        .step {
+            background: #f9fafb;
+            border-left: 4px solid #dc2626;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .step-number {
+            display: inline-block;
+            background: #dc2626;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+        
+        li {
+            margin: 8px 0;
+            color: #4b5563;
+        }
+        
+        .warning {
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .warning strong {
+            color: #d97706;
+        }
+        
+        .success {
+            background: #d1fae5;
+            border: 2px solid #10b981;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .success strong {
+            color: #059669;
+        }
+        
+        .file-structure {
+            background: #f3f4f6;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-family: monospace;
+        }
+        
+        .file-structure .folder {
+            color: #2563eb;
+            font-weight: bold;
+        }
+        
+        .file-structure .file {
+            color: #059669;
+            margin-left: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th {
+            background: #dc2626;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        tr:nth-child(even) {
+            background: #f9fafb;
+        }
+        
+        .tag {
+            display: inline-block;
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 Návod na přidávání článků</h1>
+            <div class="subtitle">HC Litvínov Lancers - Systém pro správu článků</div>
+        </header>
+        
+        <div class="content">
+            <div class="section">
+                <h2>📁 Struktura souborů</h2>
+                <div class="file-structure">
+                    <div class="folder">📂 /data</div>
+                    <div class="file">📄 articleData.js - Hlavní soubor s články</div>
+                    <div class="file">📄 playerData.js - Seznam hráčů</div>
+                    <div class="file">📄 ArticleUtils.js - Utility funkce</div>
+                    <div class="folder">📂 /public/images</div>
+                    <div class="file">📂 /clanky - Fotky pro články</div>
+                    <div class="file">📂 /loga - Loga týmů</div>
+                    <div class="folder">📂 /components</div>
+                    <div class="file">📄 ArticleContent.js - Zobrazení obsahu</div>
+                    <div class="file">📄 ArticleQuiz.js - Kvízy (volitelné)</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>🚀 Jak přidat nový článek</h2>
+                
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <strong>Otevřete soubor articleData.js</strong>
+                    <p>Najděte pole <code>articles</code> a přidejte nový objekt na začátek pole.</p>
+                </div>
+                
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <strong>Vytvořte nový objekt článku</strong>
+                    <p>Použijte následující strukturu:</p>
+                </div>
+                
+                <div class="code-block">
+{
+  <span class="comment">// Unikátní ID článku (malá písmena, pomlčky místo mezer)</span>
+  <span class="keyword">id</span>: <span class="string">'nazev-clanku-2025'</span>,
+  
+  <span class="comment">// Titulek článku zobrazený na webu</span>
+  <span class="keyword">title</span>: <span class="string">'Název vašeho článku'</span>,
+  
+  <span class="comment">// URL slug (stejný jako ID)</span>
+  <span class="keyword">slug</span>: <span class="string">'nazev-clanku-2025'</span>,
+  
+  <span class="comment">// Krátký popis (max 160 znaků)</span>
+  <span class="keyword">excerpt</span>: <span class="string">'Krátký popis článku...'</span>,
+  
+  <span class="comment">// Kategorie: 'Turnaje' | 'Zápasy' | 'Klub' | 'Mládež'</span>
+  <span class="keyword">category</span>: <span class="string">'Turnaje'</span>,
+  
+  <span class="keyword">author</span>: {
+    <span class="keyword">name</span>: <span class="string">'Tým HC Lancers'</span>,
+    <span class="keyword">id</span>: <span class="string">'hc-lancers'</span>
+  },
+  
+  <span class="comment">// Datum ve formátu: 'DD. měsíc YYYY'</span>
+  <span class="keyword">date</span>: <span class="string">'27. srpna 2025'</span>,
+  
+  <span class="comment">// JavaScript Date objekt</span>
+  <span class="keyword">publishedAt</span>: new Date(<span class="string">'2025-08-27T10:00:00'</span>),
+  
+  <span class="comment">// Emoji nebo null</span>
+  <span class="keyword">image</span>: <span class="string">'🏒'</span>,
+  
+  <span class="comment">// Cesta k obrázku nebo null</span>
+  <span class="keyword">featuredImage</span>: <span class="string">'/images/clanky/obrazek.jpg'</span>,
+  
+  <span class="keyword">featured</span>: true,
+  <span class="keyword">views</span>: 0,
+  <span class="keyword">likes</span>: 0,
+  
+  <span class="comment">// HTML obsah článku</span>
+  <span class="keyword">content</span>: <span class="string">`...HTML obsah...`</span>,
+  
+  <span class="keyword">allowComments</span>: true,
+  
+  <span class="comment">// Tagy pro SEO</span>
+  <span class="keyword">tags</span>: [<span class="string">'turnaj'</span>, <span class="string">'hokej'</span>, <span class="string">'Litvínov'</span>]
+}
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>✏️ Psaní obsahu článku</h2>
+                
+                <h3>Základní HTML struktura:</h3>
+                <div class="code-block">
+<span class="keyword">content</span>: <span class="string">`
+  &lt;div class="space-y-4"&gt;
+    &lt;!-- Úvodní box --&gt;
+    &lt;div class="bg-gradient-to-r from-red-50 to-gray-50 rounded-xl p-6 mb-6"&gt;
+      &lt;p class="text-xl font-bold text-gray-800 mb-2"&gt;
+        Titulek boxu
+      &lt;/p&gt;
+      &lt;p class="text-gray-600"&gt;
+        Informace v boxu
+      &lt;/p&gt;
+    &lt;/div&gt;
+    
+    &lt;!-- Odstavec textu --&gt;
+    &lt;p&gt;
+      Text článku s &lt;strong&gt;tučným textem&lt;/strong&gt;.
+    &lt;/p&gt;
+    
+    &lt;!-- Nadpis --&gt;
+    &lt;h3 class="text-xl font-bold text-gray-900 mt-6 mb-3"&gt;Nadpis sekce&lt;/h3&gt;
+    
+    &lt;!-- Obrázek --&gt;
+    &lt;div class="rounded-lg overflow-hidden shadow-md my-6"&gt;
+      &lt;img src="/images/clanky/foto.jpg" alt="Popis" class="w-full h-auto" /&gt;
+      &lt;p class="text-xs text-gray-500 text-center p-2 bg-gray-50"&gt;Popisek&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+`</span>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>🔗 Odkazy na hráče</h2>
+                
+                <div class="warning">
+                    <strong>⚠️ Důležité:</strong> Jména hráčů budou automaticky převedena na odkazy! Stačí je napsat normálně v textu.
+                </div>
+                
+                <p>Systém automaticky rozpozná a propojí tato jména:</p>
+                <ul>
+                    <li>Celá jména: <code>Roman Šimek</code></li>
+                    <li>Příjmení: <code>Šimek</code></li>
+                    <li>Přezdívky: <code>Tury</code> (Tomáš Tureček), <code>Šali</code> (Jiří Šalanda)</li>
+                </ul>
+                
+                <h3>Ruční vytvoření odkazu:</h3>
+                <div class="code-block">
+&lt;a href="/profil/simek-roman" class="text-amber-400 hover:text-amber-300 underline"&gt;
+  Roman Šimek
+&lt;/a&gt;
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>📊 Tabulka kategorií</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Kategorie</th>
+                            <th>Použití</th>
+                            <th>Příklady</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="tag">Turnaje</span></td>
+                            <td>Mezinárodní i domácí turnaje</td>
+                            <td>Straubing 2025, Vánoční turnaj</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag">Zápasy</span></td>
+                            <td>Jednotlivé zápasy, výsledky</td>
+                            <td>Výhra nad Warriors, Finále ČP</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag">Klub</span></td>
+                            <td>Klubové zprávy, novinky</td>
+                            <td>Nový dres, Změny v kádru</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag">Mládež</span></td>
+                            <td>Mládežnické týmy</td>
+                            <td>Junioři, Přípravka</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section">
+                <h2>🎨 CSS třídy pro styling</h2>
+                
+                <h3>Boxy a upozornění:</h3>
+                <ul>
+                    <li><code>bg-green-50 border-green-600</code> - Úspěch/výhra</li>
+                    <li><code>bg-red-50 border-red-600</code> - Prohra/varování</li>
+                    <li><code>bg-blue-50 border-blue-600</code> - Informace</li>
+                    <li><code>bg-amber-50 border-amber-600</code> - Tip/poznámka</li>
+                </ul>
+                
+                <h3>Text:</h3>
+                <ul>
+                    <li><code>text-xl font-bold</code> - Nadpis sekce</li>
+                    <li><code>text-lg</code> - Větší text</li>
+                    <li><code>text-sm text-gray-600</code> - Menší popisný text</li>
+                    <li><code>font-bold text-red-600</code> - Důležitý text</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2>📸 Přidávání obrázků</h2>
+                
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <strong>Nahrajte obrázky do složky</strong>
+                    <p><code>/public/images/clanky/</code> nebo vytvořte podsložku</p>
+                </div>
+                
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <strong>Použijte v článku</strong>
+                    <div class="code-block">
+&lt;img src="/images/clanky/nazev-obrazku.jpg" alt="Popis obrázku" /&gt;
+                    </div>
+                </div>
+                
+                <div class="warning">
+                    <strong>⚠️ Formáty:</strong> Používejte JPG/JPEG pro fotky, PNG pro loga, SVG pro ikony
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>✅ Checklist před publikováním</h2>
+                <ul style="list-style: none;">
+                    <li>☐ Unikátní ID a slug</li>
+                    <li>☐ Správná kategorie</li>
+                    <li>☐ Datum publikace</li>
+                    <li>☐ Excerpt do 160 znaků</li>
+                    <li>☐ Všechny obrázky nahrány</li>
+                    <li>☐ HTML obsah zkontrolován</li>
+                    <li>☐ Tagy pro SEO</li>
+                    <li>☐ allowComments: true</li>
+                </ul>
+            </div>
+
+            <div class="success">
+                <strong>✅ Hotovo!</strong> Po uložení souboru articleData.js bude článek automaticky dostupný na webu.
+            </div>
+
+            <div class="section">
+                <h2>🆘 Časté problémy</h2>
+                <ul>
+                    <li><strong>Článek se nezobrazuje:</strong> Zkontrolujte, že máte správně uzavřené uvozovky a závorky</li>
+                    <li><strong>Obrázky nefungují:</strong> Ověřte cestu - začíná lomítkem /images/...</li>
+                    <li><strong>Odkazy na hráče:</strong> Ujistěte se, že hráč existuje v playerData.js</li>
+                    <li><strong>Chyba syntaxe:</strong> Použijte VS Code s rozšířením pro JavaScript</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
