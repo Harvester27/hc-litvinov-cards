@@ -126,7 +126,7 @@ export const articles = [
             <p class="text-sm">
               <strong>Datum:</strong> Sobota 30. srpna 2025<br/>
               <strong>Místo:</strong> Zimní stadion Ostrov nad Ohří<br/>
-              <strong>Soupeři:</strong> České týmy (Slavia Karlovy Vary, Dynamo Klatovy, Osli Příbram, Kocouři Hrušice)
+              <strong>Soupeři:</strong> České týmy (Slavia Karlovy Vary, Dynamo Klatovy, Osli Příbram, Kocouři Hrušice a další)
             </p>
           </div>
         </div>
@@ -134,7 +134,7 @@ export const articles = [
         <h4 class="text-xl font-bold text-gray-900 mt-6 mb-3">🚌 Výprava do Ostrova</h4>
         
         <p class="mb-4">
-          Do Ostrova vyrazí speciální sestava složená z hráčů, kteří nebudou v sobotu potřeba na domácím turnaji:
+          Do Ostrova vyrazí sestava složená z hráčů, takto:
         </p>
 
         <div class="grid md:grid-cols-3 gap-4 mb-6">
@@ -146,10 +146,10 @@ export const articles = [
           <div class="bg-amber-50 rounded-lg p-4 border border-amber-300">
             <h5 class="font-bold text-amber-900 mb-2">🛡️ Obránci</h5>
             <ul class="text-sm space-y-1">
-              <li>• <a href="/profil/simek-roman" class="text-amber-600 hover:text-amber-700 underline">Roman Šimek</a></li>
-              <li>• <a href="/profil/coufal-lubos" class="text-amber-600 hover:text-amber-700 underline">Luboš Coufal</a></li>
-              <li>• <a href="/profil/hanus-jan" class="text-amber-600 hover:text-amber-700 underline">Jan Hanuš</a></li>
-              <li>• <a href="/profil/turecek-tomas" class="text-amber-600 hover:text-amber-700 underline">Tomáš Tureček</a></li>
+              <li>• Roman Šimek</li>
+              <li>• Luboš Coufal</li>
+              <li>• Jan Hanuš</li>
+              <li>• Tomáš Tureček</li>
             </ul>
           </div>
 
@@ -157,11 +157,11 @@ export const articles = [
             <h5 class="font-bold text-amber-900 mb-2">⚡ Útočníci</h5>
             <ul class="text-sm space-y-1">
               <li>• <strong>Petr Štěpanovský</strong></li>
-              <li>• <a href="/profil/kuritka-ales" class="text-amber-600 hover:text-amber-700 underline">Aleš Kuřitka</a></li>
-              <li>• <a href="/profil/stepanovsky-oliver" class="text-amber-600 hover:text-amber-700 underline">Oliver Štěpanovský</a></li>
-              <li>• <strong>Najmy</strong></li>
-              <li>• <a href="/profil/schubada-jan" class="text-amber-600 hover:text-amber-700 underline">Jan Schubada</a></li>
-              <li>• <a href="/profil/dlugopolsky-marian" class="text-amber-600 hover:text-amber-700 underline">Marian Dlugopolský</a></li>
+              <li>• Aleš Kuřitka</li>
+              <li>• Oliver Štěpanovský</li>
+              <li>• <strong>Michal Najman</strong></li>
+              <li>• Jan Schubada</li>
+              <li>• Marian Dlugopolský</li>
             </ul>
           </div>
         </div>
@@ -169,7 +169,7 @@ export const articles = [
         <div class="bg-red-50 border-l-4 border-red-600 p-4 my-6">
           <p class="font-semibold text-red-900 mb-2">⚠️ Náročná logistika</p>
           <p class="text-red-800 text-sm">
-            Někteří hráči budou muset během soboty <strong>pendlovat mezi turnaji</strong>. Například <a href="/profil/schubada-jan" class="text-amber-600 hover:text-amber-700 underline">Jan Schubada</a> odehraje ranní zápasy v Litvínově a pak pojede do Ostrova, kde také nastoupí v útoku!
+            Do Ostrova to máme z Litvínova 70km ale trochu zajímavosti se najde v tom, že Honza Schubada projevil zájem hrát po tak náročném turnaji hrát ještě v neděli, pokud se to povede může mít z jednoho víkendu dvě medaile.
           </p>
         </div>
 
