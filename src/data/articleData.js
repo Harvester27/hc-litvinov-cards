@@ -81,6 +81,7 @@ export const articles = [
               <li>• <strong>Tomáš Kodrle</strong> (brankář SO-NE)</li>
               <li>• <strong>Jiří Morávek</strong> (páteční zápas)</li>
             </ul>
+            <p class="text-xs text-blue-600 mt-2 italic">Děkujeme týmu North Blades za pomoc s půjčením brankáře Tomáše Kodrle!</p>
           </div>
 
           <div class="bg-white rounded-lg p-4 border border-gray-200">
@@ -110,8 +111,16 @@ export const articles = [
               <li>• <a href="/profil/cerny-ladislav" class="text-amber-400 hover:text-amber-300 underline">Ladislav Černý</a></li>
               <li>• <a href="/profil/materna-vaclav" class="text-amber-400 hover:text-amber-300 underline">Václav Materna</a> (pátek)</li>
               <li>• <a href="/profil/salanda-jiri" class="text-amber-400 hover:text-amber-300 underline">Jiří Šalanda</a></li>
+              <li>• <a href="/profil/schubada-jan" class="text-amber-400 hover:text-amber-300 underline">Jan Schubada</a> (neděle)</li>
             </ul>
           </div>
+        </div>
+
+        <div class="bg-yellow-50 border-l-4 border-yellow-600 p-4 my-6">
+          <p class="font-semibold text-yellow-900 mb-2">📢 Hledáme posily!</p>
+          <p class="text-yellow-800 text-sm">
+            Pro některé <strong>sobotní zápasy</strong> ještě hledáme hráče na doplnění sestavy. Pokud máte zájem přidat se k nám, ozvěte se!
+          </p>
         </div>
 
         <div class="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-2xl p-6 my-8">
