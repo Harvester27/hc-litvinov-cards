@@ -14,12 +14,35 @@ import {
 export default function HobbyCupDetailPage() {
   const [activeTab, setActiveTab] = useState('tabulka'); // tabulka, vysledky, statistiky
 
+  // Komponenta pro vlajku
+  const Flag = ({ country }) => {
+    if (country === 'DE') {
+      return (
+        <div className="w-8 h-5 flex overflow-hidden rounded-sm border border-gray-600">
+          <div className="w-1/3 bg-black"></div>
+          <div className="w-1/3 bg-red-600"></div>
+          <div className="w-1/3 bg-yellow-400"></div>
+        </div>
+      );
+    }
+    if (country === 'CZ') {
+      return (
+        <div className="w-8 h-5 flex flex-col overflow-hidden rounded-sm border border-gray-600">
+          <div className="h-1/2 bg-white"></div>
+          <div className="h-1/2 bg-red-600"></div>
+          <div className="absolute w-0 h-0 border-l-[16px] border-l-blue-600 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent"></div>
+        </div>
+      );
+    }
+    return null;
+  };
+
   // Finální tabulka turnaje - základní skupina
   const teams = [
     {
       position: 1,
       name: 'Alpha Team A',
-      flag: '🇩🇪',
+      country: 'DE',
       logo: '/images/loga/AlphaA.png',
       played: 3,
       wins: 2,
@@ -34,7 +57,7 @@ export default function HobbyCupDetailPage() {
     {
       position: 2,
       name: 'Alpha Team B',
-      flag: '🇩🇪',
+      country: 'DE',
       logo: '/images/loga/AlphaB.png',
       played: 3,
       wins: 2,
@@ -49,7 +72,7 @@ export default function HobbyCupDetailPage() {
     {
       position: 3,
       name: 'HC Litvínov Lancers',
-      flag: '🇨🇿',
+      country: 'CZ',
       logo: '/images/loga/lancers-logo.png',
       played: 3,
       wins: 1,
@@ -64,7 +87,7 @@ export default function HobbyCupDetailPage() {
     {
       position: 4,
       name: 'Berlin All Stars',
-      flag: '🇩🇪',
+      country: 'DE',
       logo: '/images/loga/Berlin.png',
       played: 3,
       wins: 0,
@@ -250,7 +273,7 @@ export default function HobbyCupDetailPage() {
                 <Trophy className="w-16 h-16 text-yellow-500 mb-2" />
                 <div className="text-white font-black text-xl">VÍTĚZ</div>
                 <div className="text-yellow-400 text-lg font-bold">Alpha Team B</div>
-                <div className="text-yellow-400/60 text-2xl">🇩🇪</div>
+                <Flag country="DE" />
               </div>
             </div>
           </div>
@@ -358,7 +381,7 @@ export default function HobbyCupDetailPage() {
                               className="object-contain"
                             />
                           )}
-                          <span className="text-2xl">{team.flag}</span>
+                          <Flag country={team.country} />
                           <span className={`font-bold ${
                             team.name.includes('Litvínov') ? 'text-red-500' : 
                             index === 0 ? 'text-yellow-500' : 'text-white'
