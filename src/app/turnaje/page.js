@@ -27,9 +27,9 @@ export default function TurnajePage() {
       teams: 4,
       status: 'finished',
       description: 'Mezinárodní turnaj amatérských hokejových týmů',
-      winner: 'Alpha Team B 🇩🇪',
-      second: 'Berlin All Stars 🇩🇪',
-      third: 'Alpha Team A 🇩🇪',
+      winner: 'Alpha Team B',
+      second: 'Berlin All Stars',
+      third: 'Alpha Team A',
       featured: true,
     }
   ];
@@ -165,15 +165,15 @@ export default function TurnajePage() {
                         <div className="flex items-center gap-4 mb-4">
                           <div className="flex items-center gap-2 px-3 py-1 bg-yellow-500/20 rounded-full">
                             <Medal className="w-4 h-4 text-yellow-400" />
-                            <span className="text-sm font-semibold text-yellow-400">1. {tournament.winner}</span>
+                            <span className="text-sm font-semibold text-yellow-400">1. Alpha Team B 🇩🇪</span>
                           </div>
                           <div className="flex items-center gap-2 px-3 py-1 bg-gray-400/20 rounded-full">
                             <Medal className="w-4 h-4 text-gray-400" />
-                            <span className="text-sm font-semibold text-gray-400">2. {tournament.second}</span>
+                            <span className="text-sm font-semibold text-gray-400">2. Berlin All Stars 🇩🇪</span>
                           </div>
                           <div className="flex items-center gap-2 px-3 py-1 bg-orange-600/20 rounded-full">
                             <Medal className="w-4 h-4 text-orange-600" />
-                            <span className="text-sm font-semibold text-orange-600">3. {tournament.third}</span>
+                            <span className="text-sm font-semibold text-orange-600">3. Alpha Team A 🇩🇪</span>
                           </div>
                         </div>
 

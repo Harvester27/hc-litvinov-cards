@@ -250,7 +250,7 @@ export default function HobbyCupDetailPage() {
                 <Trophy className="w-16 h-16 text-yellow-500 mb-2" />
                 <div className="text-white font-black text-xl">VÍTĚZ</div>
                 <div className="text-yellow-400 text-lg font-bold">Alpha Team B</div>
-                <div className="text-yellow-400/60 text-sm">🇩🇪 Německo</div>
+                <div className="text-yellow-400/60 text-2xl">🇩🇪</div>
               </div>
             </div>
           </div>
@@ -620,6 +620,7 @@ export default function HobbyCupDetailPage() {
               </div>
               <div className="text-xl font-bold text-white">Alpha Team B</div>
               <div className="text-gray-400 text-sm">Vítěz finále</div>
+              <div className="text-2xl mt-1">🇩🇪</div>
             </div>
             <div className="bg-black/40 rounded-xl p-4 border border-gray-400/50">
               <div className="flex items-center gap-3 mb-2">
