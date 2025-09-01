@@ -272,8 +272,9 @@ export default function MatchDetailPage() {
     },
   ];
 
-  // Najít konkrétní zápas
+  // Najít konkrétní zápas - stačí podle ID, protože jsme v konkrétním turnaji
   const match = allMatches.find(m => m.id === parseInt(matchId));
+
   // Komponenta pro vlajku
   const Flag = ({ country }) => {
     if (country === 'DE') {
