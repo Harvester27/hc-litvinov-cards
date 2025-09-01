@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import Navigation from '@/components/Navigation';
 import { 
   Trophy, Calendar, MapPin, Users, ArrowLeft,
@@ -13,12 +14,13 @@ import {
 export default function HobbyCupDetailPage() {
   const [activeTab, setActiveTab] = useState('tabulka'); // tabulka, vysledky, statistiky
 
-  // Finální tabulka turnaje
+  // Finální tabulka turnaje - základní skupina
   const teams = [
     {
       position: 1,
       name: 'Alpha Team A',
       flag: '🇩🇪',
+      logo: '/images/loga/AlphaA.png',
       played: 3,
       wins: 2,
       draws: 0,
@@ -33,6 +35,7 @@ export default function HobbyCupDetailPage() {
       position: 2,
       name: 'Alpha Team B',
       flag: '🇩🇪',
+      logo: '/images/loga/AlphaB.png',
       played: 3,
       wins: 2,
       draws: 0,
@@ -47,6 +50,7 @@ export default function HobbyCupDetailPage() {
       position: 3,
       name: 'HC Litvínov Lancers',
       flag: '🇨🇿',
+      logo: '/images/loga/lancers-logo.png',
       played: 3,
       wins: 1,
       draws: 2,
@@ -59,8 +63,9 @@ export default function HobbyCupDetailPage() {
     },
     {
       position: 4,
-      name: 'Team Berlin',
+      name: 'Berlin All Stars',
       flag: '🇩🇪',
+      logo: '/images/loga/Berlin.png',
       played: 3,
       wins: 0,
       draws: 1,
@@ -77,19 +82,19 @@ export default function HobbyCupDetailPage() {
   const results = [
     // Pátek 29.8.2025
     { date: '29.8.2025', time: '20:30', team1: 'Litvínov', team2: 'Alpha Team B', score: '5:7', day: 'Pátek' },
-    { date: '29.8.2025', time: '21:30', team1: 'Alpha Team A', team2: 'Team Berlin', score: '2:0', day: 'Pátek' },
+    { date: '29.8.2025', time: '21:30', team1: 'Alpha Team A', team2: 'Berlin All Stars', score: '2:0', day: 'Pátek' },
     
     // Sobota 30.8.2025
     { date: '30.8.2025', time: '08:00', team1: 'Litvínov', team2: 'Alpha Team A', score: '1:5', day: 'Sobota' },
-    { date: '30.8.2025', time: '09:00', team1: 'Team Berlin', team2: 'Alpha Team B', score: '2:3', day: 'Sobota' },
-    { date: '30.8.2025', time: '10:00', team1: 'Team Berlin', team2: 'Litvínov', score: '4:5', day: 'Sobota', note: 'po prodloužení' },
+    { date: '30.8.2025', time: '09:00', team1: 'Berlin All Stars', team2: 'Alpha Team B', score: '2:3', day: 'Sobota' },
+    { date: '30.8.2025', time: '10:00', team1: 'Berlin All Stars', team2: 'Litvínov', score: '4:5', day: 'Sobota', note: 'po prodloužení' },
     { date: '30.8.2025', time: '14:00', team1: 'Alpha Team A', team2: 'Alpha Team B', score: '6:5', day: 'Sobota' },
     
     // Neděle 31.8.2025 - Playoff
-    { date: '31.8.2025', time: '15:00', team1: 'Alpha Team A', team2: 'Team Berlin', score: '', day: 'Neděle', type: 'Semifinále 1' },
-    { date: '31.8.2025', time: '16:00', team1: 'Alpha Team B', team2: 'Litvínov', score: '', day: 'Neděle', type: 'Semifinále 2' },
-    { date: '31.8.2025', time: '09:00', team1: 'Finále', team2: '', score: '', day: 'Neděle', type: 'Spiel um Platz 3' },
-    { date: '31.8.2025', time: '10:50', team1: 'Finále', team2: '', score: '', day: 'Neděle', type: 'Siegerehrung' },
+    { date: '31.8.2025', time: '15:00', team1: 'Alpha Team A', team2: 'Berlin All Stars', score: '2:5', day: 'Neděle', type: 'Semifinále 1' },
+    { date: '31.8.2025', time: '16:00', team1: 'Alpha Team B', team2: 'Litvínov', score: '4:3', day: 'Neděle', type: 'Semifinále 2' },
+    { date: '31.8.2025', time: '09:00', team1: 'Litvínov', team2: 'Alpha Team A', score: '4:5 sn', day: 'Neděle', type: 'O 3. místo' },
+    { date: '31.8.2025', time: '10:00', team1: 'Berlin All Stars', team2: 'Alpha Team B', score: '1:2', day: 'Neděle', type: 'Finále' },
   ];
 
   return (
@@ -147,7 +152,7 @@ export default function HobbyCupDetailPage() {
               <div className="flex flex-col items-center bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-xl p-6 border border-yellow-500/30">
                 <Trophy className="w-16 h-16 text-yellow-500 mb-2" />
                 <div className="text-white font-black text-xl">VÍTĚZ</div>
-                <div className="text-yellow-400 text-lg font-bold">Alpha Team A</div>
+                <div className="text-yellow-400 text-lg font-bold">Alpha Team B</div>
                 <div className="text-yellow-400/60 text-sm">🇩🇪 Německo</div>
               </div>
             </div>
@@ -247,6 +252,15 @@ export default function HobbyCupDetailPage() {
                       </td>
                       <td className="p-4">
                         <div className="flex items-center gap-3">
+                          {team.logo && (
+                            <Image 
+                              src={team.logo} 
+                              alt={team.name}
+                              width={32}
+                              height={32}
+                              className="object-contain"
+                            />
+                          )}
                           <span className="text-2xl">{team.flag}</span>
                           <span className={`font-bold ${
                             team.name.includes('Litvínov') ? 'text-red-500' : 
@@ -377,13 +391,29 @@ export default function HobbyCupDetailPage() {
               </div>
               <div className="p-4 space-y-3">
                 {results.filter(r => r.day === 'Neděle').map((match, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
+                  <div key={i} className={`flex items-center justify-between p-3 bg-white/5 rounded-lg ${
+                    match.type === 'Finále' ? 'border-2 border-yellow-500/50' : ''
+                  }`}>
                     <span className="text-gray-400 text-sm w-16">{match.time}</span>
-                    <div className="flex-1 text-center">
-                      <span className="text-yellow-500 font-bold text-sm">{match.type}</span>
-                      {match.team1 && (
-                        <div className="mt-1 text-gray-300">
-                          {match.team1} {match.team2 && `vs ${match.team2}`}
+                    <div className="flex-1">
+                      <div className="text-center mb-1">
+                        <span className={`font-bold text-sm ${
+                          match.type === 'Finále' ? 'text-yellow-500' : 
+                          match.type === 'O 3. místo' ? 'text-orange-500' : 'text-blue-400'
+                        }`}>{match.type}</span>
+                      </div>
+                      {match.score && (
+                        <div className="flex items-center justify-center gap-4">
+                          <span className={`text-right flex-1 font-semibold ${
+                            match.team1 === 'Litvínov' ? 'text-red-500' : 'text-white'
+                          }`}>{match.team1}</span>
+                          <div className="flex flex-col items-center">
+                            <span className="text-xl font-black text-yellow-500">{match.score}</span>
+                            {match.score.includes('sn') && <span className="text-[10px] text-gray-400">po nájezdech</span>}
+                          </div>
+                          <span className={`text-left flex-1 font-semibold ${
+                            match.team2 === 'Litvínov' ? 'text-red-500' : 'text-white'
+                          }`}>{match.team2}</span>
                         </div>
                       )}
                     </div>
@@ -418,32 +448,48 @@ export default function HobbyCupDetailPage() {
                 <Medal className="w-8 h-8 text-yellow-500" />
                 <span className="text-3xl font-black text-yellow-500">1.</span>
               </div>
-              <div className="text-xl font-bold text-white">Alpha Team A</div>
-              <div className="text-gray-400">🇩🇪 Německo</div>
+              <div className="flex items-center gap-2 mb-2">
+                <Image src="/images/loga/AlphaB.png" alt="Alpha Team B" width={32} height={32} className="object-contain" />
+                <span className="text-2xl">🇩🇪</span>
+              </div>
+              <div className="text-xl font-bold text-white">Alpha Team B</div>
+              <div className="text-gray-400 text-sm">Vítěz finále</div>
             </div>
             <div className="bg-black/40 rounded-xl p-4 border border-gray-400/50">
               <div className="flex items-center gap-3 mb-2">
                 <Medal className="w-8 h-8 text-gray-400" />
                 <span className="text-3xl font-black text-gray-400">2.</span>
               </div>
-              <div className="text-xl font-bold text-white">Alpha Team B</div>
-              <div className="text-gray-400">🇩🇪 Německo</div>
+              <div className="flex items-center gap-2 mb-2">
+                <Image src="/images/loga/Berlin.png" alt="Berlin All Stars" width={32} height={32} className="object-contain" />
+                <span className="text-2xl">🇩🇪</span>
+              </div>
+              <div className="text-xl font-bold text-white">Berlin All Stars</div>
+              <div className="text-gray-400 text-sm">Finalista</div>
             </div>
             <div className="bg-black/40 rounded-xl p-4 border border-orange-600/50">
               <div className="flex items-center gap-3 mb-2">
                 <Medal className="w-8 h-8 text-orange-600" />
                 <span className="text-3xl font-black text-orange-600">3.</span>
               </div>
-              <div className="text-xl font-bold text-red-500">HC Litvínov Lancers</div>
-              <div className="text-gray-400">🇨🇿 Česká republika</div>
+              <div className="flex items-center gap-2 mb-2">
+                <Image src="/images/loga/AlphaA.png" alt="Alpha Team A" width={32} height={32} className="object-contain" />
+                <span className="text-2xl">🇩🇪</span>
+              </div>
+              <div className="text-xl font-bold text-white">Alpha Team A</div>
+              <div className="text-gray-400 text-sm">Výhra po nájezdech</div>
             </div>
             <div className="bg-black/40 rounded-xl p-4 border border-white/20">
               <div className="flex items-center gap-3 mb-2">
                 <Shield className="w-8 h-8 text-gray-600" />
                 <span className="text-3xl font-black text-gray-600">4.</span>
               </div>
-              <div className="text-xl font-bold text-white">Team Berlin</div>
-              <div className="text-gray-400">🇩🇪 Německo</div>
+              <div className="flex items-center gap-2 mb-2">
+                <Image src="/images/loga/lancers-logo.png" alt="HC Litvínov Lancers" width={32} height={32} className="object-contain" />
+                <span className="text-2xl">🇨🇿</span>
+              </div>
+              <div className="text-xl font-bold text-red-500">HC Litvínov Lancers</div>
+              <div className="text-gray-400 text-sm">4. místo</div>
             </div>
           </div>
         </div>

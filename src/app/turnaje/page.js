@@ -27,9 +27,9 @@ export default function TurnajePage() {
       teams: 4,
       status: 'finished',
       description: 'Mezinárodní turnaj amatérských hokejových týmů',
-      winner: 'Alpha Team A 🇩🇪',
-      second: 'Alpha Team B 🇩🇪',
-      third: 'HC Litvínov Lancers 🇨🇿',
+      winner: 'Alpha Team B 🇩🇪',
+      second: 'Berlin All Stars 🇩🇪',
+      third: 'Alpha Team A 🇩🇪',
       featured: true,
     }
   ];
