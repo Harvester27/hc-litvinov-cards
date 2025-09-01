@@ -13,6 +13,7 @@ import {
 import { useParams } from 'next/navigation';
 
 export default function MatchDetailPage() {
+  console.log("Stránka detailu zápasu se načetla!");
   const params = useParams();
   const { id } = params;
   
