@@ -7,7 +7,7 @@ import {
   Shield, Menu, X, ChevronDown, Users, Trophy,
   Calendar, Clock, Star, Gamepad2, User, LogIn,
   FileText, BarChart3, Award, LogOut,
-  AlertCircle, Coins, Zap, Package, Gift
+  AlertCircle, Coins, Zap, Package, Gift, Swords
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { signOut } from 'firebase/auth';
@@ -69,6 +69,7 @@ export default function Navigation() {
     { id: 'vysledky', label: 'Výsledky', href: '/vysledky', icon: <Trophy size={18} /> },
     { id: 'clanky', label: 'Články', href: '/clanky', icon: <FileText size={18} /> },
     { id: 'tabulky', label: 'Tabulky', href: '/tabulky', icon: <BarChart3 size={18} /> },
+    { id: 'turnaje', label: 'Turnaje', href: '/turnaje', icon: <Swords size={18} /> }, // NOVÁ POLOŽKA
     { id: 'historie', label: 'Historie', href: '/historie', icon: <Clock size={18} /> },
     { id: 'sin-slavy', label: 'Síň slávy', href: '/sin-slavy', icon: <Award size={18} /> },
     { id: 'hry', label: 'Hry', href: '/games', icon: <Gamepad2 size={18} /> },
