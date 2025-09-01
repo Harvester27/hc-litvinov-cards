@@ -28,7 +28,7 @@ export default function HobbyCupDetailPage() {
       goalsFor: 9,
       goalsAgainst: 10,
       points: 6,
-      form: ['V', 'V', 'P'],
+      form: ['V', 'P', 'V'],
       trend: 'stable'
     },
     {
@@ -58,7 +58,7 @@ export default function HobbyCupDetailPage() {
       goalsFor: 15,
       goalsAgainst: 12,
       points: 5,
-      form: ['R', 'R', 'V'],
+      form: ['P', 'V', 'Vsn'],
       trend: 'stable'
     },
     {
@@ -73,7 +73,7 @@ export default function HobbyCupDetailPage() {
       goalsFor: 6,
       goalsAgainst: 10,
       points: 1,
-      form: ['P', 'R', 'P'],
+      form: ['P', 'P', 'Psn'],
       trend: 'stable'
     }
   ];
@@ -81,20 +81,117 @@ export default function HobbyCupDetailPage() {
   // Výsledky všech zápasů
   const results = [
     // Pátek 29.8.2025
-    { date: '29.8.2025', time: '20:30', team1: 'Litvínov', team2: 'Alpha Team B', score: '5:7', day: 'Pátek' },
-    { date: '29.8.2025', time: '21:30', team1: 'Alpha Team A', team2: 'Berlin All Stars', score: '2:0', day: 'Pátek' },
+    { 
+      date: '29.8.2025', 
+      time: '20:30', 
+      team1: 'Litvínov', 
+      team2: 'Alpha Team B', 
+      score: '5:7', 
+      day: 'Pátek',
+      logo1: '/images/loga/lancers-logo.png',
+      logo2: '/images/loga/AlphaB.png'
+    },
+    { 
+      date: '29.8.2025', 
+      time: '21:30', 
+      team1: 'Alpha Team A', 
+      team2: 'Berlin All Stars', 
+      score: '2:0', 
+      day: 'Pátek',
+      logo1: '/images/loga/AlphaA.png',
+      logo2: '/images/loga/Berlin.png'
+    },
     
-    // Sobota 30.8.2025
-    { date: '30.8.2025', time: '08:00', team1: 'Litvínov', team2: 'Alpha Team A', score: '1:5', day: 'Sobota' },
-    { date: '30.8.2025', time: '09:00', team1: 'Berlin All Stars', team2: 'Alpha Team B', score: '2:3', day: 'Sobota' },
-    { date: '30.8.2025', time: '10:00', team1: 'Berlin All Stars', team2: 'Litvínov', score: '4:5', day: 'Sobota', note: 'po prodloužení' },
-    { date: '30.8.2025', time: '14:00', team1: 'Alpha Team A', team2: 'Alpha Team B', score: '6:5', day: 'Sobota' },
+    // Sobota 30.8.2025 - základní skupina
+    { 
+      date: '30.8.2025', 
+      time: '08:00', 
+      team1: 'Litvínov', 
+      team2: 'Alpha Team A', 
+      score: '1:5', 
+      day: 'Sobota',
+      logo1: '/images/loga/lancers-logo.png',
+      logo2: '/images/loga/AlphaA.png'
+    },
+    { 
+      date: '30.8.2025', 
+      time: '09:00', 
+      team1: 'Berlin All Stars', 
+      team2: 'Alpha Team B', 
+      score: '2:3', 
+      day: 'Sobota',
+      logo1: '/images/loga/Berlin.png',
+      logo2: '/images/loga/AlphaB.png'
+    },
+    { 
+      date: '30.8.2025', 
+      time: '10:00', 
+      team1: 'Berlin All Stars', 
+      team2: 'Litvínov', 
+      score: '4:5', 
+      day: 'Sobota', 
+      note: 'po prodloužení',
+      logo1: '/images/loga/Berlin.png',
+      logo2: '/images/loga/lancers-logo.png'
+    },
+    { 
+      date: '30.8.2025', 
+      time: '14:00', 
+      team1: 'Alpha Team A', 
+      team2: 'Alpha Team B', 
+      score: '6:5', 
+      day: 'Sobota',
+      logo1: '/images/loga/AlphaA.png',
+      logo2: '/images/loga/AlphaB.png'
+    },
     
-    // Neděle 31.8.2025 - Playoff
-    { date: '31.8.2025', time: '15:00', team1: 'Alpha Team A', team2: 'Berlin All Stars', score: '2:5', day: 'Neděle', type: 'Semifinále 1' },
-    { date: '31.8.2025', time: '16:00', team1: 'Alpha Team B', team2: 'Litvínov', score: '4:3', day: 'Neděle', type: 'Semifinále 2' },
-    { date: '31.8.2025', time: '09:00', team1: 'Litvínov', team2: 'Alpha Team A', score: '4:5 sn', day: 'Neděle', type: 'O 3. místo' },
-    { date: '31.8.2025', time: '10:00', team1: 'Berlin All Stars', team2: 'Alpha Team B', score: '1:2', day: 'Neděle', type: 'Finále' },
+    // Sobota 30.8.2025 - Semifinále
+    { 
+      date: '30.8.2025', 
+      time: '15:00', 
+      team1: 'Alpha Team A', 
+      team2: 'Berlin All Stars', 
+      score: '2:5', 
+      day: 'Semifinále', 
+      type: 'Semifinále 1',
+      logo1: '/images/loga/AlphaA.png',
+      logo2: '/images/loga/Berlin.png'
+    },
+    { 
+      date: '30.8.2025', 
+      time: '16:00', 
+      team1: 'Alpha Team B', 
+      team2: 'Litvínov', 
+      score: '4:3', 
+      day: 'Semifinále', 
+      type: 'Semifinále 2',
+      logo1: '/images/loga/AlphaB.png',
+      logo2: '/images/loga/lancers-logo.png'
+    },
+    
+    // Neděle 31.8.2025 - O umístění
+    { 
+      date: '31.8.2025', 
+      time: '09:00', 
+      team1: 'Litvínov', 
+      team2: 'Alpha Team A', 
+      score: '4:5 sn', 
+      day: 'Umístění', 
+      type: 'O 3. místo',
+      logo1: '/images/loga/lancers-logo.png',
+      logo2: '/images/loga/AlphaA.png'
+    },
+    { 
+      date: '31.8.2025', 
+      time: '10:00', 
+      team1: 'Berlin All Stars', 
+      team2: 'Alpha Team B', 
+      score: '1:2', 
+      day: 'Umístění', 
+      type: 'Finále',
+      logo1: '/images/loga/Berlin.png',
+      logo2: '/images/loga/AlphaB.png'
+    },
   ];
 
   return (
@@ -256,8 +353,8 @@ export default function HobbyCupDetailPage() {
                             <Image 
                               src={team.logo} 
                               alt={team.name}
-                              width={32}
-                              height={32}
+                              width={team.name.includes('Litvínov') ? 64 : 32}
+                              height={team.name.includes('Litvínov') ? 64 : 32}
                               className="object-contain"
                             />
                           )}
@@ -293,13 +390,17 @@ export default function HobbyCupDetailPage() {
                           {team.form.map((result, i) => (
                             <div
                               key={i}
-                              className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                              className={`w-8 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
                                 result === 'V' ? 'bg-green-500 text-white' :
-                                result === 'R' ? 'bg-yellow-500 text-black' :
+                                result === 'Vsn' ? 'bg-yellow-500 text-black' :
+                                result === 'Psn' ? 'bg-orange-500 text-white' :
+                                result === 'R' ? 'bg-gray-500 text-white' :
                                 'bg-red-500 text-white'
                               }`}
                             >
-                              {result}
+                              {result === 'Vsn' ? 'Vsn' :
+                               result === 'Psn' ? 'Psn' :
+                               result}
                             </div>
                           ))}
                         </div>
@@ -345,52 +446,110 @@ export default function HobbyCupDetailPage() {
                   <div key={i} className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
                     <span className="text-gray-400 text-sm w-16">{match.time}</span>
                     <div className="flex-1 flex items-center justify-center gap-4">
-                      <span className={`text-right flex-1 font-semibold ${
-                        match.team1 === 'Litvínov' ? 'text-red-500' : 'text-white'
-                      }`}>{match.team1}</span>
+                      <div className="flex items-center gap-2 flex-1 justify-end">
+                        <span className={`font-semibold ${
+                          match.team1 === 'Litvínov' ? 'text-red-500' : 'text-white'
+                        }`}>{match.team1}</span>
+                        {match.logo1 && (
+                          <Image src={match.logo1} alt={match.team1} width={32} height={32} className="object-contain" />
+                        )}
+                      </div>
                       <span className="text-xl font-black text-yellow-500 w-16 text-center">{match.score}</span>
-                      <span className={`text-left flex-1 font-semibold ${
-                        match.team2 === 'Litvínov' ? 'text-red-500' : 'text-white'
-                      }`}>{match.team2}</span>
+                      <div className="flex items-center gap-2 flex-1">
+                        {match.logo2 && (
+                          <Image src={match.logo2} alt={match.team2} width={32} height={32} className="object-contain" />
+                        )}
+                        <span className={`font-semibold ${
+                          match.team2 === 'Litvínov' ? 'text-red-500' : 'text-white'
+                        }`}>{match.team2}</span>
+                      </div>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Sobota */}
+            {/* Sobota - základní skupina */}
             <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden">
               <div className="p-4 bg-gradient-to-r from-green-600 to-green-700">
-                <h3 className="text-xl font-bold text-white">Sobota 30.8.2025</h3>
+                <h3 className="text-xl font-bold text-white">Sobota 30.8.2025 - Základní skupina</h3>
               </div>
               <div className="p-4 space-y-3">
                 {results.filter(r => r.day === 'Sobota').map((match, i) => (
                   <div key={i} className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
                     <span className="text-gray-400 text-sm w-16">{match.time}</span>
                     <div className="flex-1 flex items-center justify-center gap-4">
-                      <span className={`text-right flex-1 font-semibold ${
-                        match.team1 === 'Litvínov' || match.team1 === 'Team Berlin' && match.team2 === 'Litvínov' ? 'text-red-500' : 'text-white'
-                      }`}>{match.team1}</span>
+                      <div className="flex items-center gap-2 flex-1 justify-end">
+                        <span className={`font-semibold ${
+                          match.team1 === 'Litvínov' || match.team1 === 'Berlin All Stars' && match.team2 === 'Litvínov' ? 'text-red-500' : 'text-white'
+                        }`}>{match.team1}</span>
+                        {match.logo1 && (
+                          <Image src={match.logo1} alt={match.team1} width={32} height={32} className="object-contain" />
+                        )}
+                      </div>
                       <div className="flex flex-col items-center">
                         <span className="text-xl font-black text-yellow-500">{match.score}</span>
                         {match.note && <span className="text-[10px] text-gray-400">{match.note}</span>}
                       </div>
-                      <span className={`text-left flex-1 font-semibold ${
-                        match.team2 === 'Litvínov' ? 'text-red-500' : 'text-white'
-                      }`}>{match.team2}</span>
+                      <div className="flex items-center gap-2 flex-1">
+                        {match.logo2 && (
+                          <Image src={match.logo2} alt={match.team2} width={32} height={32} className="object-contain" />
+                        )}
+                        <span className={`font-semibold ${
+                          match.team2 === 'Litvínov' ? 'text-red-500' : 'text-white'
+                        }`}>{match.team2}</span>
+                      </div>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Neděle - Playoff */}
+            {/* Sobota - Semifinále */}
             <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden">
-              <div className="p-4 bg-gradient-to-r from-yellow-600 to-orange-600">
-                <h3 className="text-xl font-bold text-white">Neděle 31.8.2025 - Playoff</h3>
+              <div className="p-4 bg-gradient-to-r from-purple-600 to-purple-700">
+                <h3 className="text-xl font-bold text-white">Sobota 30.8.2025 - Semifinále</h3>
               </div>
               <div className="p-4 space-y-3">
-                {results.filter(r => r.day === 'Neděle').map((match, i) => (
+                {results.filter(r => r.day === 'Semifinále').map((match, i) => (
+                  <div key={i} className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
+                    <span className="text-gray-400 text-sm w-16">{match.time}</span>
+                    <div className="flex-1">
+                      <div className="text-center mb-1">
+                        <span className="font-bold text-sm text-purple-400">{match.type}</span>
+                      </div>
+                      <div className="flex items-center justify-center gap-4">
+                        <div className="flex items-center gap-2 flex-1 justify-end">
+                          <span className={`font-semibold ${
+                            match.team1 === 'Litvínov' ? 'text-red-500' : 'text-white'
+                          }`}>{match.team1}</span>
+                          {match.logo1 && (
+                            <Image src={match.logo1} alt={match.team1} width={32} height={32} className="object-contain" />
+                          )}
+                        </div>
+                        <span className="text-xl font-black text-yellow-500 w-16 text-center">{match.score}</span>
+                        <div className="flex items-center gap-2 flex-1">
+                          {match.logo2 && (
+                            <Image src={match.logo2} alt={match.team2} width={32} height={32} className="object-contain" />
+                          )}
+                          <span className={`font-semibold ${
+                            match.team2 === 'Litvínov' ? 'text-red-500' : 'text-white'
+                          }`}>{match.team2}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Neděle - O umístění */}
+            <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden">
+              <div className="p-4 bg-gradient-to-r from-yellow-600 to-orange-600">
+                <h3 className="text-xl font-bold text-white">Neděle 31.8.2025 - O umístění</h3>
+              </div>
+              <div className="p-4 space-y-3">
+                {results.filter(r => r.day === 'Umístění').map((match, i) => (
                   <div key={i} className={`flex items-center justify-between p-3 bg-white/5 rounded-lg ${
                     match.type === 'Finále' ? 'border-2 border-yellow-500/50' : ''
                   }`}>
@@ -398,24 +557,31 @@ export default function HobbyCupDetailPage() {
                     <div className="flex-1">
                       <div className="text-center mb-1">
                         <span className={`font-bold text-sm ${
-                          match.type === 'Finále' ? 'text-yellow-500' : 
-                          match.type === 'O 3. místo' ? 'text-orange-500' : 'text-blue-400'
+                          match.type === 'Finále' ? 'text-yellow-500' : 'text-orange-500'
                         }`}>{match.type}</span>
                       </div>
-                      {match.score && (
-                        <div className="flex items-center justify-center gap-4">
-                          <span className={`text-right flex-1 font-semibold ${
+                      <div className="flex items-center justify-center gap-4">
+                        <div className="flex items-center gap-2 flex-1 justify-end">
+                          <span className={`font-semibold ${
                             match.team1 === 'Litvínov' ? 'text-red-500' : 'text-white'
                           }`}>{match.team1}</span>
-                          <div className="flex flex-col items-center">
-                            <span className="text-xl font-black text-yellow-500">{match.score}</span>
-                            {match.score.includes('sn') && <span className="text-[10px] text-gray-400">po nájezdech</span>}
-                          </div>
-                          <span className={`text-left flex-1 font-semibold ${
+                          {match.logo1 && (
+                            <Image src={match.logo1} alt={match.team1} width={32} height={32} className="object-contain" />
+                          )}
+                        </div>
+                        <div className="flex flex-col items-center">
+                          <span className="text-xl font-black text-yellow-500">{match.score}</span>
+                          {match.score.includes('sn') && <span className="text-[10px] text-gray-400">po nájezdech</span>}
+                        </div>
+                        <div className="flex items-center gap-2 flex-1">
+                          {match.logo2 && (
+                            <Image src={match.logo2} alt={match.team2} width={32} height={32} className="object-contain" />
+                          )}
+                          <span className={`font-semibold ${
                             match.team2 === 'Litvínov' ? 'text-red-500' : 'text-white'
                           }`}>{match.team2}</span>
                         </div>
-                      )}
+                      </div>
                     </div>
                   </div>
                 ))}
