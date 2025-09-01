@@ -11,10 +11,12 @@ import {
   Minus, Goal, AlertCircle, Medal, CheckCircle,
   X, User, Timer, TrendingUp as Puck, Activity
 } from 'lucide-react';
+import { useParams } from 'next/navigation';
 
 export default function HobbyCupDetailPage() {
   const [activeTab, setActiveTab] = useState('tabulka'); // tabulka, vysledky, statistiky
-  const [selectedMatch, setSelectedMatch] = useState(null); // pro modal s detailem zápasu
+  const params = useParams();
+  const { id: tournamentId } = params;
 
   // Komponenta pro vlajku
   const Flag = ({ country }) => {
@@ -115,33 +117,7 @@ export default function HobbyCupDetailPage() {
       score: '5:7', 
       day: 'Pátek',
       logo1: '/images/loga/lancers-logo.png',
-      logo2: '/images/loga/AlphaB.png',
-      // Připravená struktura pro detailní statistiky
-      details: {
-        goals: {
-          team1: [], // Sem přidáme střelce Litvínova
-          team2: []  // Sem přidáme střelce Alpha Team B
-        },
-        assists: {
-          team1: [],
-          team2: []
-        },
-        penalties: {
-          team1: [],
-          team2: []
-        },
-        roster: {
-          team1: [], // Sestava Litvínova
-          team2: []  // Sestava Alpha Team B
-        },
-        stars: [], // Hvězdy zápasu (3 nejlepší hráči)
-        stats: {
-          shots: { team1: 0, team2: 0 },
-          faceoffs: { team1: 0, team2: 0 },
-          powerplay: { team1: '0/0', team2: '0/0' },
-          saves: { team1: 0, team2: 0 }
-        }
-      }
+      logo2: '/images/loga/AlphaB.png'
     },
     { 
       id: 2,
@@ -152,20 +128,7 @@ export default function HobbyCupDetailPage() {
       score: '2:0', 
       day: 'Pátek',
       logo1: '/images/loga/AlphaA.png',
-      logo2: '/images/loga/Berlin.png',
-      details: {
-        goals: { team1: [], team2: [] },
-        assists: { team1: [], team2: [] },
-        penalties: { team1: [], team2: [] },
-        roster: { team1: [], team2: [] },
-        stars: [],
-        stats: {
-          shots: { team1: 0, team2: 0 },
-          faceoffs: { team1: 0, team2: 0 },
-          powerplay: { team1: '0/0', team2: '0/0' },
-          saves: { team1: 0, team2: 0 }
-        }
-      }
+      logo2: '/images/loga/Berlin.png'
     },
     
     // Sobota 30.8.2025 - základní skupina
@@ -178,20 +141,7 @@ export default function HobbyCupDetailPage() {
       score: '1:5', 
       day: 'Sobota',
       logo1: '/images/loga/lancers-logo.png',
-      logo2: '/images/loga/AlphaA.png',
-      details: {
-        goals: { team1: [], team2: [] },
-        assists: { team1: [], team2: [] },
-        penalties: { team1: [], team2: [] },
-        roster: { team1: [], team2: [] },
-        stars: [],
-        stats: {
-          shots: { team1: 0, team2: 0 },
-          faceoffs: { team1: 0, team2: 0 },
-          powerplay: { team1: '0/0', team2: '0/0' },
-          saves: { team1: 0, team2: 0 }
-        }
-      }
+      logo2: '/images/loga/AlphaA.png'
     },
     { 
       id: 4,
@@ -202,20 +152,7 @@ export default function HobbyCupDetailPage() {
       score: '2:3', 
       day: 'Sobota',
       logo1: '/images/loga/Berlin.png',
-      logo2: '/images/loga/AlphaB.png',
-      details: {
-        goals: { team1: [], team2: [] },
-        assists: { team1: [], team2: [] },
-        penalties: { team1: [], team2: [] },
-        roster: { team1: [], team2: [] },
-        stars: [],
-        stats: {
-          shots: { team1: 0, team2: 0 },
-          faceoffs: { team1: 0, team2: 0 },
-          powerplay: { team1: '0/0', team2: '0/0' },
-          saves: { team1: 0, team2: 0 }
-        }
-      }
+      logo2: '/images/loga/AlphaB.png'
     },
     { 
       id: 5,
@@ -227,20 +164,7 @@ export default function HobbyCupDetailPage() {
       day: 'Sobota', 
       note: 'po prodloužení',
       logo1: '/images/loga/Berlin.png',
-      logo2: '/images/loga/lancers-logo.png',
-      details: {
-        goals: { team1: [], team2: [] },
-        assists: { team1: [], team2: [] },
-        penalties: { team1: [], team2: [] },
-        roster: { team1: [], team2: [] },
-        stars: [],
-        stats: {
-          shots: { team1: 0, team2: 0 },
-          faceoffs: { team1: 0, team2: 0 },
-          powerplay: { team1: '0/0', team2: '0/0' },
-          saves: { team1: 0, team2: 0 }
-        }
-      }
+      logo2: '/images/loga/lancers-logo.png'
     },
     { 
       id: 6,
@@ -251,20 +175,7 @@ export default function HobbyCupDetailPage() {
       score: '6:5', 
       day: 'Sobota',
       logo1: '/images/loga/AlphaA.png',
-      logo2: '/images/loga/AlphaB.png',
-      details: {
-        goals: { team1: [], team2: [] },
-        assists: { team1: [], team2: [] },
-        penalties: { team1: [], team2: [] },
-        roster: { team1: [], team2: [] },
-        stars: [],
-        stats: {
-          shots: { team1: 0, team2: 0 },
-          faceoffs: { team1: 0, team2: 0 },
-          powerplay: { team1: '0/0', team2: '0/0' },
-          saves: { team1: 0, team2: 0 }
-        }
-      }
+      logo2: '/images/loga/AlphaB.png'
     },
     
     // Sobota 30.8.2025 - Semifinále
@@ -278,20 +189,7 @@ export default function HobbyCupDetailPage() {
       day: 'Semifinále', 
       type: 'Semifinále 1',
       logo1: '/images/loga/AlphaA.png',
-      logo2: '/images/loga/Berlin.png',
-      details: {
-        goals: { team1: [], team2: [] },
-        assists: { team1: [], team2: [] },
-        penalties: { team1: [], team2: [] },
-        roster: { team1: [], team2: [] },
-        stars: [],
-        stats: {
-          shots: { team1: 0, team2: 0 },
-          faceoffs: { team1: 0, team2: 0 },
-          powerplay: { team1: '0/0', team2: '0/0' },
-          saves: { team1: 0, team2: 0 }
-        }
-      }
+      logo2: '/images/loga/Berlin.png'
     },
     { 
       id: 8,
@@ -303,20 +201,7 @@ export default function HobbyCupDetailPage() {
       day: 'Semifinále', 
       type: 'Semifinále 2',
       logo1: '/images/loga/AlphaB.png',
-      logo2: '/images/loga/lancers-logo.png',
-      details: {
-        goals: { team1: [], team2: [] },
-        assists: { team1: [], team2: [] },
-        penalties: { team1: [], team2: [] },
-        roster: { team1: [], team2: [] },
-        stars: [],
-        stats: {
-          shots: { team1: 0, team2: 0 },
-          faceoffs: { team1: 0, team2: 0 },
-          powerplay: { team1: '0/0', team2: '0/0' },
-          saves: { team1: 0, team2: 0 }
-        }
-      }
+      logo2: '/images/loga/lancers-logo.png'
     },
     
     // Neděle 31.8.2025 - O umístění
@@ -330,20 +215,7 @@ export default function HobbyCupDetailPage() {
       day: 'Umístění', 
       type: 'O 3. místo',
       logo1: '/images/loga/lancers-logo.png',
-      logo2: '/images/loga/AlphaA.png',
-      details: {
-        goals: { team1: [], team2: [] },
-        assists: { team1: [], team2: [] },
-        penalties: { team1: [], team2: [] },
-        roster: { team1: [], team2: [] },
-        stars: [],
-        stats: {
-          shots: { team1: 0, team2: 0 },
-          faceoffs: { team1: 0, team2: 0 },
-          powerplay: { team1: '0/0', team2: '0/0' },
-          saves: { team1: 0, team2: 0 }
-        }
-      }
+      logo2: '/images/loga/AlphaA.png'
     },
     { 
       id: 10,
@@ -355,20 +227,7 @@ export default function HobbyCupDetailPage() {
       day: 'Umístění', 
       type: 'Finále',
       logo1: '/images/loga/Berlin.png',
-      logo2: '/images/loga/AlphaB.png',
-      details: {
-        goals: { team1: [], team2: [] },
-        assists: { team1: [], team2: [] },
-        penalties: { team1: [], team2: [] },
-        roster: { team1: [], team2: [] },
-        stars: [],
-        stats: {
-          shots: { team1: 0, team2: 0 },
-          faceoffs: { team1: 0, team2: 0 },
-          powerplay: { team1: '0/0', team2: '0/0' },
-          saves: { team1: 0, team2: 0 }
-        }
-      }
+      logo2: '/images/loga/AlphaB.png'
     },
   ];
 
@@ -621,9 +480,9 @@ export default function HobbyCupDetailPage() {
               </div>
               <div className="p-4 space-y-3">
                 {results.filter(r => r.day === 'Pátek').map((match, i) => (
-                  <div 
-                    key={i} 
-                    onClick={() => setSelectedMatch(match)}
+                  <Link 
+                    key={i}
+                    href={`/turnaje/${tournamentId}/zapas/${match.id}`}
                     className="flex items-center justify-between p-3 bg-white/5 rounded-lg hover:bg-white/10 cursor-pointer transition-all"
                   >
                     <span className="text-gray-400 text-sm w-16">{match.time}</span>
@@ -647,7 +506,7 @@ export default function HobbyCupDetailPage() {
                       </div>
                     </div>
                     <ChevronRight className="w-5 h-5 text-gray-400" />
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -659,9 +518,9 @@ export default function HobbyCupDetailPage() {
               </div>
               <div className="p-4 space-y-3">
                 {results.filter(r => r.day === 'Sobota').map((match, i) => (
-                  <div 
-                    key={i} 
-                    onClick={() => setSelectedMatch(match)}
+                  <Link 
+                    key={i}
+                    href={`/turnaje/${tournamentId}/zapas/${match.id}`}
                     className="flex items-center justify-between p-3 bg-white/5 rounded-lg hover:bg-white/10 cursor-pointer transition-all"
                   >
                     <span className="text-gray-400 text-sm w-16">{match.time}</span>
@@ -688,7 +547,7 @@ export default function HobbyCupDetailPage() {
                       </div>
                     </div>
                     <ChevronRight className="w-5 h-5 text-gray-400" />
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -700,9 +559,9 @@ export default function HobbyCupDetailPage() {
               </div>
               <div className="p-4 space-y-3">
                 {results.filter(r => r.day === 'Semifinále').map((match, i) => (
-                  <div 
-                    key={i} 
-                    onClick={() => setSelectedMatch(match)}
+                  <Link 
+                    key={i}
+                    href={`/turnaje/${tournamentId}/zapas/${match.id}`}
                     className="flex items-center justify-between p-3 bg-white/5 rounded-lg hover:bg-white/10 cursor-pointer transition-all"
                   >
                     <span className="text-gray-400 text-sm w-16">{match.time}</span>
@@ -731,7 +590,7 @@ export default function HobbyCupDetailPage() {
                       </div>
                     </div>
                     <ChevronRight className="w-5 h-5 text-gray-400" />
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -743,9 +602,9 @@ export default function HobbyCupDetailPage() {
               </div>
               <div className="p-4 space-y-3">
                 {results.filter(r => r.day === 'Umístění').map((match, i) => (
-                  <div 
-                    key={i} 
-                    onClick={() => setSelectedMatch(match)}
+                  <Link 
+                    key={i}
+                    href={`/turnaje/${tournamentId}/zapas/${match.id}`}
                     className={`flex items-center justify-between p-3 bg-white/5 rounded-lg hover:bg-white/10 cursor-pointer transition-all ${
                       match.type === 'Finále' ? 'border-2 border-yellow-500/50' : ''
                     }`}
@@ -781,7 +640,7 @@ export default function HobbyCupDetailPage() {
                       </div>
                     </div>
                     <ChevronRight className="w-5 h-5 text-gray-400" />
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>
