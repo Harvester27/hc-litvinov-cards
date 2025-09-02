@@ -12,34 +12,33 @@ import {
   AlertTriangle, Goal
 } from 'lucide-react';
 
-// Export dat pro použití v jiných souborech
-export const matchData = {
-  id: 1,
-  tournamentId: 'hobby-cup-litvinov-2025',
-  date: '29.8.2025', 
-  time: '20:30', 
-  team1: 'HC Litvínov Lancers', 
-  team2: 'Alpha Team B', 
-  score: '5:7',
-  score1: 5,
-  score2: 7, 
-  day: 'Pátek',
-  round: 'Základní skupina',
-  logo1: '/images/loga/lancers-logo.png',
-  logo2: '/images/loga/AlphaB.png',
-  country1: 'CZ',
-  country2: 'DE',
-  venue: 'Zimní stadion Litvínov',
-  referee: 'TBA',
-  attendance: 'TBA',
-  periods: ['3:4', '2:3'], // Jen 2 třetiny
-  overtime: false,
-  shootout: false,
-  notes: 'Úvodní zápas turnaje - hrály se pouze 2 třetiny po 20 minutách',
-  duration: '2x20 minut'
-};
-
 export default function Zapas1Page() {
+  // Data zápasu - lokálně v komponentě
+  const matchData = {
+    id: 1,
+    tournamentId: 'hobby-cup-litvinov-2025',
+    date: '29.8.2025', 
+    time: '20:30', 
+    team1: 'HC Litvínov Lancers', 
+    team2: 'Alpha Team B', 
+    score: '5:7',
+    score1: 5,
+    score2: 7, 
+    day: 'Pátek',
+    round: 'Základní skupina',
+    logo1: '/images/loga/lancers-logo.png',
+    logo2: '/images/loga/AlphaB.png',
+    country1: 'CZ',
+    country2: 'DE',
+    venue: 'Zimní stadion Litvínov',
+    referee: 'TBA',
+    attendance: 'TBA',
+    periods: ['3:4', '2:3'], // Jen 2 třetiny
+    overtime: false,
+    shootout: false,
+    notes: 'Úvodní zápas turnaje - hrály se pouze 2 třetiny po 20 minutách',
+    duration: '2x20 minut'
+  };
   const [activeTab, setActiveTab] = useState('prehled'); // prehled, soupisky, statistiky
 
   // Soupisky týmů
