@@ -11,12 +11,9 @@ import {
   Minus, Goal, AlertCircle, Medal, CheckCircle,
   X, User, Timer, TrendingUp as Puck, Activity
 } from 'lucide-react';
-import { useParams } from 'next/navigation';
 
 export default function HobbyCupDetailPage() {
   const [activeTab, setActiveTab] = useState('tabulka'); // tabulka, vysledky, statistiky
-  const params = useParams();
-  const { id: tournamentId } = params;
 
   // Komponenta pro vlajku
   const Flag = ({ country }) => {
@@ -110,6 +107,7 @@ export default function HobbyCupDetailPage() {
     // Pátek 29.8.2025
     { 
       id: 1,
+      link: '/turnaje/hobby-cup-litvinov-2025/zapas-1',
       date: '29.8.2025', 
       time: '20:30', 
       team1: 'Litvínov', 
@@ -121,6 +119,7 @@ export default function HobbyCupDetailPage() {
     },
     { 
       id: 2,
+      link: '/turnaje/hobby-cup-litvinov-2025/zapas-2',
       date: '29.8.2025', 
       time: '21:30', 
       team1: 'Alpha Team A', 
@@ -134,6 +133,7 @@ export default function HobbyCupDetailPage() {
     // Sobota 30.8.2025 - základní skupina
     { 
       id: 3,
+      link: '/turnaje/hobby-cup-litvinov-2025/zapas-3',
       date: '30.8.2025', 
       time: '08:00', 
       team1: 'Litvínov', 
@@ -145,6 +145,7 @@ export default function HobbyCupDetailPage() {
     },
     { 
       id: 4,
+      link: '/turnaje/hobby-cup-litvinov-2025/zapas-4',
       date: '30.8.2025', 
       time: '09:00', 
       team1: 'Berlin All Stars', 
@@ -156,6 +157,7 @@ export default function HobbyCupDetailPage() {
     },
     { 
       id: 5,
+      link: '/turnaje/hobby-cup-litvinov-2025/zapas-5',
       date: '30.8.2025', 
       time: '10:00', 
       team1: 'Berlin All Stars', 
@@ -168,6 +170,7 @@ export default function HobbyCupDetailPage() {
     },
     { 
       id: 6,
+      link: '/turnaje/hobby-cup-litvinov-2025/zapas-6',
       date: '30.8.2025', 
       time: '14:00', 
       team1: 'Alpha Team A', 
@@ -181,6 +184,7 @@ export default function HobbyCupDetailPage() {
     // Sobota 30.8.2025 - Semifinále
     { 
       id: 7,
+      link: '/turnaje/hobby-cup-litvinov-2025/zapas-7',
       date: '30.8.2025', 
       time: '15:00', 
       team1: 'Alpha Team A', 
@@ -193,6 +197,7 @@ export default function HobbyCupDetailPage() {
     },
     { 
       id: 8,
+      link: '/turnaje/hobby-cup-litvinov-2025/zapas-8',
       date: '30.8.2025', 
       time: '16:00', 
       team1: 'Alpha Team B', 
@@ -207,6 +212,7 @@ export default function HobbyCupDetailPage() {
     // Neděle 31.8.2025 - O umístění
     { 
       id: 9,
+      link: '/turnaje/hobby-cup-litvinov-2025/zapas-9',
       date: '31.8.2025', 
       time: '09:00', 
       team1: 'Litvínov', 
@@ -219,6 +225,7 @@ export default function HobbyCupDetailPage() {
     },
     { 
       id: 10,
+      link: '/turnaje/hobby-cup-litvinov-2025/zapas-10',
       date: '31.8.2025', 
       time: '10:00', 
       team1: 'Berlin All Stars', 
@@ -479,10 +486,10 @@ export default function HobbyCupDetailPage() {
                 <h3 className="text-xl font-bold text-white">Pátek 29.8.2025</h3>
               </div>
               <div className="p-4 space-y-3">
-                {results.filter(r => r.day === 'Pátek').map((match, i) => (
+                {results.filter(r => r.day === 'Pátek').map((match) => (
                   <Link 
-                    key={i}
-                    href="/turnaje/hobby-cup-litvinov-2025/zapas-1"
+                    key={match.id}
+                    href={match.link}
                     className="flex items-center justify-between p-3 bg-white/5 rounded-lg hover:bg-white/10 cursor-pointer transition-all"
                   >
                     <span className="text-gray-400 text-sm w-16">{match.time}</span>
@@ -517,10 +524,10 @@ export default function HobbyCupDetailPage() {
                 <h3 className="text-xl font-bold text-white">Sobota 30.8.2025 - Základní skupina</h3>
               </div>
               <div className="p-4 space-y-3">
-                {results.filter(r => r.day === 'Sobota').map((match, i) => (
+                {results.filter(r => r.day === 'Sobota').map((match) => (
                   <Link 
-                    key={i}
-                    href={`/turnaje/${tournamentId}/zapas/${match.id}`}
+                    key={match.id}
+                    href={match.link}
                     className="flex items-center justify-between p-3 bg-white/5 rounded-lg hover:bg-white/10 cursor-pointer transition-all"
                   >
                     <span className="text-gray-400 text-sm w-16">{match.time}</span>
@@ -558,10 +565,10 @@ export default function HobbyCupDetailPage() {
                 <h3 className="text-xl font-bold text-white">Sobota 30.8.2025 - Semifinále</h3>
               </div>
               <div className="p-4 space-y-3">
-                {results.filter(r => r.day === 'Semifinále').map((match, i) => (
+                {results.filter(r => r.day === 'Semifinále').map((match) => (
                   <Link 
-                    key={i}
-                    href={`/turnaje/${tournamentId}/zapas/${match.id}`}
+                    key={match.id}
+                    href={match.link}
                     className="flex items-center justify-between p-3 bg-white/5 rounded-lg hover:bg-white/10 cursor-pointer transition-all"
                   >
                     <span className="text-gray-400 text-sm w-16">{match.time}</span>
@@ -601,10 +608,10 @@ export default function HobbyCupDetailPage() {
                 <h3 className="text-xl font-bold text-white">Neděle 31.8.2025 - O umístění</h3>
               </div>
               <div className="p-4 space-y-3">
-                {results.filter(r => r.day === 'Umístění').map((match, i) => (
+                {results.filter(r => r.day === 'Umístění').map((match) => (
                   <Link 
-                    key={i}
-                    href={`/turnaje/${tournamentId}/zapas/${match.id}`}
+                    key={match.id}
+                    href={match.link}
                     className={`flex items-center justify-between p-3 bg-white/5 rounded-lg hover:bg-white/10 cursor-pointer transition-all ${
                       match.type === 'Finále' ? 'border-2 border-yellow-500/50' : ''
                     }`}
@@ -673,11 +680,10 @@ export default function HobbyCupDetailPage() {
               </div>
               <div className="flex items-center gap-2 mb-2">
                 <Image src="/images/loga/AlphaB.png" alt="Alpha Team B" width={32} height={32} className="object-contain" />
-                <span className="text-2xl">🇩🇪</span>
               </div>
               <div className="text-xl font-bold text-white">Alpha Team B</div>
               <div className="text-gray-400 text-sm">Vítěz finále</div>
-              <div className="text-2xl mt-1">🇩🇪</div>
+              <Flag country="DE" />
             </div>
             <div className="bg-black/40 rounded-xl p-4 border border-gray-400/50">
               <div className="flex items-center gap-3 mb-2">
@@ -686,10 +692,10 @@ export default function HobbyCupDetailPage() {
               </div>
               <div className="flex items-center gap-2 mb-2">
                 <Image src="/images/loga/Berlin.png" alt="Berlin All Stars" width={32} height={32} className="object-contain" />
-                <span className="text-2xl">🇩🇪</span>
               </div>
               <div className="text-xl font-bold text-white">Berlin All Stars</div>
               <div className="text-gray-400 text-sm">Finalista</div>
+              <Flag country="DE" />
             </div>
             <div className="bg-black/40 rounded-xl p-4 border border-orange-600/50">
               <div className="flex items-center gap-3 mb-2">
@@ -698,10 +704,10 @@ export default function HobbyCupDetailPage() {
               </div>
               <div className="flex items-center gap-2 mb-2">
                 <Image src="/images/loga/AlphaA.png" alt="Alpha Team A" width={32} height={32} className="object-contain" />
-                <span className="text-2xl">🇩🇪</span>
               </div>
               <div className="text-xl font-bold text-white">Alpha Team A</div>
               <div className="text-gray-400 text-sm">Výhra po nájezdech</div>
+              <Flag country="DE" />
             </div>
             <div className="bg-black/40 rounded-xl p-4 border border-white/20">
               <div className="flex items-center gap-3 mb-2">
@@ -710,10 +716,10 @@ export default function HobbyCupDetailPage() {
               </div>
               <div className="flex items-center gap-2 mb-2">
                 <Image src="/images/loga/lancers-logo.png" alt="HC Litvínov Lancers" width={32} height={32} className="object-contain" />
-                <span className="text-2xl">🇨🇿</span>
               </div>
               <div className="text-xl font-bold text-red-500">HC Litvínov Lancers</div>
               <div className="text-gray-400 text-sm">4. místo</div>
+              <Flag country="CZ" />
             </div>
           </div>
         </div>

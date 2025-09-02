@@ -1,246 +1,726 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import Navigation from '@/components/Navigation';
 import { 
-  Trophy, Calendar, MapPin, Users, 
-  ArrowRight, Shield, Star, Award,
-  Swords, ChevronRight, Clock, Target,
-  Medal, CheckCircle
+  Trophy, Calendar, MapPin, Users, ArrowLeft,
+  Shield, Star, Award, Clock, Target, Swords,
+  ChevronRight, Hash, TrendingUp, TrendingDown,
+  Minus, Goal, AlertCircle, Medal, CheckCircle,
+  X, User, Timer, TrendingUp as Puck, Activity
 } from 'lucide-react';
 
-export default function TurnajePage() {
-  // Zatím máme jen jeden turnaj, ale struktura je připravená na více
-  // Aktuální/budoucí turnaje
-  const tournaments = [
-    // Sem přidáme budoucí turnaje
+export default function HobbyCupDetailPage() {
+  const [activeTab, setActiveTab] = useState('tabulka'); // tabulka, vysledky, statistiky
+
+  // Komponenta pro vlajku
+  const Flag = ({ country }) => {
+    if (country === 'DE') {
+      return (
+        <div className="w-8 h-5 flex overflow-hidden rounded-sm border border-gray-600">
+          <div className="w-1/3 bg-black"></div>
+          <div className="w-1/3 bg-red-600"></div>
+          <div className="w-1/3 bg-yellow-400"></div>
+        </div>
+      );
+    }
+    if (country === 'CZ') {
+      return (
+        <div className="w-8 h-5 flex flex-col overflow-hidden rounded-sm border border-gray-600">
+          <div className="h-1/2 bg-white"></div>
+          <div className="h-1/2 bg-red-600"></div>
+          <div className="absolute w-0 h-0 border-l-[16px] border-l-blue-600 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent"></div>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  // Finální tabulka turnaje - základní skupina
+  const teams = [
+    {
+      position: 1,
+      name: 'Alpha Team A',
+      country: 'DE',
+      logo: '/images/loga/AlphaA.png',
+      played: 3,
+      wins: 2,
+      draws: 0,
+      losses: 1,
+      goalsFor: 9,
+      goalsAgainst: 10,
+      points: 6,
+      form: ['V', 'P', 'V'],
+      trend: 'stable'
+    },
+    {
+      position: 2,
+      name: 'Alpha Team B',
+      country: 'DE',
+      logo: '/images/loga/AlphaB.png',
+      played: 3,
+      wins: 2,
+      draws: 0,
+      losses: 1,
+      goalsFor: 15,
+      goalsAgainst: 13,
+      points: 6,
+      form: ['V', 'V', 'P'],
+      trend: 'stable'
+    },
+    {
+      position: 3,
+      name: 'HC Litvínov Lancers',
+      country: 'CZ',
+      logo: '/images/loga/lancers-logo.png',
+      played: 3,
+      wins: 1,
+      draws: 2,
+      losses: 0,
+      goalsFor: 15,
+      goalsAgainst: 12,
+      points: 5,
+      form: ['P', 'V', 'Vsn'],
+      trend: 'stable'
+    },
+    {
+      position: 4,
+      name: 'Berlin All Stars',
+      country: 'DE',
+      logo: '/images/loga/Berlin.png',
+      played: 3,
+      wins: 0,
+      draws: 1,
+      losses: 2,
+      goalsFor: 6,
+      goalsAgainst: 10,
+      points: 1,
+      form: ['P', 'P', 'Psn'],
+      trend: 'stable'
+    }
   ];
 
-  // Dokončené turnaje
-  const pastTournaments = [
-    {
-      id: 'hobby-cup-litvinov-2025',
-      name: 'Hobby Hockey Litvínov 2025',
-      date: '29. - 31. srpna 2025',
-      location: 'Zimní stadion Litvínov',
-      teams: 4,
-      status: 'finished',
-      description: 'Mezinárodní turnaj amatérských hokejových týmů',
-      winner: 'Alpha Team B',
-      second: 'Berlin All Stars',
-      third: 'Alpha Team A',
-      featured: true,
-    }
+  // Výsledky všech zápasů s ID pro detail
+  const results = [
+    // Pátek 29.8.2025
+    { 
+      id: 1,
+      link: '/turnaje/hobby-cup-litvinov-2025/zapas-1',
+      date: '29.8.2025', 
+      time: '20:30', 
+      team1: 'Litvínov', 
+      team2: 'Alpha Team B', 
+      score: '5:7', 
+      day: 'Pátek',
+      logo1: '/images/loga/lancers-logo.png',
+      logo2: '/images/loga/AlphaB.png'
+    },
+    { 
+      id: 2,
+      link: '/turnaje/hobby-cup-litvinov-2025/zapas-2',
+      date: '29.8.2025', 
+      time: '21:30', 
+      team1: 'Alpha Team A', 
+      team2: 'Berlin All Stars', 
+      score: '2:0', 
+      day: 'Pátek',
+      logo1: '/images/loga/AlphaA.png',
+      logo2: '/images/loga/Berlin.png'
+    },
+    
+    // Sobota 30.8.2025 - základní skupina
+    { 
+      id: 3,
+      link: '/turnaje/hobby-cup-litvinov-2025/zapas-3',
+      date: '30.8.2025', 
+      time: '08:00', 
+      team1: 'Litvínov', 
+      team2: 'Alpha Team A', 
+      score: '1:5', 
+      day: 'Sobota',
+      logo1: '/images/loga/lancers-logo.png',
+      logo2: '/images/loga/AlphaA.png'
+    },
+    { 
+      id: 4,
+      link: '/turnaje/hobby-cup-litvinov-2025/zapas-4',
+      date: '30.8.2025', 
+      time: '09:00', 
+      team1: 'Berlin All Stars', 
+      team2: 'Alpha Team B', 
+      score: '2:3', 
+      day: 'Sobota',
+      logo1: '/images/loga/Berlin.png',
+      logo2: '/images/loga/AlphaB.png'
+    },
+    { 
+      id: 5,
+      link: '/turnaje/hobby-cup-litvinov-2025/zapas-5',
+      date: '30.8.2025', 
+      time: '10:00', 
+      team1: 'Berlin All Stars', 
+      team2: 'Litvínov', 
+      score: '4:5', 
+      day: 'Sobota', 
+      note: 'po prodloužení',
+      logo1: '/images/loga/Berlin.png',
+      logo2: '/images/loga/lancers-logo.png'
+    },
+    { 
+      id: 6,
+      link: '/turnaje/hobby-cup-litvinov-2025/zapas-6',
+      date: '30.8.2025', 
+      time: '14:00', 
+      team1: 'Alpha Team A', 
+      team2: 'Alpha Team B', 
+      score: '6:5', 
+      day: 'Sobota',
+      logo1: '/images/loga/AlphaA.png',
+      logo2: '/images/loga/AlphaB.png'
+    },
+    
+    // Sobota 30.8.2025 - Semifinále
+    { 
+      id: 7,
+      link: '/turnaje/hobby-cup-litvinov-2025/zapas-7',
+      date: '30.8.2025', 
+      time: '15:00', 
+      team1: 'Alpha Team A', 
+      team2: 'Berlin All Stars', 
+      score: '2:5', 
+      day: 'Semifinále', 
+      type: 'Semifinále 1',
+      logo1: '/images/loga/AlphaA.png',
+      logo2: '/images/loga/Berlin.png'
+    },
+    { 
+      id: 8,
+      link: '/turnaje/hobby-cup-litvinov-2025/zapas-8',
+      date: '30.8.2025', 
+      time: '16:00', 
+      team1: 'Alpha Team B', 
+      team2: 'Litvínov', 
+      score: '4:3', 
+      day: 'Semifinále', 
+      type: 'Semifinále 2',
+      logo1: '/images/loga/AlphaB.png',
+      logo2: '/images/loga/lancers-logo.png'
+    },
+    
+    // Neděle 31.8.2025 - O umístění
+    { 
+      id: 9,
+      link: '/turnaje/hobby-cup-litvinov-2025/zapas-9',
+      date: '31.8.2025', 
+      time: '09:00', 
+      team1: 'Litvínov', 
+      team2: 'Alpha Team A', 
+      score: '4:5 sn', 
+      day: 'Umístění', 
+      type: 'O 3. místo',
+      logo1: '/images/loga/lancers-logo.png',
+      logo2: '/images/loga/AlphaA.png'
+    },
+    { 
+      id: 10,
+      link: '/turnaje/hobby-cup-litvinov-2025/zapas-10',
+      date: '31.8.2025', 
+      time: '10:00', 
+      team1: 'Berlin All Stars', 
+      team2: 'Alpha Team B', 
+      score: '1:2', 
+      day: 'Umístění', 
+      type: 'Finále',
+      logo1: '/images/loga/Berlin.png',
+      logo2: '/images/loga/AlphaB.png'
+    },
   ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-zinc-900 via-black to-zinc-900">
       <Navigation />
       
-      {/* Hero sekce */}
+      {/* Hero sekce s informacemi o turnaji */}
       <div className="relative mt-28 mb-12 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-red-600/20 to-blue-600/20 animate-gradient"></div>
-        <div className="relative max-w-7xl mx-auto px-4 py-16">
-          <div className="text-center">
-            <div className="inline-flex items-center gap-3 mb-6">
-              <Swords className="w-12 h-12 text-red-500" />
-              <h1 className="text-5xl lg:text-6xl font-black text-white">
-                TURNAJE
-              </h1>
-              <Swords className="w-12 h-12 text-red-500 scale-x-[-1]" />
+        <div className="relative max-w-7xl mx-auto px-4 py-12">
+          {/* Navigační drobečky */}
+          <Link 
+            href="/turnaje" 
+            className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-6"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Zpět na přehled turnajů</span>
+          </Link>
+
+          <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-2xl p-8">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+              <div>
+                <div className="flex items-center gap-3 mb-4">
+                  <Trophy className="w-10 h-10 text-yellow-500" />
+                  <div>
+                    <h1 className="text-4xl lg:text-5xl font-black text-white">
+                      HOBBY HOCKEY LITVÍNOV 2025
+                    </h1>
+                    <p className="text-gray-400 text-lg mt-1">
+                      Mezinárodní turnaj amatérských hokejových týmů
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="flex items-center gap-2 text-gray-300">
+                    <Calendar className="w-5 h-5 text-red-500" />
+                    <span className="font-semibold">29. - 31. srpna 2025</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-gray-300">
+                    <MapPin className="w-5 h-5 text-blue-500" />
+                    <span className="font-semibold">Zimní stadion Litvínov</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-gray-300">
+                    <Users className="w-5 h-5 text-green-500" />
+                    <span className="font-semibold">4 týmy</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-gray-300">
+                    <CheckCircle className="w-5 h-5 text-green-500" />
+                    <span className="font-semibold text-green-400">Dokončeno</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col items-center bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-xl p-6 border border-yellow-500/30">
+                <Trophy className="w-16 h-16 text-yellow-500 mb-2" />
+                <div className="text-white font-black text-xl">VÍTĚZ</div>
+                <div className="text-yellow-400 text-lg font-bold">Alpha Team B</div>
+                <Flag country="DE" />
+              </div>
             </div>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              Mezinárodní hokejové turnaje pořádané HC Litvínov Lancers
-            </p>
           </div>
         </div>
       </div>
 
       {/* Hlavní obsah */}
       <div className="max-w-7xl mx-auto px-4 pb-20">
-        
-        {/* Aktuální/Nadcházející turnaje */}
-        {tournaments.length > 0 && (
-          <div className="mb-16">
-            <div className="flex items-center gap-3 mb-8">
-              <Trophy className="w-8 h-8 text-yellow-500" />
-              <h2 className="text-3xl font-black text-white">Nadcházející turnaje</h2>
-              <div className="flex-1 h-1 bg-gradient-to-r from-yellow-500/50 to-transparent rounded-full"></div>
+        {/* Navigace mezi sekcemi */}
+        <div className="flex gap-2 mb-8 overflow-x-auto">
+          <button
+            onClick={() => setActiveTab('tabulka')}
+            className={`px-6 py-3 rounded-lg font-bold transition-all whitespace-nowrap ${
+              activeTab === 'tabulka'
+                ? 'bg-gradient-to-r from-red-600 to-red-700 text-white'
+                : 'bg-white/10 text-gray-400 hover:bg-white/20 hover:text-white'
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <Hash className="w-4 h-4" />
+              <span>Konečná tabulka</span>
+            </div>
+          </button>
+          <button
+            onClick={() => setActiveTab('vysledky')}
+            className={`px-6 py-3 rounded-lg font-bold transition-all whitespace-nowrap ${
+              activeTab === 'vysledky'
+                ? 'bg-gradient-to-r from-red-600 to-red-700 text-white'
+                : 'bg-white/10 text-gray-400 hover:bg-white/20 hover:text-white'
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <Calendar className="w-4 h-4" />
+              <span>Výsledky zápasů</span>
+            </div>
+          </button>
+          <button
+            onClick={() => setActiveTab('statistiky')}
+            className={`px-6 py-3 rounded-lg font-bold transition-all whitespace-nowrap ${
+              activeTab === 'statistiky'
+                ? 'bg-gradient-to-r from-red-600 to-red-700 text-white'
+                : 'bg-white/10 text-gray-400 hover:bg-white/20 hover:text-white'
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <Star className="w-4 h-4" />
+              <span>Statistiky</span>
+            </div>
+          </button>
+        </div>
+
+        {/* Obsah podle aktivní záložky */}
+        {activeTab === 'tabulka' && (
+          <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden">
+            <div className="p-6 bg-gradient-to-r from-red-600 to-red-700">
+              <h2 className="text-2xl font-black text-white flex items-center gap-3">
+                <Trophy className="w-6 h-6" />
+                Konečná tabulka
+              </h2>
             </div>
 
-            <div className="text-center py-16 bg-black/40 backdrop-blur-sm border border-white/10 rounded-2xl">
-              <Calendar className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-              <h3 className="text-2xl font-bold text-white mb-2">Žádné nadcházející turnaje</h3>
-              <p className="text-gray-400">Nové turnaje budou brzy oznámeny.</p>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-white/5 border-b border-white/10">
+                    <th className="text-left p-4 text-gray-400 font-bold">#</th>
+                    <th className="text-left p-4 text-gray-400 font-bold">Tým</th>
+                    <th className="text-center p-4 text-gray-400 font-bold">Z</th>
+                    <th className="text-center p-4 text-gray-400 font-bold">V</th>
+                    <th className="text-center p-4 text-gray-400 font-bold">R</th>
+                    <th className="text-center p-4 text-gray-400 font-bold">P</th>
+                    <th className="text-center p-4 text-gray-400 font-bold">VG</th>
+                    <th className="text-center p-4 text-gray-400 font-bold">OG</th>
+                    <th className="text-center p-4 text-gray-400 font-bold">+/-</th>
+                    <th className="text-center p-4 text-gray-400 font-bold">B</th>
+                    <th className="text-center p-4 text-gray-400 font-bold hidden lg:table-cell">Forma</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {teams.map((team, index) => (
+                    <tr 
+                      key={team.name}
+                      className={`border-b border-white/5 hover:bg-white/5 transition-colors ${
+                        team.name.includes('Litvínov') ? 'bg-red-500/5' : ''
+                      } ${index === 0 ? 'bg-yellow-500/10' : ''}`}
+                    >
+                      <td className="p-4">
+                        <div className="flex items-center gap-2">
+                          {index === 0 && <Medal className="w-5 h-5 text-yellow-500" />}
+                          {index === 1 && <Medal className="w-5 h-5 text-gray-400" />}
+                          {index === 2 && <Medal className="w-5 h-5 text-orange-600" />}
+                          <span className={`font-bold ${index === 0 ? 'text-yellow-500' : 'text-gray-400'}`}>
+                            {team.position}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="p-4">
+                        <div className="flex items-center gap-3">
+                          {team.logo && (
+                            <Image 
+                              src={team.logo} 
+                              alt={team.name}
+                              width={team.name.includes('Litvínov') ? 64 : 32}
+                              height={team.name.includes('Litvínov') ? 64 : 32}
+                              className="object-contain"
+                            />
+                          )}
+                          <Flag country={team.country} />
+                          <span className={`font-bold ${
+                            team.name.includes('Litvínov') ? 'text-red-500' : 
+                            index === 0 ? 'text-yellow-500' : 'text-white'
+                          }`}>
+                            {team.name}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="text-center p-4 text-gray-300">{team.played}</td>
+                      <td className="text-center p-4 text-green-400 font-semibold">{team.wins}</td>
+                      <td className="text-center p-4 text-yellow-400 font-semibold">{team.draws}</td>
+                      <td className="text-center p-4 text-red-400 font-semibold">{team.losses}</td>
+                      <td className="text-center p-4 text-gray-300">{team.goalsFor}</td>
+                      <td className="text-center p-4 text-gray-300">{team.goalsAgainst}</td>
+                      <td className="text-center p-4">
+                        <span className={`font-semibold ${
+                          team.goalsFor - team.goalsAgainst > 0 ? 'text-green-400' :
+                          team.goalsFor - team.goalsAgainst < 0 ? 'text-red-400' : 'text-gray-400'
+                        }`}>
+                          {team.goalsFor - team.goalsAgainst > 0 && '+'}
+                          {team.goalsFor - team.goalsAgainst}
+                        </span>
+                      </td>
+                      <td className="text-center p-4">
+                        <span className="text-xl font-black text-white">{team.points}</span>
+                      </td>
+                      <td className="text-center p-4 hidden lg:table-cell">
+                        <div className="flex items-center justify-center gap-1">
+                          {team.form.map((result, i) => (
+                            <div
+                              key={i}
+                              className={`w-8 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                                result === 'V' ? 'bg-green-500 text-white' :
+                                result === 'Vsn' ? 'bg-yellow-500 text-black' :
+                                result === 'Psn' ? 'bg-orange-500 text-white' :
+                                result === 'R' ? 'bg-gray-500 text-white' :
+                                'bg-red-500 text-white'
+                              }`}
+                            >
+                              {result === 'Vsn' ? 'Vsn' :
+                               result === 'Psn' ? 'Psn' :
+                               result}
+                            </div>
+                          ))}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Legenda */}
+            <div className="p-6 bg-white/5 border-t border-white/10">
+              <div className="flex flex-wrap gap-6 text-sm">
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-400">Z - Zápasy</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-400">V - Výhry (3 body)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-400">R - Remízy v prodloužení (2 body)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-400">P - Prohry (0 bodů)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-400">B - Body</span>
+                </div>
+              </div>
             </div>
           </div>
         )}
 
-        {/* Dokončené turnaje */}
-        {pastTournaments.length > 0 && (
-          <div className="mb-16">
-            <div className="flex items-center gap-3 mb-8">
-              <Shield className="w-8 h-8 text-gray-400" />
-              <h2 className="text-3xl font-black text-white">Dokončené turnaje</h2>
-              <div className="flex-1 h-1 bg-gradient-to-r from-gray-500/50 to-transparent rounded-full"></div>
+        {activeTab === 'vysledky' && (
+          <div className="space-y-8">
+            {/* Pátek */}
+            <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden">
+              <div className="p-4 bg-gradient-to-r from-blue-600 to-blue-700">
+                <h3 className="text-xl font-bold text-white">Pátek 29.8.2025</h3>
+              </div>
+              <div className="p-4 space-y-3">
+                {results.filter(r => r.day === 'Pátek').map((match) => (
+                  <Link 
+                    key={match.id}
+                    href={match.link}
+                    className="flex items-center justify-between p-3 bg-white/5 rounded-lg hover:bg-white/10 cursor-pointer transition-all"
+                  >
+                    <span className="text-gray-400 text-sm w-16">{match.time}</span>
+                    <div className="flex-1 flex items-center justify-center gap-4">
+                      <div className="flex items-center gap-2 flex-1 justify-end">
+                        <span className={`font-semibold ${
+                          match.team1 === 'Litvínov' ? 'text-red-500' : 'text-white'
+                        }`}>{match.team1}</span>
+                        {match.logo1 && (
+                          <Image src={match.logo1} alt={match.team1} width={32} height={32} className="object-contain" />
+                        )}
+                      </div>
+                      <span className="text-xl font-black text-yellow-500 w-16 text-center">{match.score}</span>
+                      <div className="flex items-center gap-2 flex-1">
+                        {match.logo2 && (
+                          <Image src={match.logo2} alt={match.team2} width={32} height={32} className="object-contain" />
+                        )}
+                        <span className={`font-semibold ${
+                          match.team2 === 'Litvínov' ? 'text-red-500' : 'text-white'
+                        }`}>{match.team2}</span>
+                      </div>
+                    </div>
+                    <ChevronRight className="w-5 h-5 text-gray-400" />
+                  </Link>
+                ))}
+              </div>
             </div>
 
-            <div className="grid gap-8">
-              {pastTournaments.map((tournament) => (
-                <Link
-                  key={tournament.id}
-                  href={`/turnaje/${tournament.id}`}
-                  className="group relative"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-r from-gray-600/10 to-gray-800/10 rounded-2xl blur-xl group-hover:blur-2xl transition-all"></div>
-                  
-                  <div className="relative bg-black/40 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:border-gray-500/50 transition-all duration-300">
-                    {tournament.featured && (
-                      <div className="absolute top-4 left-4 z-10">
-                        <div className="bg-gradient-to-r from-green-500 to-green-600 text-white text-xs font-black px-3 py-1 rounded-full flex items-center gap-1">
-                          <CheckCircle className="w-3 h-3" />
-                          DOKONČENO
-                        </div>
+            {/* Sobota - základní skupina */}
+            <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden">
+              <div className="p-4 bg-gradient-to-r from-green-600 to-green-700">
+                <h3 className="text-xl font-bold text-white">Sobota 30.8.2025 - Základní skupina</h3>
+              </div>
+              <div className="p-4 space-y-3">
+                {results.filter(r => r.day === 'Sobota').map((match) => (
+                  <Link 
+                    key={match.id}
+                    href={match.link}
+                    className="flex items-center justify-between p-3 bg-white/5 rounded-lg hover:bg-white/10 cursor-pointer transition-all"
+                  >
+                    <span className="text-gray-400 text-sm w-16">{match.time}</span>
+                    <div className="flex-1 flex items-center justify-center gap-4">
+                      <div className="flex items-center gap-2 flex-1 justify-end">
+                        <span className={`font-semibold ${
+                          match.team1 === 'Litvínov' || match.team1 === 'Berlin All Stars' && match.team2 === 'Litvínov' ? 'text-red-500' : 'text-white'
+                        }`}>{match.team1}</span>
+                        {match.logo1 && (
+                          <Image src={match.logo1} alt={match.team1} width={32} height={32} className="object-contain" />
+                        )}
                       </div>
-                    )}
-
-                    <div className="flex flex-col lg:flex-row">
-                      {/* Levá část - informace */}
-                      <div className="flex-1 p-8">
-                        <div className="flex items-start justify-between mb-4">
-                          <div>
-                            <h3 className="text-3xl font-black text-white mb-2 group-hover:text-gray-400 transition-colors">
-                              {tournament.name}
-                            </h3>
-                            <p className="text-gray-400 text-lg">
-                              {tournament.description}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                          <div className="flex items-center gap-3 text-gray-300">
-                            <div className="w-10 h-10 rounded-lg bg-gray-500/20 flex items-center justify-center">
-                              <Calendar className="w-5 h-5 text-gray-500" />
-                            </div>
-                            <div>
-                              <div className="text-xs text-gray-500">Termín</div>
-                              <div className="font-semibold">{tournament.date}</div>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center gap-3 text-gray-300">
-                            <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
-                              <MapPin className="w-5 h-5 text-blue-500" />
-                            </div>
-                            <div>
-                              <div className="text-xs text-gray-500">Místo</div>
-                              <div className="font-semibold">{tournament.location}</div>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center gap-3 text-gray-300">
-                            <div className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center">
-                              <Users className="w-5 h-5 text-green-500" />
-                            </div>
-                            <div>
-                              <div className="text-xs text-gray-500">Počet týmů</div>
-                              <div className="font-semibold">{tournament.teams} týmy</div>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center gap-3 text-gray-300">
-                            <div className="w-10 h-10 rounded-lg bg-yellow-500/20 flex items-center justify-center">
-                              <Trophy className="w-5 h-5 text-yellow-500" />
-                            </div>
-                            <div>
-                              <div className="text-xs text-gray-500">Vítěz</div>
-                              <div className="font-semibold text-yellow-400">{tournament.winner}</div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Medailové pozice */}
-                        <div className="flex items-center gap-4 mb-4">
-                          <div className="flex items-center gap-2 px-3 py-1 bg-yellow-500/20 rounded-full">
-                            <Medal className="w-4 h-4 text-yellow-400" />
-                            <span className="text-sm font-semibold text-yellow-400">1. Alpha Team B 🇩🇪</span>
-                          </div>
-                          <div className="flex items-center gap-2 px-3 py-1 bg-gray-400/20 rounded-full">
-                            <Medal className="w-4 h-4 text-gray-400" />
-                            <span className="text-sm font-semibold text-gray-400">2. Berlin All Stars 🇩🇪</span>
-                          </div>
-                          <div className="flex items-center gap-2 px-3 py-1 bg-orange-600/20 rounded-full">
-                            <Medal className="w-4 h-4 text-orange-600" />
-                            <span className="text-sm font-semibold text-orange-600">3. Alpha Team A 🇩🇪</span>
-                          </div>
-                        </div>
-
-                        {/* Status a akce */}
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <div className="flex items-center gap-2 px-3 py-1 bg-green-500/20 rounded-full">
-                              <CheckCircle className="w-4 h-4 text-green-400" />
-                              <span className="text-sm font-semibold text-green-400">Turnaj dokončen</span>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center gap-2 text-gray-400 font-bold group-hover:text-white group-hover:gap-4 transition-all">
-                            <span>Zobrazit výsledky</span>
-                            <ChevronRight className="w-5 h-5" />
-                          </div>
-                        </div>
+                      <div className="flex flex-col items-center">
+                        <span className="text-xl font-black text-yellow-500">{match.score}</span>
+                        {match.note && <span className="text-[10px] text-gray-400">{match.note}</span>}
                       </div>
+                      <div className="flex items-center gap-2 flex-1">
+                        {match.logo2 && (
+                          <Image src={match.logo2} alt={match.team2} width={32} height={32} className="object-contain" />
+                        )}
+                        <span className={`font-semibold ${
+                          match.team2 === 'Litvínov' ? 'text-red-500' : 'text-white'
+                        }`}>{match.team2}</span>
+                      </div>
+                    </div>
+                    <ChevronRight className="w-5 h-5 text-gray-400" />
+                  </Link>
+                ))}
+              </div>
+            </div>
 
-                      {/* Pravá část - vizuál/logo */}
-                      <div className="lg:w-96 h-64 lg:h-auto relative bg-gradient-to-br from-gray-600/20 to-gray-800/20 flex items-center justify-center">
-                        <div className="absolute inset-0 bg-black/20"></div>
-                        <div className="relative text-center p-8">
-                          <Trophy className="w-24 h-24 text-gray-500 mx-auto mb-4" />
-                          <div className="text-white font-black text-2xl">HOBBY HOCKEY</div>
-                          <div className="text-gray-400 font-black text-3xl">2025</div>
-                          <div className="text-gray-500 text-sm mt-2">LITVÍNOV</div>
+            {/* Sobota - Semifinále */}
+            <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden">
+              <div className="p-4 bg-gradient-to-r from-purple-600 to-purple-700">
+                <h3 className="text-xl font-bold text-white">Sobota 30.8.2025 - Semifinále</h3>
+              </div>
+              <div className="p-4 space-y-3">
+                {results.filter(r => r.day === 'Semifinále').map((match) => (
+                  <Link 
+                    key={match.id}
+                    href={match.link}
+                    className="flex items-center justify-between p-3 bg-white/5 rounded-lg hover:bg-white/10 cursor-pointer transition-all"
+                  >
+                    <span className="text-gray-400 text-sm w-16">{match.time}</span>
+                    <div className="flex-1">
+                      <div className="text-center mb-1">
+                        <span className="font-bold text-sm text-purple-400">{match.type}</span>
+                      </div>
+                      <div className="flex items-center justify-center gap-4">
+                        <div className="flex items-center gap-2 flex-1 justify-end">
+                          <span className={`font-semibold ${
+                            match.team1 === 'Litvínov' ? 'text-red-500' : 'text-white'
+                          }`}>{match.team1}</span>
+                          {match.logo1 && (
+                            <Image src={match.logo1} alt={match.team1} width={32} height={32} className="object-contain" />
+                          )}
+                        </div>
+                        <span className="text-xl font-black text-yellow-500 w-16 text-center">{match.score}</span>
+                        <div className="flex items-center gap-2 flex-1">
+                          {match.logo2 && (
+                            <Image src={match.logo2} alt={match.team2} width={32} height={32} className="object-contain" />
+                          )}
+                          <span className={`font-semibold ${
+                            match.team2 === 'Litvínov' ? 'text-red-500' : 'text-white'
+                          }`}>{match.team2}</span>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </Link>
-              ))}
+                    <ChevronRight className="w-5 h-5 text-gray-400" />
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Neděle - O umístění */}
+            <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden">
+              <div className="p-4 bg-gradient-to-r from-yellow-600 to-orange-600">
+                <h3 className="text-xl font-bold text-white">Neděle 31.8.2025 - O umístění</h3>
+              </div>
+              <div className="p-4 space-y-3">
+                {results.filter(r => r.day === 'Umístění').map((match) => (
+                  <Link 
+                    key={match.id}
+                    href={match.link}
+                    className={`flex items-center justify-between p-3 bg-white/5 rounded-lg hover:bg-white/10 cursor-pointer transition-all ${
+                      match.type === 'Finále' ? 'border-2 border-yellow-500/50' : ''
+                    }`}
+                  >
+                    <span className="text-gray-400 text-sm w-16">{match.time}</span>
+                    <div className="flex-1">
+                      <div className="text-center mb-1">
+                        <span className={`font-bold text-sm ${
+                          match.type === 'Finále' ? 'text-yellow-500' : 'text-orange-500'
+                        }`}>{match.type}</span>
+                      </div>
+                      <div className="flex items-center justify-center gap-4">
+                        <div className="flex items-center gap-2 flex-1 justify-end">
+                          <span className={`font-semibold ${
+                            match.team1 === 'Litvínov' ? 'text-red-500' : 'text-white'
+                          }`}>{match.team1}</span>
+                          {match.logo1 && (
+                            <Image src={match.logo1} alt={match.team1} width={32} height={32} className="object-contain" />
+                          )}
+                        </div>
+                        <div className="flex flex-col items-center">
+                          <span className="text-xl font-black text-yellow-500">{match.score}</span>
+                          {match.score.includes('sn') && <span className="text-[10px] text-gray-400">po nájezdech</span>}
+                        </div>
+                        <div className="flex items-center gap-2 flex-1">
+                          {match.logo2 && (
+                            <Image src={match.logo2} alt={match.team2} width={32} height={32} className="object-contain" />
+                          )}
+                          <span className={`font-semibold ${
+                            match.team2 === 'Litvínov' ? 'text-red-500' : 'text-white'
+                          }`}>{match.team2}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <ChevronRight className="w-5 h-5 text-gray-400" />
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
         )}
 
-        {/* Informační sekce */}
-        <div className="mt-16 grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl p-6">
-            <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center mb-4">
-              <Trophy className="w-6 h-6 text-red-500" />
+        {activeTab === 'statistiky' && (
+          <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-2xl p-8">
+            <div className="text-center py-16">
+              <Star className="w-16 h-16 text-gray-500 mx-auto mb-4" />
+              <h3 className="text-2xl font-bold text-white mb-2">Individuální statistiky</h3>
+              <p className="text-gray-400">
+                Nejlepší střelci, nahrávači a brankáři budou doplněni.
+              </p>
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">Mezinárodní prestiž</h3>
-            <p className="text-gray-400">
-              Naše turnaje přitahují týmy z celé Evropy a poskytují jedinečnou příležitost k mezinárodnímu hokejovému setkání.
-            </p>
           </div>
+        )}
 
-          <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl p-6">
-            <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center mb-4">
-              <Users className="w-6 h-6 text-blue-500" />
+        {/* Finální umístění */}
+        <div className="mt-12 bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border border-yellow-500/30 rounded-2xl p-8">
+          <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+            <Trophy className="w-8 h-8 text-yellow-500" />
+            Konečné pořadí
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-black/40 rounded-xl p-4 border border-yellow-500/50">
+              <div className="flex items-center gap-3 mb-2">
+                <Medal className="w-8 h-8 text-yellow-500" />
+                <span className="text-3xl font-black text-yellow-500">1.</span>
+              </div>
+              <div className="flex items-center gap-2 mb-2">
+                <Image src="/images/loga/AlphaB.png" alt="Alpha Team B" width={32} height={32} className="object-contain" />
+              </div>
+              <div className="text-xl font-bold text-white">Alpha Team B</div>
+              <div className="text-gray-400 text-sm">Vítěz finále</div>
+              <Flag country="DE" />
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">Skvělá atmosféra</h3>
-            <p className="text-gray-400">
-              Zažijte nezapomenutelnou hokejovou atmosféru v moderním zázemí zimního stadionu Litvínov.
-            </p>
-          </div>
-
-          <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl p-6">
-            <div className="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center mb-4">
-              <Award className="w-6 h-6 text-green-500" />
+            <div className="bg-black/40 rounded-xl p-4 border border-gray-400/50">
+              <div className="flex items-center gap-3 mb-2">
+                <Medal className="w-8 h-8 text-gray-400" />
+                <span className="text-3xl font-black text-gray-400">2.</span>
+              </div>
+              <div className="flex items-center gap-2 mb-2">
+                <Image src="/images/loga/Berlin.png" alt="Berlin All Stars" width={32} height={32} className="object-contain" />
+              </div>
+              <div className="text-xl font-bold text-white">Berlin All Stars</div>
+              <div className="text-gray-400 text-sm">Finalista</div>
+              <Flag country="DE" />
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">Hodnotné ceny</h3>
-            <p className="text-gray-400">
-              Vítězové si odnáší nejen putovní pohár, ale také hodnotné ceny a nezapomenutelné zážitky.
-            </p>
+            <div className="bg-black/40 rounded-xl p-4 border border-orange-600/50">
+              <div className="flex items-center gap-3 mb-2">
+                <Medal className="w-8 h-8 text-orange-600" />
+                <span className="text-3xl font-black text-orange-600">3.</span>
+              </div>
+              <div className="flex items-center gap-2 mb-2">
+                <Image src="/images/loga/AlphaA.png" alt="Alpha Team A" width={32} height={32} className="object-contain" />
+              </div>
+              <div className="text-xl font-bold text-white">Alpha Team A</div>
+              <div className="text-gray-400 text-sm">Výhra po nájezdech</div>
+              <Flag country="DE" />
+            </div>
+            <div className="bg-black/40 rounded-xl p-4 border border-white/20">
+              <div className="flex items-center gap-3 mb-2">
+                <Shield className="w-8 h-8 text-gray-600" />
+                <span className="text-3xl font-black text-gray-600">4.</span>
+              </div>
+              <div className="flex items-center gap-2 mb-2">
+                <Image src="/images/loga/lancers-logo.png" alt="HC Litvínov Lancers" width={32} height={32} className="object-contain" />
+              </div>
+              <div className="text-xl font-bold text-red-500">HC Litvínov Lancers</div>
+              <div className="text-gray-400 text-sm">4. místo</div>
+              <Flag country="CZ" />
+            </div>
           </div>
         </div>
       </div>
