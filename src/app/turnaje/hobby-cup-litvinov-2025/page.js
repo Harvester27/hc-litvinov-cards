@@ -482,7 +482,7 @@ export default function HobbyCupDetailPage() {
                 {results.filter(r => r.day === 'Pátek').map((match, i) => (
                   <Link 
                     key={i}
-                    href={`/turnaje/${tournamentId}/zapas/${match.id}`}
+                    href="/turnaje/hobby-cup-litvinov-2025/zapas-1"
                     className="flex items-center justify-between p-3 bg-white/5 rounded-lg hover:bg-white/10 cursor-pointer transition-all"
                   >
                     <span className="text-gray-400 text-sm w-16">{match.time}</span>
