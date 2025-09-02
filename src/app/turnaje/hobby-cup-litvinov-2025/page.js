@@ -138,7 +138,7 @@ export default function HobbyCupDetailPage() {
       time: '08:00', 
       team1: 'Litvínov', 
       team2: 'Alpha Team A', 
-      score: '1:5', 
+      score: '5:1', 
       day: 'Sobota',
       logo1: '/images/loga/lancers-logo.png',
       logo2: '/images/loga/AlphaA.png'
