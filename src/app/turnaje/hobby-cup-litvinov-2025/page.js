@@ -238,68 +238,70 @@ export default function HobbyCupDetailPage() {
     },
   ];
 
-  // Agregovaná data hráčů ze zápasů 1-5
+  // Agregovaná data hráčů ze VŠECH zápasů turnaje (1-10)
   const playerStats = [
-    // HC Litvínov Lancers
-    { name: 'Václav Matějovič', team: 'HC Litvínov Lancers', country: 'CZ', goals: 8, assists: 2, points: 10, penalties: 0, games: 3 },
+    // HC Litvínov Lancers (zápasy 1, 3, 5, 8, 9)
+    { name: 'Václav Matějovič', team: 'HC Litvínov Lancers', country: 'CZ', goals: 10, assists: 3, points: 13, penalties: 2, games: 5 },
     { name: 'Václav Materna', team: 'HC Litvínov Lancers', country: 'CZ', goals: 2, assists: 2, points: 4, penalties: 0, games: 1 },
-    { name: 'Michal Klečka', team: 'HC Litvínov Lancers', country: 'CZ', goals: 3, assists: 0, points: 3, penalties: 0, games: 3 },
-    { name: 'Stanislav Švarc', team: 'HC Litvínov Lancers', country: 'CZ', goals: 1, assists: 2, points: 3, penalties: 2, games: 3 },
-    { name: 'Jan Švarc', team: 'HC Litvínov Lancers', country: 'CZ', goals: 0, assists: 3, points: 3, penalties: 0, games: 3 },
-    { name: 'Gustav Toman', team: 'HC Litvínov Lancers', country: 'CZ', goals: 1, assists: 1, points: 2, penalties: 2, games: 3 },
-    { name: 'Ladislav Černý', team: 'HC Litvínov Lancers', country: 'CZ', goals: 1, assists: 1, points: 2, penalties: 0, games: 2 },
-    { name: 'Ondřej Kocourek', team: 'HC Litvínov Lancers', country: 'CZ', goals: 1, assists: 0, points: 1, penalties: 6, games: 2 },
-    { name: 'Jiří Belinger', team: 'HC Litvínov Lancers', country: 'CZ', goals: 0, assists: 1, points: 1, penalties: 0, games: 3 },
-    { name: 'Jindřich Belinger', team: 'HC Litvínov Lancers', country: 'CZ', goals: 0, assists: 0, points: 0, penalties: 0, games: 3 },
-    { name: 'Jiří Šalanda', team: 'HC Litvínov Lancers', country: 'CZ', goals: 0, assists: 0, points: 0, penalties: 2, games: 3 },
+    { name: 'Michal Klečka', team: 'HC Litvínov Lancers', country: 'CZ', goals: 6, assists: 1, points: 7, penalties: 0, games: 5 },
+    { name: 'Stanislav Švarc', team: 'HC Litvínov Lancers', country: 'CZ', goals: 1, assists: 2, points: 3, penalties: 6, games: 5 },
+    { name: 'Jan Švarc', team: 'HC Litvínov Lancers', country: 'CZ', goals: 1, assists: 4, points: 5, penalties: 0, games: 5 },
+    { name: 'Gustav Toman', team: 'HC Litvínov Lancers', country: 'CZ', goals: 1, assists: 1, points: 2, penalties: 2, games: 5 },
+    { name: 'Ladislav Černý', team: 'HC Litvínov Lancers', country: 'CZ', goals: 1, assists: 1, points: 2, penalties: 0, games: 4 },
+    { name: 'Ondřej Kocourek', team: 'HC Litvínov Lancers', country: 'CZ', goals: 2, assists: 2, points: 4, penalties: 10, games: 4 },
+    { name: 'Jiří Belinger', team: 'HC Litvínov Lancers', country: 'CZ', goals: 0, assists: 1, points: 1, penalties: 0, games: 5 },
+    { name: 'Jindřich Belinger', team: 'HC Litvínov Lancers', country: 'CZ', goals: 0, assists: 0, points: 0, penalties: 0, games: 5 },
+    { name: 'Jiří Šalanda', team: 'HC Litvínov Lancers', country: 'CZ', goals: 0, assists: 0, points: 0, penalties: 4, games: 5 },
     { name: 'Jiří Morávek', team: 'HC Litvínov Lancers', country: 'CZ', goals: 0, assists: 0, points: 0, penalties: 0, games: 1 },
-    { name: 'Tomáš Kodrle', team: 'HC Litvínov Lancers', country: 'CZ', goals: 0, assists: 0, points: 0, penalties: 0, games: 2 },
+    { name: 'Tomáš Kodrle', team: 'HC Litvínov Lancers', country: 'CZ', goals: 0, assists: 0, points: 0, penalties: 0, games: 4 },
+    { name: 'Jan Schubada', team: 'HC Litvínov Lancers', country: 'CZ', goals: 0, assists: 0, points: 0, penalties: 2, games: 1 },
+    { name: 'Oldřich Štěpanovský', team: 'HC Litvínov Lancers', country: 'CZ', goals: 0, assists: 0, points: 0, penalties: 0, games: 1 },
     
-    // Alpha Team B
-    { name: 'Ivan Patayala', team: 'Alpha Team B', country: 'DE', goals: 5, assists: 1, points: 6, penalties: 0, games: 2 },
+    // Alpha Team B (zápasy 1, 4, 6, 8, 10)
+    { name: 'Ivan Patayala', team: 'Alpha Team B', country: 'DE', goals: 7, assists: 4, points: 11, penalties: 0, games: 5 },
+    { name: 'Artur Lishchynsky', team: 'Alpha Team B', country: 'DE', goals: 4, assists: 1, points: 5, penalties: 0, games: 5 },
     { name: 'Igor Nalyotov', team: 'Alpha Team B', country: 'DE', goals: 3, assists: 1, points: 4, penalties: 2, games: 2 },
-    { name: 'Peter Eisele', team: 'Alpha Team B', country: 'DE', goals: 1, assists: 1, points: 2, penalties: 0, games: 2 },
-    { name: 'Leonid Hansen', team: 'Alpha Team B', country: 'DE', goals: 1, assists: 0, points: 1, penalties: 2, games: 2 },
-    { name: 'Sergey Terechov', team: 'Alpha Team B', country: 'DE', goals: 0, assists: 1, points: 1, penalties: 0, games: 2 },
-    { name: 'Artur Lishchynsky', team: 'Alpha Team B', country: 'DE', goals: 0, assists: 1, points: 1, penalties: 0, games: 2 },
+    { name: 'Leonid Hansen', team: 'Alpha Team B', country: 'DE', goals: 3, assists: 1, points: 4, penalties: 4, games: 5 },
+    { name: 'Leon Patz', team: 'Alpha Team B', country: 'DE', goals: 2, assists: 1, points: 3, penalties: 0, games: 5 },
+    { name: 'Sergey Terechov', team: 'Alpha Team B', country: 'DE', goals: 1, assists: 2, points: 3, penalties: 0, games: 5 },
+    { name: 'Peter Eisele', team: 'Alpha Team B', country: 'DE', goals: 1, assists: 1, points: 2, penalties: 2, games: 5 },
     { name: 'Sergey Schnarr (B)', team: 'Alpha Team B', country: 'DE', goals: 0, assists: 1, points: 1, penalties: 0, games: 2 },
-    { name: 'Alexander Zhiliaev', team: 'Alpha Team B', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 0, games: 2 },
-    { name: 'Sergey Wotschel', team: 'Alpha Team B', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 0, games: 2 },
-    { name: 'Leon Patz', team: 'Alpha Team B', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 0, games: 2 },
-    { name: 'Vladimir Visner', team: 'Alpha Team B', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 0, games: 2 },
-    { name: 'Sergey Antipov', team: 'Alpha Team B', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 0, games: 2 },
-    { name: 'Andrey Esser', team: 'Alpha Team B', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 0, games: 2 },
-    { name: 'Lars Bethke', team: 'Alpha Team B', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 0, games: 2 },
+    { name: 'Alexander Zhiliaev', team: 'Alpha Team B', country: 'DE', goals: 0, assists: 4, points: 4, penalties: 0, games: 5 },
+    { name: 'Sergey Wotschel', team: 'Alpha Team B', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 2, games: 5 },
+    { name: 'Vladimir Visner', team: 'Alpha Team B', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 6, games: 5 },
+    { name: 'Sergey Antipov', team: 'Alpha Team B', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 0, games: 5 },
+    { name: 'Andrey Esser', team: 'Alpha Team B', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 0, games: 5 },
+    { name: 'Lars Bethke', team: 'Alpha Team B', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 2, games: 5 },
     
-    // Alpha Team A
-    { name: 'Nikita Helm', team: 'Alpha Team A', country: 'DE', goals: 2, assists: 0, points: 2, penalties: 0, games: 2 },
-    { name: 'Sergey Schnarr (A)', team: 'Alpha Team A', country: 'DE', goals: 1, assists: 0, points: 1, penalties: 0, games: 2 },
-    { name: 'Alexander Plinger', team: 'Alpha Team A', country: 'DE', goals: 0, assists: 1, points: 1, penalties: 4, games: 2 },
-    { name: 'Maurice Giese', team: 'Alpha Team A', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 2, games: 2 },
-    { name: 'Dennis Hermann', team: 'Alpha Team A', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 2, games: 2 },
-    { name: 'Dennis Schuller', team: 'Alpha Team A', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 2, games: 2 },
-    { name: 'Alexander Hermann', team: 'Alpha Team A', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 0, games: 2 },
-    { name: 'Mark Wassermann', team: 'Alpha Team A', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 0, games: 2 },
-    { name: 'Andrey Schapovalov', team: 'Alpha Team A', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 0, games: 2 },
-    { name: 'Nikita Kulpin', team: 'Alpha Team A', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 0, games: 2 },
-    { name: 'Igor Nalyotov (A)', team: 'Alpha Team A', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 0, games: 2 },
-    { name: 'Alexandra Hesse', team: 'Alpha Team A', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 0, games: 2 },
+    // Alpha Team A (zápasy 2, 3, 6, 7, 9) 
+    { name: 'Alexander Plinger', team: 'Alpha Team A', country: 'DE', goals: 5, assists: 4, points: 9, penalties: 4, games: 5 },
+    { name: 'Nikita Helm', team: 'Alpha Team A', country: 'DE', goals: 5, assists: 2, points: 7, penalties: 4, games: 5 },
+    { name: 'Mark Wassermann', team: 'Alpha Team A', country: 'DE', goals: 2, assists: 0, points: 2, penalties: 4, games: 5 },
+    { name: 'Sergey Schnarr (A)', team: 'Alpha Team A', country: 'DE', goals: 1, assists: 2, points: 3, penalties: 0, games: 5 },
+    { name: 'Alexander Hermann', team: 'Alpha Team A', country: 'DE', goals: 1, assists: 0, points: 1, penalties: 2, games: 5 },
+    { name: 'Dennis Hermann', team: 'Alpha Team A', country: 'DE', goals: 1, assists: 0, points: 1, penalties: 8, games: 5 },
+    { name: 'Maurice Giese', team: 'Alpha Team A', country: 'DE', goals: 1, assists: 0, points: 1, penalties: 4, games: 5 },
+    { name: 'Dennis Schuller', team: 'Alpha Team A', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 2, games: 5 },
+    { name: 'Andrey Schapovalov', team: 'Alpha Team A', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 2, games: 5 },
+    { name: 'Nikita Kulpin', team: 'Alpha Team A', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 0, games: 5 },
+    { name: 'Igor Nalyotov (A)', team: 'Alpha Team A', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 2, games: 5 },
+    { name: 'Alexandra Hesse', team: 'Alpha Team A', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 0, games: 5 },
     
-    // Berlin All Stars
-    { name: 'Felix Schliemann', team: 'Berlin All Stars', country: 'DE', goals: 2, assists: 0, points: 2, penalties: 2, games: 2 },
-    { name: 'Peter Angrik', team: 'Berlin All Stars', country: 'DE', goals: 1, assists: 1, points: 2, penalties: 0, games: 3 },
-    { name: 'Matthias Blaschzik', team: 'Berlin All Stars', country: 'DE', goals: 1, assists: 1, points: 2, penalties: 2, games: 3 },
-    { name: 'Marco Rensch', team: 'Berlin All Stars', country: 'DE', goals: 1, assists: 0, points: 1, penalties: 0, games: 3 },
-    { name: 'Ricardo Pietsch', team: 'Berlin All Stars', country: 'DE', goals: 1, assists: 0, points: 1, penalties: 0, games: 3 },
-    { name: 'Daniel Pietsch', team: 'Berlin All Stars', country: 'DE', goals: 0, assists: 1, points: 1, penalties: 0, games: 3 },
-    { name: 'Tim Bartsch', team: 'Berlin All Stars', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 4, games: 3 },
-    { name: 'Frank Blaschzik', team: 'Berlin All Stars', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 2, games: 3 },
-    { name: 'Jan Fritche', team: 'Berlin All Stars', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 2, games: 3 },
-    { name: 'Daety Ertel', team: 'Berlin All Stars', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 2, games: 3 },
-    { name: 'Guido Martin', team: 'Berlin All Stars', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 0, games: 3 },
-    { name: 'Leon Wäser', team: 'Berlin All Stars', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 0, games: 3 },
-    { name: 'David Weiss', team: 'Berlin All Stars', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 0, games: 3 },
-    { name: 'Daniel Herzog', team: 'Berlin All Stars', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 0, games: 3 },
+    // Berlin All Stars (zápasy 2, 4, 5, 7, 10)
+    { name: 'Tim Bartsch', team: 'Berlin All Stars', country: 'DE', goals: 3, assists: 2, points: 5, penalties: 4, games: 5 },
+    { name: 'Peter Angrik', team: 'Berlin All Stars', country: 'DE', goals: 3, assists: 1, points: 4, penalties: 4, games: 5 },
+    { name: 'Felix Schliemann', team: 'Berlin All Stars', country: 'DE', goals: 3, assists: 0, points: 3, penalties: 2, games: 5 },
+    { name: 'Matthias Blaschzik', team: 'Berlin All Stars', country: 'DE', goals: 1, assists: 2, points: 3, penalties: 4, games: 5 },
+    { name: 'Daniel Pietsch', team: 'Berlin All Stars', country: 'DE', goals: 2, assists: 1, points: 3, penalties: 0, games: 5 },
+    { name: 'Leon Wäser', team: 'Berlin All Stars', country: 'DE', goals: 2, assists: 0, points: 2, penalties: 2, games: 5 },
+    { name: 'Marco Rensch', team: 'Berlin All Stars', country: 'DE', goals: 1, assists: 1, points: 2, penalties: 0, games: 5 },
+    { name: 'Ricardo Pietsch', team: 'Berlin All Stars', country: 'DE', goals: 1, assists: 0, points: 1, penalties: 0, games: 5 },
+    { name: 'Frank Blaschzik', team: 'Berlin All Stars', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 2, games: 5 },
+    { name: 'Guido Martin', team: 'Berlin All Stars', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 4, games: 5 },
+    { name: 'David Weiss', team: 'Berlin All Stars', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 2, games: 5 },
+    { name: 'Jan Fritche', team: 'Berlin All Stars', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 2, games: 5 },
+    { name: 'Daety Ertel', team: 'Berlin All Stars', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 4, games: 5 },
+    { name: 'Daniel Herzog', team: 'Berlin All Stars', country: 'DE', goals: 0, assists: 0, points: 0, penalties: 0, games: 5 }
   ];
 
   // Funkce pro řazení
@@ -769,7 +771,7 @@ export default function HobbyCupDetailPage() {
                 <Star className="w-6 h-6" />
                 Individuální statistiky hráčů
               </h2>
-              <p className="text-red-200 text-sm mt-1">Data ze zápasů 1-5 (ze základní skupiny)</p>
+              <p className="text-red-200 text-sm mt-1">Kompletní statistiky ze všech 10 zápasů turnaje</p>
             </div>
 
             <div className="overflow-x-auto">
