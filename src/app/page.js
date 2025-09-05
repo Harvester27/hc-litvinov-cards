@@ -27,7 +27,7 @@ export default function HomePage() {
 
   useEffect(() => {
     const calculateTimeToGame = () => {
-      const nextGame = new Date('2025-08-23T18:15:00');
+      const nextGame = new Date('2025-09-13T16:00:00');
       const now = new Date();
       const diff = nextGame - now;
       
@@ -121,8 +121,8 @@ export default function HomePage() {
           {/* Poslední zápas */}
           <div className="pb-4 border-b border-gray-200">
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-2 h-2 bg-green-600 rounded-full"></div>
-              <span className="text-green-600 font-bold text-sm uppercase tracking-wider">Poslední zápas - VÝHRA!</span>
+              <div className="w-2 h-2 bg-amber-600 rounded-full"></div>
+              <span className="text-amber-600 font-bold text-sm uppercase tracking-wider">Poslední zápas - 3. místo</span>
             </div>
             <div className="flex items-center gap-3 mb-2">
               <Image 
@@ -133,24 +133,24 @@ export default function HomePage() {
                 className="object-contain"
               />
               <div className="text-center">
-                <div className="text-3xl font-black text-green-600">13:4</div>
+                <div className="text-3xl font-black text-gray-600">vs</div>
               </div>
               <Image 
-                src="/images/loga/HCKopyta.png" 
-                alt="HC Kopyta"
+                src="/images/loga/AlphaA.png" 
+                alt="ALPHA Team A"
                 width={40}
                 height={40}
                 className="object-contain"
               />
             </div>
-            <div className="text-2xl font-black mb-2">Lancers vs. HC Kopyta</div>
+            <div className="text-2xl font-black mb-2">Zápas o 3. místo</div>
             <div className="text-gray-600 flex items-center gap-2 mb-4">
-              <MapPin size={16} />
-              Venkovní zápas • Teplice
+              <Trophy size={16} className="text-amber-600" />
+              HH Cup Litvínov 2025
             </div>
-            <div className="bg-gradient-to-r from-green-600 to-green-700 rounded-xl px-4 py-3 text-center">
-              <div className="text-white text-sm font-semibold">23. srpna 2025 • 18:15</div>
-              <div className="text-2xl font-black text-white">Vítězství o 9 gólů!</div>
+            <div className="bg-gradient-to-r from-amber-600 to-amber-700 rounded-xl px-4 py-3 text-center">
+              <div className="text-white text-sm font-semibold">30. srpna 2025</div>
+              <div className="text-2xl font-black text-white">ALPHA Team A</div>
             </div>
           </div>
 
@@ -158,73 +158,45 @@ export default function HomePage() {
           <div className="pt-4">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-2 h-2 bg-red-600 rounded-full animate-pulse"></div>
-              <span className="text-red-600 font-bold text-sm uppercase tracking-wider">Nadcházející zápasy</span>
+              <span className="text-red-600 font-bold text-sm uppercase tracking-wider">Příští zápas</span>
             </div>
             
-            <div className="space-y-2 text-sm">
-              {/* 29.8 ALPHA Team B */}
+            <div className="space-y-2">
+              {/* Hlavní příští zápas - Berlín All Stars */}
+              <div className="bg-gradient-to-r from-red-50 to-white rounded-lg p-3 border-2 border-red-600">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <Image src="/images/loga/Berlin.png" alt="Berlín All Stars" width={32} height={32} className="object-contain" />
+                    <div>
+                      <span className="font-black text-lg">Berlín All Stars</span>
+                      <div className="text-xs text-red-600 font-semibold">Přátelský zápas</div>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <Calendar size={14} />
+                  <span className="font-semibold">13.9. 16:00</span>
+                  <MapPin size={14} />
+                  <span>Litvínov</span>
+                </div>
+                <div className="mt-2 bg-red-600 text-white text-center py-1 rounded-lg text-sm font-bold">
+                  Zbývá: {timeToNextGame}
+                </div>
+              </div>
+
+              {/* Další zápasy */}
+              <div className="text-xs text-gray-500 font-semibold uppercase tracking-wider mt-3 mb-1">
+                Další zápasy
+              </div>
+
+              {/* Placeholder pro další zápasy */}
               <div className="flex items-center justify-between p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                 <div className="flex items-center gap-2">
-                  <Image src="/images/loga/AlphaB.png" alt="ALPHA Team B" width={24} height={24} className="object-contain" />
-                  <span className="font-semibold">ALPHA Team B</span>
+                  <div className="w-6 h-6 bg-gray-300 rounded-full"></div>
+                  <span className="font-semibold text-sm text-gray-600">TBA</span>
                 </div>
-                <div className="text-xs text-gray-600">
-                  <span className="font-semibold">29.8. 20:30</span> • Litvínov
-                </div>
-              </div>
-
-              {/* 30.8 ALPHA Team A */}
-              <div className="flex items-center justify-between p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                <div className="flex items-center gap-2">
-                  <Image src="/images/loga/AlphaA.png" alt="ALPHA Team A" width={24} height={24} className="object-contain" />
-                  <span className="font-semibold">ALPHA Team A</span>
-                </div>
-                <div className="text-xs text-gray-600">
-                  <span className="font-semibold">30.8. 8:00</span> • Litvínov
-                </div>
-              </div>
-
-              {/* 30.8 Stars Chodov */}
-              <div className="flex items-center justify-between p-2 bg-amber-50 rounded-lg hover:bg-amber-100 transition-colors">
-                <div className="flex items-center gap-2">
-                  <Image src="/images/loga/StarsChodov.png" alt="Stars Chodov" width={24} height={24} className="object-contain" />
-                  <span className="font-semibold">Stars Chodov</span>
-                </div>
-                <div className="text-xs text-gray-600">
-                  <span className="font-semibold">30.8. 8:50</span> • Ostrov n/O
-                </div>
-              </div>
-
-              {/* 30.8 Kocouři Hrušice */}
-              <div className="flex items-center justify-between p-2 bg-amber-50 rounded-lg hover:bg-amber-100 transition-colors">
-                <div className="flex items-center gap-2">
-                  <Image src="/images/loga/Hrusice.png" alt="Kocouři Hrušice" width={24} height={24} className="object-contain" />
-                  <span className="font-semibold">Kocouři Hrušice</span>
-                </div>
-                <div className="text-xs text-gray-600">
-                  <span className="font-semibold">30.8. 9:55</span> • Ostrov n/O
-                </div>
-              </div>
-
-              {/* 30.8 Berlín */}
-              <div className="flex items-center justify-between p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                <div className="flex items-center gap-2">
-                  <Image src="/images/loga/Berlin.png" alt="Berlín" width={24} height={24} className="object-contain" />
-                  <span className="font-semibold">Berlín</span>
-                </div>
-                <div className="text-xs text-gray-600">
-                  <span className="font-semibold">30.8. 10:00</span> • Litvínov
-                </div>
-              </div>
-
-              {/* 30.8 Dynamo Klatovy */}
-              <div className="flex items-center justify-between p-2 bg-amber-50 rounded-lg hover:bg-amber-100 transition-colors">
-                <div className="flex items-center gap-2">
-                  <Image src="/images/loga/DynamoKlatovy.png" alt="Dynamo Klatovy" width={24} height={24} className="object-contain" />
-                  <span className="font-semibold">Dynamo Klatovy</span>
-                </div>
-                <div className="text-xs text-gray-600">
-                  <span className="font-semibold">30.8. 12:55</span> • Ostrov n/O
+                <div className="text-xs text-gray-500">
+                  Bude upřesněno
                 </div>
               </div>
             </div>
