@@ -504,8 +504,8 @@ export default function HomePage() {
                   <Image 
                     src="/images/loga/lancers-logo.png" 
                     alt="HC Litvínov Lancers"
-                    width={112}
-                    height={112}
+                    width={111}
+                    height={111}
                     className="object-contain filter drop-shadow-lg"
                   />
                 </div>
