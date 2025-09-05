@@ -119,10 +119,13 @@ export default function HomePage() {
         {/* Zápasy widget - poslední + nadcházející */}
         <div className="absolute bottom-8 right-8 bg-white rounded-2xl p-6 text-black max-w-md shadow-2xl">
           {/* Poslední zápas */}
-          <div className="pb-4 border-b border-gray-200">
+          <div 
+            className="pb-4 border-b border-gray-200 cursor-pointer hover:bg-gray-50 rounded-lg p-2 transition-colors"
+            onClick={() => router.push('/turnaje/hobby-cup-litvinov-2025')}
+          >
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-2 h-2 bg-amber-600 rounded-full"></div>
-              <span className="text-amber-600 font-bold text-sm uppercase tracking-wider">Poslední zápas - 3. místo</span>
+              <div className="w-2 h-2 bg-red-600 rounded-full"></div>
+              <span className="text-red-600 font-bold text-sm uppercase tracking-wider">Poslední zápas - PROHRA</span>
             </div>
             <div className="flex items-center gap-3 mb-2">
               <Image 
@@ -133,7 +136,12 @@ export default function HomePage() {
                 className="object-contain"
               />
               <div className="text-center">
-                <div className="text-3xl font-black text-gray-600">vs</div>
+                <div className="text-3xl font-black">
+                  <span className="text-red-600">4</span>
+                  <span className="text-gray-600 mx-2">:</span>
+                  <span className="text-green-600">5</span>
+                </div>
+                <div className="text-xs text-gray-500 font-semibold">po nájezdech</div>
               </div>
               <Image 
                 src="/images/loga/AlphaA.png" 
@@ -149,8 +157,14 @@ export default function HomePage() {
               HH Cup Litvínov 2025
             </div>
             <div className="bg-gradient-to-r from-amber-600 to-amber-700 rounded-xl px-4 py-3 text-center">
-              <div className="text-white text-sm font-semibold">30. srpna 2025</div>
-              <div className="text-2xl font-black text-white">ALPHA Team A</div>
+              <div className="text-white text-sm font-semibold">30. srpna 2025 • Litvínov</div>
+              <div className="text-2xl font-black text-white">4. místo na turnaji</div>
+            </div>
+            <div className="mt-2 text-center">
+              <span className="text-sm text-blue-600 hover:text-blue-800 font-semibold flex items-center justify-center gap-1">
+                Zobrazit celý turnaj
+                <ChevronRight size={14} />
+              </span>
             </div>
           </div>
 
