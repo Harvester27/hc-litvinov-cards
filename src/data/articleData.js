@@ -13,320 +13,470 @@ export const articles = [
     date: '1. září 2025',
     publishedAt: new Date('2025-09-01T10:00:00'),
     image: '🏆',
-    featuredImage: null,
+    featuredImage: '/images/clanky/HHLitvinov2025.jpeg',
     featured: true,
     views: 0,
     likes: 0,
     content: `
-      <div class="space-y-4">
-        <div class="bg-gradient-to-r from-red-50 to-gray-50 rounded-xl p-6 mb-6">
-          <p class="text-xl font-bold text-gray-800 mb-2">
-            🏒 HH Cup Litvínov 2025
-          </p>
-          <p class="text-gray-600">
-            <strong>Kdy:</strong> 29.-31. srpna 2025<br/>
-            <strong>Kde:</strong> Zimní stadion Litvínov 🏟️<br/>
-            <strong>Umístění:</strong> <span class="text-2xl font-bold text-gray-700">4. místo</span>
-          </p>
-        </div>
-        
-        <p>
-          Na konci srpna jsme ve dnech <strong>29.-31. srpna</strong> hostili domácí turnaj, kterého se účastnily <strong>4 týmy</strong>. Tři týmy přijely z Berlína - <strong>Alpha Team A</strong>, <strong>Alpha Team B</strong> a <strong>Berlin All Stars</strong> - a samozřejmě domácí <strong>HC Litvínov Lancers</strong>. Čekal nás víkend plný hokeje a dramatických momentů!
-        </p>
-
-        <h3 class="text-2xl font-bold text-gray-900 mt-8 mb-4">🎯 Pátek 29.8. - Zahájení turnaje</h3>
-        
-        <p>
-          Turnaj jsme zahajovali večerním zápasem proti <strong>Alpha Team B</strong>, kde dostal první příležitost brankář <strong>Jiří Morávek</strong>, který s námi začal chodit na tréninkové ledy už v sezóně 2024/2025.
-        </p>
-
-        <div class="bg-white rounded-lg p-4 border border-gray-200 my-4">
-          <h5 class="font-bold text-gray-900 mb-3">📋 Sestava na první zápas</h5>
-          <div class="grid md:grid-cols-2 gap-4">
-            <div>
-              <p class="font-semibold text-red-600 mb-2">🥅 Brankář:</p>
-              <ul class="text-sm space-y-1">
-                <li>• <strong>Jiří Morávek</strong> (debut na turnaji!)</li>
-              </ul>
+      <div class="space-y-6">
+        <!-- Hero sekce s gradientem -->
+        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-red-600 via-red-700 to-gray-900 p-8 text-white shadow-2xl">
+          <div class="absolute inset-0 bg-black/20"></div>
+          <div class="relative z-10">
+            <div class="flex items-center gap-2 mb-4">
+              <span class="px-3 py-1 bg-white/20 backdrop-blur rounded-full text-sm font-bold">29.-31. srpna 2025</span>
+              <span class="px-3 py-1 bg-yellow-500/20 backdrop-blur rounded-full text-sm font-bold">🏟️ Zimní stadion Litvínov</span>
             </div>
-            <div>
-              <p class="font-semibold text-red-600 mb-2">🛡️ Obránci:</p>
-              <ul class="text-sm space-y-1">
-                <li>• <a href="/profil/belinger-jindrich" class="text-amber-400 hover:text-amber-300 underline">Jindřich Belinger</a></li>
-                <li>• <a href="/profil/belinger-jiri" class="text-amber-400 hover:text-amber-300 underline">Jiří Belinger</a></li>
-                <li>• <a href="/profil/kocourek-ondrej" class="text-amber-400 hover:text-amber-300 underline">Ondřej Kocourek</a></li>
-                <li>• <a href="/profil/salanda-jiri" class="text-amber-400 hover:text-amber-300 underline">Jiří Šalanda</a> <span class="text-xs text-blue-600">(překvapivě na obraně!)</span></li>
-              </ul>
+            <h1 class="text-4xl md:text-5xl font-black mb-4">HH Cup Litvínov 2025</h1>
+            <p class="text-xl text-white/90 mb-6">Mezinárodní hokejový turnaj</p>
+            
+            <!-- Rychlý přehled -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div class="bg-white/10 backdrop-blur rounded-xl p-4 text-center">
+                <div class="text-3xl font-black">4</div>
+                <div class="text-sm text-white/70">týmy</div>
+              </div>
+              <div class="bg-white/10 backdrop-blur rounded-xl p-4 text-center">
+                <div class="text-3xl font-black">10</div>
+                <div class="text-sm text-white/70">zápasů</div>
+              </div>
+              <div class="bg-white/10 backdrop-blur rounded-xl p-4 text-center">
+                <div class="text-3xl font-black">3</div>
+                <div class="text-sm text-white/70">dny</div>
+              </div>
+              <div class="bg-white/10 backdrop-blur rounded-xl p-4 text-center border-2 border-white/30">
+                <div class="text-3xl font-black">4.</div>
+                <div class="text-sm text-white/70">místo</div>
+              </div>
             </div>
           </div>
-          <p class="text-sm text-gray-600 mt-3">
-            Trochu překvapivě na obraně nastoupil <strong>Jiří Šalanda</strong>, který normálně hraje v útoku, ale pro nedostatek obránců byl vybrán na obranu. 😊
-          </p>
         </div>
-        
-        <div class="bg-red-50 border-l-4 border-red-600 p-4 my-4">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="font-semibold">
-                <a href="/turnaje/hobby-cup-litvinov-2025/zapas-1" class="text-blue-600 hover:text-blue-800 underline">
-                  1. zápas: Lancers vs Alpha Team B - <span class="text-red-600">5:7</span>
-                </a>
+
+        <!-- Účastníci turnaje -->
+        <div class="bg-gradient-to-r from-gray-50 to-white rounded-2xl p-6 shadow-lg">
+          <h3 class="text-2xl font-black text-gray-900 mb-6 flex items-center gap-3">
+            <span class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center text-white">🏒</span>
+            Účastníci turnaje
+          </h3>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-white rounded-xl p-4 shadow-md hover:shadow-xl transition-all text-center group">
+              <img src="/images/loga/lancers-logo.png" alt="HC Litvínov Lancers" class="w-28 h-28 mx-auto mb-3 group-hover:scale-110 transition-transform" />
+              <div class="font-bold text-red-600">HC Litvínov Lancers</div>
+              <div class="text-sm text-gray-500">🇨🇿 Domácí tým</div>
+            </div>
+            <div class="bg-white rounded-xl p-4 shadow-md hover:shadow-xl transition-all text-center group">
+              <img src="/images/loga/AlphaA.png" alt="Alpha Team A" class="w-16 h-16 mx-auto mb-3 group-hover:scale-110 transition-transform" />
+              <div class="font-bold">Alpha Team A</div>
+              <div class="text-sm text-gray-500">🇩🇪 Berlín</div>
+            </div>
+            <div class="bg-white rounded-xl p-4 shadow-md hover:shadow-xl transition-all text-center group">
+              <img src="/images/loga/AlphaB.png" alt="Alpha Team B" class="w-16 h-16 mx-auto mb-3 group-hover:scale-110 transition-transform" />
+              <div class="font-bold">Alpha Team B</div>
+              <div class="text-sm text-gray-500">🇩🇪 Berlín</div>
+            </div>
+            <div class="bg-white rounded-xl p-4 shadow-md hover:shadow-xl transition-all text-center group">
+              <img src="/images/loga/Berlin.png" alt="Berlin All Stars" class="w-16 h-16 mx-auto mb-3 group-hover:scale-110 transition-transform" />
+              <div class="font-bold">Berlin All Stars</div>
+              <div class="text-sm text-gray-500">🇩🇪 Berlín</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Timeline turnaje -->
+        <div class="relative">
+          <div class="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-red-600 to-gray-300"></div>
+          
+          <!-- PÁTEK -->
+          <div class="relative mb-12">
+            <div class="absolute left-6 w-5 h-5 bg-red-600 rounded-full border-4 border-white shadow-lg"></div>
+            <div class="ml-16">
+              <div class="flex items-center gap-3 mb-4">
+                <span class="text-sm font-bold text-white bg-blue-600 px-3 py-1 rounded-full">PÁTEK 29.8.</span>
+                <h3 class="text-2xl font-black text-gray-900">Zahájení turnaje</h3>
+              </div>
+              
+              <p class="text-gray-600 mb-4">
+                Turnaj jsme zahajovali večerním zápasem proti <strong>Alpha Team B</strong>, kde dostal první příležitost brankář <strong>Jiří Morávek</strong>.
               </p>
-              <p class="text-sm text-gray-600 mt-1">Zápas jsme začali obdrženým zbytečným gólem a celkově jsme půl zápasu nehráli to, co bychom měli. Začali jsme hrát až v druhé půlce, ale to už bylo pozdě. V kabině převládal názor, že jsme si zápas prohráli hned na začátku.</p>
-            </div>
-          </div>
-        </div>
 
-        <p>Paralelně s naším zápasem se odehrál druhý páteční zápas:</p>
+              <!-- Sestava -->
+              <div class="bg-gray-50 rounded-xl p-4 mb-4">
+                <h5 class="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                  <span class="text-red-600">📋</span> Základní sestava
+                </h5>
+                <div class="grid md:grid-cols-3 gap-3 text-sm">
+                  <div>
+                    <span class="font-semibold text-gray-700">🥅 Brankář:</span>
+                    <div class="mt-1">Jiří Morávek</div>
+                  </div>
+                  <div>
+                    <span class="font-semibold text-gray-700">🛡️ Obránci:</span>
+                    <div class="mt-1">Bratři Belingerové, Kocourek, Šalanda</div>
+                  </div>
+                  <div>
+                    <span class="font-semibold text-gray-700">⚡ Útočníci:</span>
+                    <div class="mt-1">Matějovič, Materna, Švarc, Toman, Černý</div>
+                  </div>
+                </div>
+              </div>
 
-        <div class="bg-gray-50 border-l-4 border-gray-400 p-4 my-4">
-          <p class="font-semibold">
-            <a href="/turnaje/hobby-cup-litvinov-2025/zapas-2" class="text-blue-600 hover:text-blue-800 underline">
-              Alpha Team A vs Berlin All Stars - <span class="text-gray-600">2:0</span>
-            </a>
-          </p>
-        </div>
-
-        <h3 class="text-2xl font-bold text-gray-900 mt-8 mb-4">⚔️ Sobota 30.8. - Boje ve skupině</h3>
-
-        <p>
-          Druhý den pokračoval turnaj dalšími zápasy ve skupině, ale museli jsme se obejít bez <strong>Vaška Materny</strong>, který musel na šichtu. Výborně ho ale kvalitativně nahradil <strong>Michal Klečka</strong>, i když byl umístěn na obranu.
-        </p>
-
-        <div class="bg-blue-50 rounded-lg p-4 my-6">
-          <h4 class="font-semibold text-blue-900 mb-3">🔄 Změny v sestavě:</h4>
-          <ul class="space-y-2 text-sm">
-            <li class="flex items-center gap-2">
-              <span class="text-red-600">➖</span>
-              <strong>Václav Materna</strong> (pracovní povinnosti)
-            </li>
-            <li class="flex items-center gap-2">
-              <span class="text-green-600">➕</span>
-              <strong>Michal Klečka</strong> (obránce)
-            </li>
-            <li class="flex items-center gap-2">
-              <span class="text-green-600">➕</span>
-              <strong>Tomáš Kodrle</strong> (brankář - zapůjčen od North Blades)
-            </li>
-          </ul>
-          <p class="text-xs text-blue-600 mt-3 italic">
-            Tomáše nám dohodili North Blades, takže jim patří díky, že díky nim pro nás neskončil turnaj blamáží a pomohli nám do brány sehnat brankáře v době, kdy naši brankáři jsou zranění nebo v práci!
-          </p>
-        </div>
-
-        <div class="bg-green-50 border-l-4 border-green-600 p-4 my-4">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="font-semibold">
-                <a href="/turnaje/hobby-cup-litvinov-2025/zapas-3" class="text-blue-600 hover:text-blue-800 underline">
-                  2. zápas: Lancers vs Alpha Team A - <span class="text-green-600">5:1</span> ✅
+              <!-- Výsledky pátku -->
+              <div class="space-y-3">
+                <a href="/turnaje/hobby-cup-litvinov-2025/zapas-1" class="block bg-white rounded-xl p-4 shadow-md hover:shadow-xl transition-all border-l-4 border-red-600">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                      <img src="/images/loga/lancers-logo.png" alt="Lancers" class="w-12 h-12" />
+                      <div>
+                        <div class="font-bold">HC Litvínov Lancers</div>
+                        <div class="text-sm text-gray-500">20:30</div>
+                      </div>
+                    </div>
+                    <div class="text-3xl font-black text-red-600">5:7</div>
+                    <div class="flex items-center gap-4">
+                      <div class="text-right">
+                        <div class="font-bold">Alpha Team B</div>
+                        <div class="text-sm text-gray-500">Porážka</div>
+                      </div>
+                      <img src="/images/loga/AlphaB.png" alt="Alpha B" class="w-8 h-8" />
+                    </div>
+                  </div>
                 </a>
-              </p>
-              <p class="text-sm text-gray-600 mt-1">V zápase řádil <strong>Václav Matějovič</strong>, který si připsal 4 góly! Také výborný výkon ukázal další debutant v naší bráně <strong>Tomáš Kodrle</strong>.</p>
+
+                <a href="/turnaje/hobby-cup-litvinov-2025/zapas-2" class="block bg-white rounded-xl p-4 shadow-md hover:shadow-xl transition-all">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                      <img src="/images/loga/AlphaA.png" alt="Alpha A" class="w-8 h-8" />
+                      <div>
+                        <div class="font-bold">Alpha Team A</div>
+                        <div class="text-sm text-gray-500">21:30</div>
+                      </div>
+                    </div>
+                    <div class="text-3xl font-black text-gray-600">2:0</div>
+                    <div class="flex items-center gap-4">
+                      <div class="text-right">
+                        <div class="font-bold">Berlin All Stars</div>
+                      </div>
+                      <img src="/images/loga/Berlin.png" alt="Berlin" class="w-8 h-8" />
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- SOBOTA -->
+          <div class="relative mb-12">
+            <div class="absolute left-6 w-5 h-5 bg-green-600 rounded-full border-4 border-white shadow-lg"></div>
+            <div class="ml-16">
+              <div class="flex items-center gap-3 mb-4">
+                <span class="text-sm font-bold text-white bg-green-600 px-3 py-1 rounded-full">SOBOTA 30.8.</span>
+                <h3 class="text-2xl font-black text-gray-900">Skupinové boje & Semifinále</h3>
+              </div>
+
+              <!-- Změny v sestavě -->
+              <div class="bg-blue-50 border-l-4 border-blue-600 rounded-r-xl p-4 mb-4">
+                <div class="font-semibold text-blue-900 mb-2">🔄 Změny v sestavě</div>
+                <ul class="text-sm space-y-1 text-blue-800">
+                  <li>➖ Václav Materna (pracovní povinnosti)</li>
+                  <li>➕ Michal Klečka (obránce)</li>
+                  <li>➕ Tomáš Kodrle (brankář - zapůjčen od North Blades)</li>
+                </ul>
+              </div>
+
+              <!-- Hvězda dne -->
+              <div class="bg-gradient-to-r from-yellow-50 to-yellow-100 rounded-xl p-4 mb-4 border border-yellow-300">
+                <div class="flex items-center gap-4">
+                  <div class="text-5xl">⭐</div>
+                  <div>
+                    <div class="font-black text-xl text-gray-900">Václav Matějovič</div>
+                    <div class="text-yellow-700 font-semibold">4 góly proti Alpha Team A!</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Skupinové zápasy -->
+              <h4 class="font-bold text-gray-700 mb-3">Základní skupina:</h4>
+              <div class="space-y-3 mb-6">
+                <a href="/turnaje/hobby-cup-litvinov-2025/zapas-3" class="block bg-white rounded-xl p-4 shadow-md hover:shadow-xl transition-all border-l-4 border-green-600">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                      <img src="/images/loga/lancers-logo.png" alt="Lancers" class="w-12 h-12" />
+                      <div>
+                        <div class="font-bold">HC Litvínov Lancers</div>
+                        <div class="text-sm text-gray-500">08:00</div>
+                      </div>
+                    </div>
+                    <div class="text-3xl font-black text-green-600">5:1</div>
+                    <div class="flex items-center gap-4">
+                      <div class="text-right">
+                        <div class="font-bold">Alpha Team A</div>
+                        <div class="text-sm text-green-600 font-semibold">✓ Výhra</div>
+                      </div>
+                      <img src="/images/loga/AlphaA.png" alt="Alpha A" class="w-8 h-8" />
+                    </div>
+                  </div>
+                </a>
+
+                <a href="/turnaje/hobby-cup-litvinov-2025/zapas-4" class="block bg-white rounded-xl p-4 shadow-md hover:shadow-xl transition-all">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                      <img src="/images/loga/Berlin.png" alt="Berlin" class="w-8 h-8" />
+                      <div>
+                        <div class="font-bold">Berlin All Stars</div>
+                        <div class="text-sm text-gray-500">09:00</div>
+                      </div>
+                    </div>
+                    <div class="text-3xl font-black text-gray-600">2:3</div>
+                    <div class="flex items-center gap-4">
+                      <div class="text-right">
+                        <div class="font-bold">Alpha Team B</div>
+                      </div>
+                      <img src="/images/loga/AlphaB.png" alt="Alpha B" class="w-8 h-8" />
+                    </div>
+                  </div>
+                </a>
+
+                <a href="/turnaje/hobby-cup-litvinov-2025/zapas-5" class="block bg-white rounded-xl p-4 shadow-md hover:shadow-xl transition-all border-l-4 border-green-600">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                      <img src="/images/loga/Berlin.png" alt="Berlin" class="w-8 h-8" />
+                      <div>
+                        <div class="font-bold">Berlin All Stars</div>
+                        <div class="text-sm text-gray-500">10:00</div>
+                      </div>
+                    </div>
+                    <div class="flex flex-col items-center">
+                      <div class="text-3xl font-black text-green-600">4:5</div>
+                      <div class="text-xs text-gray-500">po prodloužení</div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                      <div class="text-right">
+                        <div class="font-bold">HC Litvínov Lancers</div>
+                        <div class="text-sm text-green-600 font-semibold">✓ Výhra</div>
+                      </div>
+                      <img src="/images/loga/lancers-logo.png" alt="Lancers" class="w-12 h-12" />
+                    </div>
+                  </div>
+                </a>
+
+                <a href="/turnaje/hobby-cup-litvinov-2025/zapas-6" class="block bg-white rounded-xl p-4 shadow-md hover:shadow-xl transition-all">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                      <img src="/images/loga/AlphaA.png" alt="Alpha A" class="w-8 h-8" />
+                      <div>
+                        <div class="font-bold">Alpha Team A</div>
+                        <div class="text-sm text-gray-500">14:00</div>
+                      </div>
+                    </div>
+                    <div class="text-3xl font-black text-gray-600">6:5</div>
+                    <div class="flex items-center gap-4">
+                      <div class="text-right">
+                        <div class="font-bold">Alpha Team B</div>
+                      </div>
+                      <img src="/images/loga/AlphaB.png" alt="Alpha B" class="w-8 h-8" />
+                    </div>
+                  </div>
+                </a>
+              </div>
+
+              <!-- Semifinále -->
+              <h4 class="font-bold text-gray-700 mb-3">Semifinále:</h4>
+              <div class="space-y-3">
+                <a href="/turnaje/hobby-cup-litvinov-2025/zapas-7" class="block bg-gradient-to-r from-purple-50 to-white rounded-xl p-4 shadow-md hover:shadow-xl transition-all">
+                  <div class="text-center text-purple-600 font-bold text-sm mb-2">SEMIFINÁLE 1</div>
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                      <img src="/images/loga/AlphaA.png" alt="Alpha A" class="w-8 h-8" />
+                      <div class="font-bold">Alpha Team A</div>
+                    </div>
+                    <div class="text-3xl font-black text-gray-600">2:5</div>
+                    <div class="flex items-center gap-4">
+                      <div class="font-bold">Berlin All Stars</div>
+                      <img src="/images/loga/Berlin.png" alt="Berlin" class="w-8 h-8" />
+                    </div>
+                  </div>
+                </a>
+
+                <a href="/turnaje/hobby-cup-litvinov-2025/zapas-8" class="block bg-gradient-to-r from-purple-50 to-white rounded-xl p-4 shadow-md hover:shadow-xl transition-all border-2 border-red-300">
+                  <div class="text-center text-purple-600 font-bold text-sm mb-2">SEMIFINÁLE 2</div>
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                      <img src="/images/loga/AlphaB.png" alt="Alpha B" class="w-8 h-8" />
+                      <div class="font-bold">Alpha Team B</div>
+                    </div>
+                    <div class="text-3xl font-black text-red-600">4:3</div>
+                    <div class="flex items-center gap-4">
+                      <div class="font-bold">HC Litvínov Lancers</div>
+                      <img src="/images/loga/lancers-logo.png" alt="Lancers" class="w-12 h-12" />
+                    </div>
+                  </div>
+                  <div class="text-center text-red-600 text-sm mt-2">❌ Porážka - postup do zápasu o 3. místo</div>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- NEDĚLE -->
+          <div class="relative">
+            <div class="absolute left-6 w-5 h-5 bg-amber-600 rounded-full border-4 border-white shadow-lg"></div>
+            <div class="ml-16">
+              <div class="flex items-center gap-3 mb-4">
+                <span class="text-sm font-bold text-white bg-amber-600 px-3 py-1 rounded-full">NEDĚLE 31.8.</span>
+                <h3 class="text-2xl font-black text-gray-900">Boje o umístění</h3>
+              </div>
+
+              <div class="space-y-3">
+                <a href="/turnaje/hobby-cup-litvinov-2025/zapas-9" class="block bg-gradient-to-r from-amber-50 to-white rounded-xl p-4 shadow-md hover:shadow-xl transition-all border-2 border-amber-400">
+                  <div class="text-center text-amber-600 font-bold text-sm mb-2">🥉 O 3. MÍSTO</div>
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                      <img src="/images/loga/lancers-logo.png" alt="Lancers" class="w-12 h-12" />
+                      <div class="font-bold">HC Litvínov Lancers</div>
+                    </div>
+                    <div class="flex flex-col items-center">
+                      <div class="text-3xl font-black text-red-600">4:5</div>
+                      <div class="text-xs text-gray-500">po nájezdech</div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                      <div class="font-bold">Alpha Team A</div>
+                      <img src="/images/loga/AlphaA.png" alt="Alpha A" class="w-8 h-8" />
+                    </div>
+                  </div>
+                  <div class="mt-3 bg-red-50 rounded-lg p-3 text-sm">
+                    <div class="font-semibold text-red-900 mb-1">📊 Průběh zápasu:</div>
+                    <div class="text-red-700">První gól ✓ → Soupeř na 3:1 → Vyrovnání 4:4 → Nájezdy 2:2 → Náhlá smrt ✗</div>
+                  </div>
+                </a>
+
+                <a href="/turnaje/hobby-cup-litvinov-2025/zapas-10" class="block bg-gradient-to-r from-yellow-100 to-yellow-50 rounded-xl p-4 shadow-lg hover:shadow-xl transition-all border-2 border-yellow-500">
+                  <div class="text-center text-yellow-700 font-black text-sm mb-2">🏆 FINÁLE</div>
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                      <img src="/images/loga/Berlin.png" alt="Berlin" class="w-8 h-8" />
+                      <div class="font-bold">Berlin All Stars</div>
+                    </div>
+                    <div class="text-3xl font-black text-gray-700">1:2</div>
+                    <div class="flex items-center gap-4">
+                      <div class="font-bold">Alpha Team B</div>
+                      <img src="/images/loga/AlphaB.png" alt="Alpha B" class="w-8 h-8" />
+                    </div>
+                  </div>
+                  <div class="text-center text-yellow-700 font-semibold text-sm mt-2">🥇 Alpha Team B vítězem turnaje!</div>
+                </a>
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="bg-yellow-50 border-l-4 border-yellow-600 p-4 my-4">
-          <h5 class="font-bold text-yellow-900 mb-2">⭐ Hvězda zápasu</h5>
+        <!-- Konečné pořadí -->
+        <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-8 text-white shadow-2xl">
+          <h3 class="text-3xl font-black mb-8 text-center">🏆 Konečné pořadí</h3>
+          
+          <div class="grid md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-xl p-6 text-center transform hover:scale-105 transition-all">
+              <div class="text-4xl mb-2">🥇</div>
+              <img src="/images/loga/AlphaB.png" alt="Alpha Team B" class="w-16 h-16 mx-auto mb-2" />
+              <div class="font-black text-lg">Alpha Team B</div>
+              <div class="text-sm opacity-90">🇩🇪 Berlín</div>
+            </div>
+            
+            <div class="bg-gradient-to-br from-gray-300 to-gray-500 rounded-xl p-6 text-center transform hover:scale-105 transition-all">
+              <div class="text-4xl mb-2">🥈</div>
+              <img src="/images/loga/Berlin.png" alt="Berlin All Stars" class="w-16 h-16 mx-auto mb-2" />
+              <div class="font-black text-lg">Berlin All Stars</div>
+              <div class="text-sm opacity-90">🇩🇪 Berlín</div>
+            </div>
+            
+            <div class="bg-gradient-to-br from-orange-600 to-orange-700 rounded-xl p-6 text-center transform hover:scale-105 transition-all">
+              <div class="text-4xl mb-2">🥉</div>
+              <img src="/images/loga/AlphaA.png" alt="Alpha Team A" class="w-16 h-16 mx-auto mb-2" />
+              <div class="font-black text-lg">Alpha Team A</div>
+              <div class="text-sm opacity-90">🇩🇪 Berlín</div>
+            </div>
+            
+            <div class="bg-gradient-to-br from-red-600 to-red-700 rounded-xl p-6 text-center transform hover:scale-105 transition-all border-2 border-white/30">
+              <div class="text-4xl mb-2">4️⃣</div>
+              <img src="/images/loga/lancers-logo.png" alt="HC Litvínov Lancers" class="w-24 h-24 mx-auto mb-2" />
+              <div class="font-black text-lg">HC Litvínov Lancers</div>
+              <div class="text-sm opacity-90">🇨🇿 Domácí tým</div>
+            </div>
+          </div>
+
+          <!-- Naše statistiky -->
+          <div class="bg-white/10 backdrop-blur rounded-xl p-6">
+            <h4 class="text-xl font-bold mb-4">📊 Naše výsledky</h4>
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <div class="font-semibold mb-2">Skupinová fáze:</div>
+                <ul class="space-y-1 text-sm">
+                  <li class="flex justify-between">
+                    <span>vs Alpha Team B</span>
+                    <span class="text-red-400">5:7 ❌</span>
+                  </li>
+                  <li class="flex justify-between">
+                    <span>vs Alpha Team A</span>
+                    <span class="text-green-400">5:1 ✅</span>
+                  </li>
+                  <li class="flex justify-between">
+                    <span>vs Berlin All Stars</span>
+                    <span class="text-green-400">5:4 OT ✅</span>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <div class="font-semibold mb-2">Play-off:</div>
+                <ul class="space-y-1 text-sm">
+                  <li class="flex justify-between">
+                    <span>Semifinále vs Alpha Team B</span>
+                    <span class="text-red-400">3:4 ❌</span>
+                  </li>
+                  <li class="flex justify-between">
+                    <span>O 3. místo vs Alpha Team A</span>
+                    <span class="text-red-400">4:5 SO ❌</span>
+                  </li>
+                </ul>
+                <div class="mt-3 pt-3 border-t border-white/20">
+                  <div class="flex justify-between font-bold">
+                    <span>Celková bilance:</span>
+                    <span>2 výhry - 3 porážky</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Co dál? -->
+        <div class="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-6 text-white shadow-xl">
           <div class="flex items-center gap-4">
-            <div class="text-4xl">🎯</div>
+            <div class="text-5xl">🤝</div>
             <div>
-              <p class="font-bold text-lg">Václav Matějovič</p>
-              <p class="text-yellow-800">4 góly v jednom zápase!</p>
-            </div>
-          </div>
-        </div>
-
-        <p>Další skupinové zápasy v sobotu:</p>
-
-        <div class="bg-gray-50 border-l-4 border-gray-400 p-4 my-4">
-          <p class="font-semibold">
-            <a href="/turnaje/hobby-cup-litvinov-2025/zapas-4" class="text-blue-600 hover:text-blue-800 underline">
-              Berlin All Stars vs Alpha Team B - <span class="text-gray-600">2:3</span>
-            </a>
-          </p>
-        </div>
-
-        <p>
-          V posledním zápase skupiny nás čekal tým <strong>Berlin All Stars</strong>, který v turnaji měl jen porážky.
-        </p>
-
-        <div class="bg-green-50 border-l-4 border-green-600 p-4 my-4">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="font-semibold">
-                <a href="/turnaje/hobby-cup-litvinov-2025/zapas-5" class="text-blue-600 hover:text-blue-800 underline">
-                  3. zápas: Berlin All Stars vs Lancers - <span class="text-green-600">4:5 po prodloužení</span> 🎯
-                </a>
+              <h4 class="text-xl font-bold mb-2">Příští zápas díky novým kontaktům!</h4>
+              <p>
+                Díky navázaným kontaktům z turnaje odehrajeme <strong>13. září od 16:00</strong> v Litvínově 
+                přátelský zápas s týmem <strong>Berlin All Stars</strong>! Přijďte nás podpořit! 🏒
               </p>
-              <p class="text-sm text-gray-600 mt-1">Zápas byl pěkně dramatický! Po celý zápas nevedl žádný tým o více než 1 gól. V závěru za stavu 4:4 jsme ubránili po dvou našich vyloučeních. Zápas došel do prodloužení, které jsme zvládli lépe a za vítězství jsme brali 2 body!</p>
             </div>
           </div>
         </div>
 
-        <div class="bg-gray-50 border-l-4 border-gray-400 p-4 my-4">
-          <p class="font-semibold">
-            <a href="/turnaje/hobby-cup-litvinov-2025/zapas-6" class="text-blue-600 hover:text-blue-800 underline">
-              Alpha Team A vs Alpha Team B - <span class="text-gray-600">6:5</span>
-            </a>
-          </p>
-        </div>
-
-        <h3 class="text-2xl font-bold text-gray-900 mt-8 mb-4">🏆 Semifinále</h3>
-
-        <p>
-          Na závěr sobotního dne následovalo semifinále. První semifinále mezi Alpha Team A a Berlin All Stars skončilo překvapivým vítězstvím Berlin All Stars 2:5. My jsme vyfasovali tým z našeho prvního zápasu - <strong>Alpha Team B</strong>.
-        </p>
-
-        <div class="bg-gray-50 border-l-4 border-gray-400 p-4 my-4">
-          <p class="font-semibold">
-            <a href="/turnaje/hobby-cup-litvinov-2025/zapas-7" class="text-blue-600 hover:text-blue-800 underline">
-              Semifinále 1: Alpha Team A vs Berlin All Stars - <span class="text-gray-600">2:5</span>
-            </a>
-          </p>
-        </div>
-
-        <div class="bg-red-50 border-l-4 border-red-600 p-4 my-4">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="font-semibold">
-                <a href="/turnaje/hobby-cup-litvinov-2025/zapas-8" class="text-blue-600 hover:text-blue-800 underline">
-                  Semifinále 2: Alpha Team B vs Lancers - <span class="text-red-600">4:3</span>
-                </a>
-              </p>
-              <p class="text-sm text-gray-600 mt-1">Zápas byl opět velmi vyrovnaný, ale i přes velmi bojovný výkon jsme nedokázali uspět. Prohra v semifinále neznamenala vyřazení z turnaje, ale hodila nás to do zápasu o třetí místo.</p>
-            </div>
-          </div>
-        </div>
-
-        <h3 class="text-2xl font-bold text-gray-900 mt-8 mb-4">🥉 Neděle 31.8. - Boj o bronz</h3>
-
-        <p>
-          Zápas o třetí místo proti týmu <strong>Alpha Team A</strong> se odehrál v neděli už od <strong>9:00 hodin</strong>.
-        </p>
-
-        <div class="bg-amber-50 border-l-4 border-amber-600 p-4 my-4">
-          <div>
-            <p class="font-semibold mb-2">
-              <a href="/turnaje/hobby-cup-litvinov-2025/zapas-9" class="text-blue-600 hover:text-blue-800 underline">
-                Zápas o 3. místo: Lancers vs Alpha Team A - <span class="text-red-600">4:5 po nájezdech</span>
-              </a>
-            </p>
-            <div class="space-y-2 text-sm text-gray-700">
-              <p>📊 <strong>Průběh zápasu:</strong></p>
-              <ul class="ml-4 space-y-1">
-                <li>• Vstřelili jsme první gól ✅</li>
-                <li>• Soupeř odskočil na 3:1 ⚠️</li>
-                <li>• Dokázali jsme srovnat na 4:4! 💪</li>
-                <li>• Došlo na nájezdy 🎯</li>
-              </ul>
-              <p class="mt-3 font-semibold">🎯 <strong>Nájezdy:</strong></p>
-              <ul class="ml-4 space-y-1">
-                <li>• Po třech nájezdech: 2:2</li>
-                <li>• Náhlá smrt: soupeř proměnil, my ne 😔</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <p>Finále turnaje:</p>
-
-        <div class="bg-yellow-50 border-l-4 border-yellow-600 p-4 my-4">
-          <p class="font-semibold">
-            <a href="/turnaje/hobby-cup-litvinov-2025/zapas-10" class="text-blue-600 hover:text-blue-800 underline">
-              Finále: Berlin All Stars vs Alpha Team B - <span class="text-yellow-600">1:2</span> 🏆
-            </a>
-          </p>
-          <p class="text-sm text-gray-600 mt-1">Alpha Team B se stal vítězem turnaje!</p>
-        </div>
-
-        <h3 class="text-2xl font-bold text-gray-900 mt-8 mb-4">📊 Konečné pořadí turnaje</h3>
-
-        <div class="bg-white rounded-lg shadow-lg p-4 my-6">
-          <table class="w-full">
-            <thead>
-              <tr class="border-b-2 border-gray-300">
-                <th class="text-left p-2 font-bold text-gray-800">Pořadí</th>
-                <th class="text-left p-2 font-bold text-gray-800">Tým</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="border-b border-gray-200">
-                <td class="p-2">🥇 1. místo</td>
-                <td class="p-2 font-semibold">Alpha Team B 🇩🇪</td>
-              </tr>
-              <tr class="border-b border-gray-200">
-                <td class="p-2">🥈 2. místo</td>
-                <td class="p-2 font-semibold">Berlin All Stars 🇩🇪</td>
-              </tr>
-              <tr class="border-b border-gray-200">
-                <td class="p-2">🥉 3. místo</td>
-                <td class="p-2 font-semibold">Alpha Team A 🇩🇪</td>
-              </tr>
-              <tr class="bg-red-50">
-                <td class="p-2 font-bold text-red-600">4. místo</td>
-                <td class="p-2 font-bold">HC Litvínov Lancers 🇨🇿</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <h3 class="text-xl font-bold text-gray-900 mt-8 mb-4">💪 Shrnutí turnaje</h3>
-
-        <p>
-          Samozřejmě došlo ke zklamání z konečného 4. místa, ale turnaj se hrál v <strong>přátelském duchu</strong>, který přinesl mnoho vyrovnaných zápasů. I přes tento neúspěch jsme si turnaj užili a hlavně jsme poznali nové týmy a navázali nové kontakty!
-        </p>
-
-        <div class="bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl p-6 mt-6">
-          <h4 class="text-lg font-bold mb-3">📊 Naše výsledky na turnaji:</h4>
-          <ul class="space-y-2">
-            <li class="flex justify-between items-center py-1 border-b border-white/20">
-              <span>Alpha Team B (pátek)</span>
-              <span class="font-bold">5:7 ❌</span>
-            </li>
-            <li class="flex justify-between items-center py-1 border-b border-white/20">
-              <span>Alpha Team A (sobota)</span>
-              <span class="font-bold">5:1 ✅</span>
-            </li>
-            <li class="flex justify-between items-center py-1 border-b border-white/20">
-              <span>Berlin All Stars (sobota)</span>
-              <span class="font-bold">5:4 po prodloužení ✅</span>
-            </li>
-            <li class="flex justify-between items-center py-1 border-b border-white/20">
-              <span>Alpha Team B (semifinále)</span>
-              <span class="font-bold">3:4 ❌</span>
-            </li>
-            <li class="flex justify-between items-center py-1">
-              <span>Alpha Team A (o 3. místo)</span>
-              <span class="font-bold">4:5 po nájezdech ❌</span>
-            </li>
-          </ul>
-          <div class="mt-4 pt-4 border-t border-white/30 text-center">
-            <p class="text-2xl font-bold">Konečné umístění: 4. místo</p>
-            <p class="text-sm mt-1 opacity-90">3 výhry, 3 prohry</p>
-          </div>
-        </div>
-
-        <div class="bg-blue-50 rounded-lg p-4 my-6">
-          <p class="font-semibold text-blue-900 mb-2">🤝 Co dál?</p>
-          <p class="text-blue-800 text-sm">
-            Díky novým kontaktům z turnaje odehrajeme <strong>13. září od 16:00</strong> v Litvínově přátelský zápas s týmem <strong>Berlin All Stars</strong>! Přijďte nás podpořit! 🏒
-          </p>
-        </div>
-
-        <div class="text-center mt-8">
-          <a href="/turnaje/hobby-cup-litvinov-2025" class="inline-flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-bold">
-            Zobrazit kompletní statistiky turnaje
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <!-- CTA tlačítko -->
+        <div class="text-center">
+          <a href="/turnaje/hobby-cup-litvinov-2025" class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl hover:from-red-700 hover:to-red-800 transition-all font-bold text-lg shadow-xl hover:shadow-2xl transform hover:scale-105">
+            <span>Zobrazit kompletní statistiky turnaje</span>
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
             </svg>
           </a>
         </div>
 
-        <p class="text-center text-gray-600 italic mt-6">
-          Děkujeme všem hráčům za bojovnost a North Blades za zapůjčení brankáře! 💪❤️
-        </p>
+        <!-- Poděkování -->
+        <div class="bg-gradient-to-r from-gray-50 to-white rounded-xl p-6 text-center border-2 border-gray-200">
+          <p class="text-gray-600 text-lg">
+            <span class="font-bold text-gray-900">Děkujeme</span> všem hráčům za bojovnost 
+            a týmu <span class="font-bold text-blue-600">North Blades</span> za zapůjčení brankáře! 💪❤️
+          </p>
+        </div>
       </div>
     `,
     allowComments: true,
