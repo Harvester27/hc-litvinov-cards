@@ -26,18 +26,18 @@ export const articles = [
           <p class="text-gray-600">
             <strong>Kdy:</strong> 29.-31. srpna 2025<br/>
             <strong>Kde:</strong> Zimní stadion Litvínov 🏟️<br/>
-            <strong>Umístění:</strong> <span class="text-2xl font-bold text-amber-600">4. místo</span> 🏅
+            <strong>Umístění:</strong> <span class="text-2xl font-bold text-gray-700">4. místo</span>
           </p>
         </div>
         
         <p>
-          Na konci srpna jsme ve dnech <strong>29.-31. srpna</strong> hostili domácí turnaj, kterého se účastnily <strong>4 týmy</strong>. Tři týmy přijely z Berlína - <strong>Berlín All Stars</strong>, <strong>Alpha Team A</strong> a <strong>Alpha Team B</strong> - a samozřejmě domácí <strong>Litvínov Lancers</strong>. Čekal nás víkend plný hokeje a dramatických momentů!
+          Na konci srpna jsme ve dnech <strong>29.-31. srpna</strong> hostili domácí turnaj, kterého se účastnily <strong>4 týmy</strong>. Tři týmy přijely z Berlína - <strong>Alpha Team A</strong>, <strong>Alpha Team B</strong> a <strong>Berlin All Stars</strong> - a samozřejmě domácí <strong>HC Litvínov Lancers</strong>. Čekal nás víkend plný hokeje a dramatických momentů!
         </p>
 
         <h3 class="text-2xl font-bold text-gray-900 mt-8 mb-4">🎯 Pátek 29.8. - Zahájení turnaje</h3>
         
         <p>
-          Turnaj jsme zahajovali zápasem proti <strong>Alpha Team B</strong>, kde dostal první příležitost brankář <strong>Jiří Morávek</strong>, který s námi začal chodit na tréninkové ledy už v sezóně 2024/2025. Do zápasu jsme nastoupili v sestavě:
+          Turnaj jsme zahajovali večerním zápasem proti <strong>Alpha Team B</strong>, kde dostal první příležitost brankář <strong>Jiří Morávek</strong>, který s námi začal chodit na tréninkové ledy už v sezóně 2024/2025.
         </p>
 
         <div class="bg-white rounded-lg p-4 border border-gray-200 my-4">
@@ -59,19 +59,32 @@ export const articles = [
               </ul>
             </div>
           </div>
+          <p class="text-sm text-gray-600 mt-3">
+            Trochu překvapivě na obraně nastoupil <strong>Jiří Šalanda</strong>, který normálně hraje v útoku, ale pro nedostatek obránců byl vybrán na obranu. 😊
+          </p>
         </div>
-
-        <p>
-          Trochu překvapivě na obraně nastoupil <strong>Jiří Šalanda</strong>, který normálně hraje v útoku, ale pro nedostatek obránců byl vybrán na obranu. 😊
-        </p>
         
         <div class="bg-red-50 border-l-4 border-red-600 p-4 my-4">
           <div class="flex items-center justify-between">
             <div>
-              <p class="font-semibold">1. zápas: Lancers vs Alpha Team B - <span class="text-red-600">5:7</span></p>
+              <p class="font-semibold">
+                <a href="/turnaje/hobby-cup-litvinov-2025/zapas-1" class="text-blue-600 hover:text-blue-800 underline">
+                  1. zápas: Lancers vs Alpha Team B - <span class="text-red-600">5:7</span>
+                </a>
+              </p>
               <p class="text-sm text-gray-600 mt-1">Zápas jsme začali obdrženým zbytečným gólem a celkově jsme půl zápasu nehráli to, co bychom měli. Začali jsme hrát až v druhé půlce, ale to už bylo pozdě. V kabině převládal názor, že jsme si zápas prohráli hned na začátku.</p>
             </div>
           </div>
+        </div>
+
+        <p>Paralelně s naším zápasem se odehrál druhý páteční zápas:</p>
+
+        <div class="bg-gray-50 border-l-4 border-gray-400 p-4 my-4">
+          <p class="font-semibold">
+            <a href="/turnaje/hobby-cup-litvinov-2025/zapas-2" class="text-blue-600 hover:text-blue-800 underline">
+              Alpha Team A vs Berlin All Stars - <span class="text-gray-600">2:0</span>
+            </a>
+          </p>
         </div>
 
         <h3 class="text-2xl font-bold text-gray-900 mt-8 mb-4">⚔️ Sobota 30.8. - Boje ve skupině</h3>
@@ -104,7 +117,11 @@ export const articles = [
         <div class="bg-green-50 border-l-4 border-green-600 p-4 my-4">
           <div class="flex items-center justify-between">
             <div>
-              <p class="font-semibold">2. zápas: Lancers vs Alpha Team A - <span class="text-green-600">5:1</span> ✅</p>
+              <p class="font-semibold">
+                <a href="/turnaje/hobby-cup-litvinov-2025/zapas-3" class="text-blue-600 hover:text-blue-800 underline">
+                  2. zápas: Lancers vs Alpha Team A - <span class="text-green-600">5:1</span> ✅
+                </a>
+              </p>
               <p class="text-sm text-gray-600 mt-1">V zápase řádil <strong>Václav Matějovič</strong>, který si připsal 4 góly! Také výborný výkon ukázal další debutant v naší bráně <strong>Tomáš Kodrle</strong>.</p>
             </div>
           </div>
@@ -121,29 +138,63 @@ export const articles = [
           </div>
         </div>
 
+        <p>Další skupinové zápasy v sobotu:</p>
+
+        <div class="bg-gray-50 border-l-4 border-gray-400 p-4 my-4">
+          <p class="font-semibold">
+            <a href="/turnaje/hobby-cup-litvinov-2025/zapas-4" class="text-blue-600 hover:text-blue-800 underline">
+              Berlin All Stars vs Alpha Team B - <span class="text-gray-600">2:3</span>
+            </a>
+          </p>
+        </div>
+
         <p>
-          V posledním zápase skupiny nás čekal tým <strong>Berlín All Stars</strong>, který v turnaji měl jen porážky.
+          V posledním zápase skupiny nás čekal tým <strong>Berlin All Stars</strong>, který v turnaji měl jen porážky.
         </p>
 
         <div class="bg-green-50 border-l-4 border-green-600 p-4 my-4">
           <div class="flex items-center justify-between">
             <div>
-              <p class="font-semibold">3. zápas: Lancers vs Berlín All Stars - <span class="text-green-600">Výhra po nájezdech</span> 🎯</p>
-              <p class="text-sm text-gray-600 mt-1">Zápas byl pěkně dramatický! Po celý zápas nevedl žádný tým o více než 1 gól. V závěru za stavu 4:4 jsme ubránili po dvou našich vyloučeních. Zápas došel na nájezdy, které jsme zvládli lépe a za vítězství po nájezdech jsme brali 2 body!</p>
+              <p class="font-semibold">
+                <a href="/turnaje/hobby-cup-litvinov-2025/zapas-5" class="text-blue-600 hover:text-blue-800 underline">
+                  3. zápas: Berlin All Stars vs Lancers - <span class="text-green-600">4:5 po prodloužení</span> 🎯
+                </a>
+              </p>
+              <p class="text-sm text-gray-600 mt-1">Zápas byl pěkně dramatický! Po celý zápas nevedl žádný tým o více než 1 gól. V závěru za stavu 4:4 jsme ubránili po dvou našich vyloučeních. Zápas došel do prodloužení, které jsme zvládli lépe a za vítězství jsme brali 2 body!</p>
             </div>
           </div>
+        </div>
+
+        <div class="bg-gray-50 border-l-4 border-gray-400 p-4 my-4">
+          <p class="font-semibold">
+            <a href="/turnaje/hobby-cup-litvinov-2025/zapas-6" class="text-blue-600 hover:text-blue-800 underline">
+              Alpha Team A vs Alpha Team B - <span class="text-gray-600">6:5</span>
+            </a>
+          </p>
         </div>
 
         <h3 class="text-2xl font-bold text-gray-900 mt-8 mb-4">🏆 Semifinále</h3>
 
         <p>
-          Na závěr sobotního dne následovalo semifinále, kde jsme vyfasovali tým z našeho prvního zápasu - <strong>Alpha Team B</strong>.
+          Na závěr sobotního dne následovalo semifinále. První semifinále mezi Alpha Team A a Berlin All Stars skončilo překvapivým vítězstvím Berlin All Stars 2:5. My jsme vyfasovali tým z našeho prvního zápasu - <strong>Alpha Team B</strong>.
         </p>
+
+        <div class="bg-gray-50 border-l-4 border-gray-400 p-4 my-4">
+          <p class="font-semibold">
+            <a href="/turnaje/hobby-cup-litvinov-2025/zapas-7" class="text-blue-600 hover:text-blue-800 underline">
+              Semifinále 1: Alpha Team A vs Berlin All Stars - <span class="text-gray-600">2:5</span>
+            </a>
+          </p>
+        </div>
 
         <div class="bg-red-50 border-l-4 border-red-600 p-4 my-4">
           <div class="flex items-center justify-between">
             <div>
-              <p class="font-semibold">Semifinále: Lancers vs Alpha Team B - <span class="text-red-600">3:4</span></p>
+              <p class="font-semibold">
+                <a href="/turnaje/hobby-cup-litvinov-2025/zapas-8" class="text-blue-600 hover:text-blue-800 underline">
+                  Semifinále 2: Alpha Team B vs Lancers - <span class="text-red-600">4:3</span>
+                </a>
+              </p>
               <p class="text-sm text-gray-600 mt-1">Zápas byl opět velmi vyrovnaný, ale i přes velmi bojovný výkon jsme nedokázali uspět. Prohra v semifinále neznamenala vyřazení z turnaje, ale hodila nás to do zápasu o třetí místo.</p>
             </div>
           </div>
@@ -157,7 +208,11 @@ export const articles = [
 
         <div class="bg-amber-50 border-l-4 border-amber-600 p-4 my-4">
           <div>
-            <p class="font-semibold mb-2">Zápas o 3. místo: Lancers vs Alpha Team A - <span class="text-red-600">4:5 po nájezdech</span></p>
+            <p class="font-semibold mb-2">
+              <a href="/turnaje/hobby-cup-litvinov-2025/zapas-9" class="text-blue-600 hover:text-blue-800 underline">
+                Zápas o 3. místo: Lancers vs Alpha Team A - <span class="text-red-600">4:5 po nájezdech</span>
+              </a>
+            </p>
             <div class="space-y-2 text-sm text-gray-700">
               <p>📊 <strong>Průběh zápasu:</strong></p>
               <ul class="ml-4 space-y-1">
@@ -175,6 +230,17 @@ export const articles = [
           </div>
         </div>
 
+        <p>Finále turnaje:</p>
+
+        <div class="bg-yellow-50 border-l-4 border-yellow-600 p-4 my-4">
+          <p class="font-semibold">
+            <a href="/turnaje/hobby-cup-litvinov-2025/zapas-10" class="text-blue-600 hover:text-blue-800 underline">
+              Finále: Berlin All Stars vs Alpha Team B - <span class="text-yellow-600">1:2</span> 🏆
+            </a>
+          </p>
+          <p class="text-sm text-gray-600 mt-1">Alpha Team B se stal vítězem turnaje!</p>
+        </div>
+
         <h3 class="text-2xl font-bold text-gray-900 mt-8 mb-4">📊 Konečné pořadí turnaje</h3>
 
         <div class="bg-white rounded-lg shadow-lg p-4 my-6">
@@ -188,19 +254,19 @@ export const articles = [
             <tbody>
               <tr class="border-b border-gray-200">
                 <td class="p-2">🥇 1. místo</td>
-                <td class="p-2 font-semibold">Alpha Team B</td>
+                <td class="p-2 font-semibold">Alpha Team B 🇩🇪</td>
               </tr>
               <tr class="border-b border-gray-200">
                 <td class="p-2">🥈 2. místo</td>
-                <td class="p-2 font-semibold">Alpha Team A</td>
+                <td class="p-2 font-semibold">Berlin All Stars 🇩🇪</td>
               </tr>
               <tr class="border-b border-gray-200">
                 <td class="p-2">🥉 3. místo</td>
-                <td class="p-2 font-semibold">Berlín All Stars</td>
+                <td class="p-2 font-semibold">Alpha Team A 🇩🇪</td>
               </tr>
               <tr class="bg-red-50">
                 <td class="p-2 font-bold text-red-600">4. místo</td>
-                <td class="p-2 font-bold">HC Litvínov Lancers</td>
+                <td class="p-2 font-bold">HC Litvínov Lancers 🇨🇿</td>
               </tr>
             </tbody>
           </table>
@@ -216,16 +282,16 @@ export const articles = [
           <h4 class="text-lg font-bold mb-3">📊 Naše výsledky na turnaji:</h4>
           <ul class="space-y-2">
             <li class="flex justify-between items-center py-1 border-b border-white/20">
-              <span>Alpha Team B (skupina)</span>
+              <span>Alpha Team B (pátek)</span>
               <span class="font-bold">5:7 ❌</span>
             </li>
             <li class="flex justify-between items-center py-1 border-b border-white/20">
-              <span>Alpha Team A (skupina)</span>
+              <span>Alpha Team A (sobota)</span>
               <span class="font-bold">5:1 ✅</span>
             </li>
             <li class="flex justify-between items-center py-1 border-b border-white/20">
-              <span>Berlín All Stars (skupina)</span>
-              <span class="font-bold">Výhra po nájezdech ✅</span>
+              <span>Berlin All Stars (sobota)</span>
+              <span class="font-bold">5:4 po prodloužení ✅</span>
             </li>
             <li class="flex justify-between items-center py-1 border-b border-white/20">
               <span>Alpha Team B (semifinále)</span>
@@ -238,14 +304,24 @@ export const articles = [
           </ul>
           <div class="mt-4 pt-4 border-t border-white/30 text-center">
             <p class="text-2xl font-bold">Konečné umístění: 4. místo</p>
+            <p class="text-sm mt-1 opacity-90">3 výhry, 3 prohry</p>
           </div>
         </div>
 
         <div class="bg-blue-50 rounded-lg p-4 my-6">
           <p class="font-semibold text-blue-900 mb-2">🤝 Co dál?</p>
           <p class="text-blue-800 text-sm">
-            Díky novým kontaktům z turnaje odehrajeme <strong>13. září od 16:00</strong> v Litvínově přátelský zápas s týmem <strong>Berlín All Stars</strong>! Přijďte nás podpořit! 🏒
+            Díky novým kontaktům z turnaje odehrajeme <strong>13. září od 16:00</strong> v Litvínově přátelský zápas s týmem <strong>Berlin All Stars</strong>! Přijďte nás podpořit! 🏒
           </p>
+        </div>
+
+        <div class="text-center mt-8">
+          <a href="/turnaje/hobby-cup-litvinov-2025" class="inline-flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-bold">
+            Zobrazit kompletní statistiky turnaje
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+            </svg>
+          </a>
         </div>
 
         <p class="text-center text-gray-600 italic mt-6">
@@ -254,7 +330,7 @@ export const articles = [
       </div>
     `,
     allowComments: true,
-    tags: ['turnaj', 'Litvínov', 'HH Cup', 'Berlín', 'domácí turnaj', 'Alpha Team', 'Berlín All Stars']
+    tags: ['turnaj', 'Litvínov', 'HH Cup', 'Berlín', 'domácí turnaj', 'Alpha Team', 'Berlin All Stars']
   },
   {
     id: 'dva-turnaje-litvinov-ostrov-2025',
