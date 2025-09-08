@@ -257,6 +257,9 @@ export const articles = [
                       <img src="/images/loga/lancers-logo.png" alt="Lancers" class="w-12 h-12" />
                     </div>
                   </div>
+                  <p class="text-xs text-gray-600 mt-2 px-2">
+                    V posledním zápase skupiny nás čekal tým Berlin All Stars, který v turnaji měl jen porážky. Porazili jsme je, ale zápas byl pěkně dramatický. Po celý zápas nevedl žádný tým o více než 1 gól a v závěru za stavu 4:4 jsme ubránili po dvou našich vyloučeních. Zápas došel do prodloužení, které jsme zvládli lépe a za vítězství jsme brali 2 body!
+                  </p>
                 </a>
 
                 <a href="/turnaje/hobby-cup-litvinov-2025/zapas-6" class="block bg-white rounded-xl p-4 shadow-md hover:shadow-xl transition-all">
