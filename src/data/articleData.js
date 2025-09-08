@@ -1,6 +1,262 @@
 // Databáze článků HC Litvínov Lancers
 export const articles = [
   {
+    id: 'hh-cup-litvinov-2025',
+    title: 'HH Cup Litvínov 2025: Dramatické boje o medaile',
+    slug: 'hh-cup-litvinov-2025',
+    excerpt: 'Domácí turnaj přinesl spoustu dramatických zápasů! Proti třem berlínským týmům jsme bojovali o medaile až do posledního nájezdu.',
+    category: 'Turnaje',
+    author: {
+      name: 'Tým HC Lancers',
+      id: 'hc-lancers'
+    },
+    date: '1. září 2025',
+    publishedAt: new Date('2025-09-01T10:00:00'),
+    image: '🏆',
+    featuredImage: null,
+    featured: true,
+    views: 0,
+    likes: 0,
+    content: `
+      <div class="space-y-4">
+        <div class="bg-gradient-to-r from-red-50 to-gray-50 rounded-xl p-6 mb-6">
+          <p class="text-xl font-bold text-gray-800 mb-2">
+            🏒 HH Cup Litvínov 2025
+          </p>
+          <p class="text-gray-600">
+            <strong>Kdy:</strong> 29.-31. srpna 2025<br/>
+            <strong>Kde:</strong> Zimní stadion Litvínov 🏟️<br/>
+            <strong>Umístění:</strong> <span class="text-2xl font-bold text-amber-600">4. místo</span> 🏅
+          </p>
+        </div>
+        
+        <p>
+          Na konci srpna jsme ve dnech <strong>29.-31. srpna</strong> hostili domácí turnaj, kterého se účastnily <strong>4 týmy</strong>. Tři týmy přijely z Berlína - <strong>Berlín All Stars</strong>, <strong>Alpha Team A</strong> a <strong>Alpha Team B</strong> - a samozřejmě domácí <strong>Litvínov Lancers</strong>. Čekal nás víkend plný hokeje a dramatických momentů!
+        </p>
+
+        <h3 class="text-2xl font-bold text-gray-900 mt-8 mb-4">🎯 Pátek 29.8. - Zahájení turnaje</h3>
+        
+        <p>
+          Turnaj jsme zahajovali zápasem proti <strong>Alpha Team B</strong>, kde dostal první příležitost brankář <strong>Jiří Morávek</strong>, který s námi začal chodit na tréninkové ledy už v sezóně 2024/2025. Do zápasu jsme nastoupili v sestavě:
+        </p>
+
+        <div class="bg-white rounded-lg p-4 border border-gray-200 my-4">
+          <h5 class="font-bold text-gray-900 mb-3">📋 Sestava na první zápas</h5>
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <p class="font-semibold text-red-600 mb-2">🥅 Brankář:</p>
+              <ul class="text-sm space-y-1">
+                <li>• <strong>Jiří Morávek</strong> (debut na turnaji!)</li>
+              </ul>
+            </div>
+            <div>
+              <p class="font-semibold text-red-600 mb-2">🛡️ Obránci:</p>
+              <ul class="text-sm space-y-1">
+                <li>• <a href="/profil/belinger-jindrich" class="text-amber-400 hover:text-amber-300 underline">Jindřich Belinger</a></li>
+                <li>• <a href="/profil/belinger-jiri" class="text-amber-400 hover:text-amber-300 underline">Jiří Belinger</a></li>
+                <li>• <a href="/profil/kocourek-ondrej" class="text-amber-400 hover:text-amber-300 underline">Ondřej Kocourek</a></li>
+                <li>• <a href="/profil/salanda-jiri" class="text-amber-400 hover:text-amber-300 underline">Jiří Šalanda</a> <span class="text-xs text-blue-600">(překvapivě na obraně!)</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <p>
+          Trochu překvapivě na obraně nastoupil <strong>Jiří Šalanda</strong>, který normálně hraje v útoku, ale pro nedostatek obránců byl vybrán na obranu. 😊
+        </p>
+        
+        <div class="bg-red-50 border-l-4 border-red-600 p-4 my-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="font-semibold">1. zápas: Lancers vs Alpha Team B - <span class="text-red-600">5:7</span></p>
+              <p class="text-sm text-gray-600 mt-1">Zápas jsme začali obdrženým zbytečným gólem a celkově jsme půl zápasu nehráli to, co bychom měli. Začali jsme hrát až v druhé půlce, ale to už bylo pozdě. V kabině převládal názor, že jsme si zápas prohráli hned na začátku.</p>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="text-2xl font-bold text-gray-900 mt-8 mb-4">⚔️ Sobota 30.8. - Boje ve skupině</h3>
+
+        <p>
+          Druhý den pokračoval turnaj dalšími zápasy ve skupině, ale museli jsme se obejít bez <strong>Vaška Materny</strong>, který musel na šichtu. Výborně ho ale kvalitativně nahradil <strong>Michal Klečka</strong>, i když byl umístěn na obranu.
+        </p>
+
+        <div class="bg-blue-50 rounded-lg p-4 my-6">
+          <h4 class="font-semibold text-blue-900 mb-3">🔄 Změny v sestavě:</h4>
+          <ul class="space-y-2 text-sm">
+            <li class="flex items-center gap-2">
+              <span class="text-red-600">➖</span>
+              <strong>Václav Materna</strong> (pracovní povinnosti)
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="text-green-600">➕</span>
+              <strong>Michal Klečka</strong> (obránce)
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="text-green-600">➕</span>
+              <strong>Tomáš Kodrle</strong> (brankář - zapůjčen od North Blades)
+            </li>
+          </ul>
+          <p class="text-xs text-blue-600 mt-3 italic">
+            Tomáše nám dohodili North Blades, takže jim patří díky, že díky nim pro nás neskončil turnaj blamáží a pomohli nám do brány sehnat brankáře v době, kdy naši brankáři jsou zranění nebo v práci!
+          </p>
+        </div>
+
+        <div class="bg-green-50 border-l-4 border-green-600 p-4 my-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="font-semibold">2. zápas: Lancers vs Alpha Team A - <span class="text-green-600">5:1</span> ✅</p>
+              <p class="text-sm text-gray-600 mt-1">V zápase řádil <strong>Václav Matějovič</strong>, který si připsal 4 góly! Také výborný výkon ukázal další debutant v naší bráně <strong>Tomáš Kodrle</strong>.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-yellow-50 border-l-4 border-yellow-600 p-4 my-4">
+          <h5 class="font-bold text-yellow-900 mb-2">⭐ Hvězda zápasu</h5>
+          <div class="flex items-center gap-4">
+            <div class="text-4xl">🎯</div>
+            <div>
+              <p class="font-bold text-lg">Václav Matějovič</p>
+              <p class="text-yellow-800">4 góly v jednom zápase!</p>
+            </div>
+          </div>
+        </div>
+
+        <p>
+          V posledním zápase skupiny nás čekal tým <strong>Berlín All Stars</strong>, který v turnaji měl jen porážky.
+        </p>
+
+        <div class="bg-green-50 border-l-4 border-green-600 p-4 my-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="font-semibold">3. zápas: Lancers vs Berlín All Stars - <span class="text-green-600">Výhra po nájezdech</span> 🎯</p>
+              <p class="text-sm text-gray-600 mt-1">Zápas byl pěkně dramatický! Po celý zápas nevedl žádný tým o více než 1 gól. V závěru za stavu 4:4 jsme ubránili po dvou našich vyloučeních. Zápas došel na nájezdy, které jsme zvládli lépe a za vítězství po nájezdech jsme brali 2 body!</p>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="text-2xl font-bold text-gray-900 mt-8 mb-4">🏆 Semifinále</h3>
+
+        <p>
+          Na závěr sobotního dne následovalo semifinále, kde jsme vyfasovali tým z našeho prvního zápasu - <strong>Alpha Team B</strong>.
+        </p>
+
+        <div class="bg-red-50 border-l-4 border-red-600 p-4 my-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="font-semibold">Semifinále: Lancers vs Alpha Team B - <span class="text-red-600">3:4</span></p>
+              <p class="text-sm text-gray-600 mt-1">Zápas byl opět velmi vyrovnaný, ale i přes velmi bojovný výkon jsme nedokázali uspět. Prohra v semifinále neznamenala vyřazení z turnaje, ale hodila nás to do zápasu o třetí místo.</p>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="text-2xl font-bold text-gray-900 mt-8 mb-4">🥉 Neděle 31.8. - Boj o bronz</h3>
+
+        <p>
+          Zápas o třetí místo proti týmu <strong>Alpha Team A</strong> se odehrál v neděli už od <strong>9:00 hodin</strong>.
+        </p>
+
+        <div class="bg-amber-50 border-l-4 border-amber-600 p-4 my-4">
+          <div>
+            <p class="font-semibold mb-2">Zápas o 3. místo: Lancers vs Alpha Team A - <span class="text-red-600">4:5 po nájezdech</span></p>
+            <div class="space-y-2 text-sm text-gray-700">
+              <p>📊 <strong>Průběh zápasu:</strong></p>
+              <ul class="ml-4 space-y-1">
+                <li>• Vstřelili jsme první gól ✅</li>
+                <li>• Soupeř odskočil na 3:1 ⚠️</li>
+                <li>• Dokázali jsme srovnat na 4:4! 💪</li>
+                <li>• Došlo na nájezdy 🎯</li>
+              </ul>
+              <p class="mt-3 font-semibold">🎯 <strong>Nájezdy:</strong></p>
+              <ul class="ml-4 space-y-1">
+                <li>• Po třech nájezdech: 2:2</li>
+                <li>• Náhlá smrt: soupeř proměnil, my ne 😔</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="text-2xl font-bold text-gray-900 mt-8 mb-4">📊 Konečné pořadí turnaje</h3>
+
+        <div class="bg-white rounded-lg shadow-lg p-4 my-6">
+          <table class="w-full">
+            <thead>
+              <tr class="border-b-2 border-gray-300">
+                <th class="text-left p-2 font-bold text-gray-800">Pořadí</th>
+                <th class="text-left p-2 font-bold text-gray-800">Tým</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-gray-200">
+                <td class="p-2">🥇 1. místo</td>
+                <td class="p-2 font-semibold">Alpha Team B</td>
+              </tr>
+              <tr class="border-b border-gray-200">
+                <td class="p-2">🥈 2. místo</td>
+                <td class="p-2 font-semibold">Alpha Team A</td>
+              </tr>
+              <tr class="border-b border-gray-200">
+                <td class="p-2">🥉 3. místo</td>
+                <td class="p-2 font-semibold">Berlín All Stars</td>
+              </tr>
+              <tr class="bg-red-50">
+                <td class="p-2 font-bold text-red-600">4. místo</td>
+                <td class="p-2 font-bold">HC Litvínov Lancers</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="text-xl font-bold text-gray-900 mt-8 mb-4">💪 Shrnutí turnaje</h3>
+
+        <p>
+          Samozřejmě došlo ke zklamání z konečného 4. místa, ale turnaj se hrál v <strong>přátelském duchu</strong>, který přinesl mnoho vyrovnaných zápasů. I přes tento neúspěch jsme si turnaj užili a hlavně jsme poznali nové týmy a navázali nové kontakty!
+        </p>
+
+        <div class="bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl p-6 mt-6">
+          <h4 class="text-lg font-bold mb-3">📊 Naše výsledky na turnaji:</h4>
+          <ul class="space-y-2">
+            <li class="flex justify-between items-center py-1 border-b border-white/20">
+              <span>Alpha Team B (skupina)</span>
+              <span class="font-bold">5:7 ❌</span>
+            </li>
+            <li class="flex justify-between items-center py-1 border-b border-white/20">
+              <span>Alpha Team A (skupina)</span>
+              <span class="font-bold">5:1 ✅</span>
+            </li>
+            <li class="flex justify-between items-center py-1 border-b border-white/20">
+              <span>Berlín All Stars (skupina)</span>
+              <span class="font-bold">Výhra po nájezdech ✅</span>
+            </li>
+            <li class="flex justify-between items-center py-1 border-b border-white/20">
+              <span>Alpha Team B (semifinále)</span>
+              <span class="font-bold">3:4 ❌</span>
+            </li>
+            <li class="flex justify-between items-center py-1">
+              <span>Alpha Team A (o 3. místo)</span>
+              <span class="font-bold">4:5 po nájezdech ❌</span>
+            </li>
+          </ul>
+          <div class="mt-4 pt-4 border-t border-white/30 text-center">
+            <p class="text-2xl font-bold">Konečné umístění: 4. místo</p>
+          </div>
+        </div>
+
+        <div class="bg-blue-50 rounded-lg p-4 my-6">
+          <p class="font-semibold text-blue-900 mb-2">🤝 Co dál?</p>
+          <p class="text-blue-800 text-sm">
+            Díky novým kontaktům z turnaje odehrajeme <strong>13. září od 16:00</strong> v Litvínově přátelský zápas s týmem <strong>Berlín All Stars</strong>! Přijďte nás podpořit! 🏒
+          </p>
+        </div>
+
+        <p class="text-center text-gray-600 italic mt-6">
+          Děkujeme všem hráčům za bojovnost a North Blades za zapůjčení brankáře! 💪❤️
+        </p>
+      </div>
+    `,
+    allowComments: true,
+    tags: ['turnaj', 'Litvínov', 'HH Cup', 'Berlín', 'domácí turnaj', 'Alpha Team', 'Berlín All Stars']
+  },
+  {
     id: 'dva-turnaje-litvinov-ostrov-2025',
     title: 'Víkend nabitý turnaji!',
     slug: 'dva-turnaje-litvinov-ostrov-2025',
@@ -12,7 +268,7 @@ export const articles = [
     },
     date: '27. srpna 2025',
     publishedAt: new Date('2025-08-27T10:00:00'),
-    image: '👑',
+    image: '🏆',
     featuredImage: null,
     featured: true,
     views: 0,
@@ -251,7 +507,7 @@ export const articles = [
         <h3 class="text-xl font-bold text-gray-900 mt-6 mb-3">🚗 Páteční příjezd</h3>
         
         <p>
-          Do Straubingu jsme vyrazeli všichni už v pátek, protože jsme se chtěli dobře vyspat a vlastně poznat trochu město. Jako první do Straubingu na hotel dorazilo auto s Turym, Šalim, Coufim a Ondrou. Pak následovali Dan se Zmeškalem, bratři Matuškovi atd.
+          Do Straubingu jsme vyrazili všichni už v pátek, protože jsme se chtěli dobře vyspat a vlastně poznat trochu město. Jako první do Straubingu na hotel dorazilo auto s Turym, Šalim, Coufim a Ondrou. Pak následovali Dan se Zmeškalem, bratři Matuškovi atd.
         </p>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
@@ -465,7 +721,7 @@ export const articles = [
           <div class="flex items-center justify-between">
             <div>
               <p class="font-semibold">Semifinále: Lancers vs Bayern Rangers - <span class="text-green-600">Výhra po nájezdech!</span> 🎯</p>
-              <p class="text-sm text-gray-600 mt-1">Zápas byl velmi vyrovnaný a tak došlo na nájezdy. Po třech nájezdech na každé straně to bylo 1:1 a tak došlo na náhlou smrt. Soupeř při svém nájezdu nepromělil, ale náš <strong>Michal Koreš</strong> už jo!</p>
+              <p class="text-sm text-gray-600 mt-1">Zápas byl velmi vyrovnaný a tak došlo na nájezdy. Po třech nájezdech na každé straně to bylo 1:1 a tak došlo na náhlou smrt. Soupeř při svém nájezdu neproměnil, ale náš <strong>Michal Koreš</strong> už jo!</p>
             </div>
             <img src="/images/loga/BayernRangers.png" alt="Bayern Rangers" class="w-16 h-16 object-contain opacity-50" />
           </div>
@@ -557,7 +813,7 @@ export const articles = [
         </div>
         
         <p class="text-center text-gray-600 italic mt-6">
-          Děkujeme všem hráčům za skvělou reprezentaci klubu! 👏❤️
+          Děkujeme všem hráčům za skvělou reprezentaci klubu! 🏒❤️
         </p>
       </div>
     `,
