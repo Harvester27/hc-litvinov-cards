@@ -10,7 +10,7 @@ export const articleHHCupLitvinov2025 = {
       name: 'Tým HC Lancers',
       id: 'hc-lancers'
     },
-    date: '1. září 2025',
+    date: '9. září 2025',
     publishedAt: new Date('2025-09-01T10:00:00'),
     image: '🏆',
     featuredImage: '/images/clanky/HHLitvinov2025.jpeg',
