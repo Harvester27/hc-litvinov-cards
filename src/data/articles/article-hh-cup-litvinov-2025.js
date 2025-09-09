@@ -399,7 +399,7 @@ export const articleHHCupLitvinov2025 = {
               </p>
   
               <div class="space-y-3">
-                <div class="block bg-gradient-to-r from-amber-50 to-white rounded-xl p-4 shadow-md hover:shadow-xl transition-all border-2 border-amber-400">
+                <a href="/turnaje/hobby-cup-litvinov-2025/zapas-9" class="block bg-gradient-to-r from-amber-50 to-white rounded-xl p-4 shadow-md hover:shadow-xl transition-all border-2 border-amber-400">
                   <div class="text-center text-amber-600 font-bold text-sm mb-2">🥉 O 3. MÍSTO</div>
                   <div class="flex items-center justify-between">
                     <div class="flex items-center gap-4">
@@ -427,15 +427,25 @@ export const articleHHCupLitvinov2025 = {
                       Po třech nájezdech na každé straně to bylo 2:2 a došlo na <strong>náhlou smrt</strong>. Bohužel soupeř hned v prvním nájezdu proměnil a my ne. Samozřejmě došlo ke zklamání, ale turnaj se hrál v přátelském duchu.
                     </p>
                   </div>
-                  <div class="mt-3 bg-gradient-to-r from-amber-50 to-white rounded-lg p-2 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-amber-600 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
-                    </svg>
-                    <a href="https://youtu.be/_kfj5Zp4NRU" target="_blank" class="text-sm text-amber-700 hover:text-amber-800 font-semibold transition-colors">
-                      Sledovat dramatické nájezdy na YouTube
-                    </a>
-                  </div>
-                </div>
+                  
+                  <!-- YouTube video box - opraveno -->
+                  <a href="https://youtu.be/_kfj5Zp4NRU" target="_blank" class="mt-3 bg-gradient-to-r from-red-50 to-red-100 rounded-lg p-4 flex items-center gap-3 hover:from-red-100 hover:to-red-200 transition-all border border-red-300 group">
+                    <div class="flex-shrink-0">
+                      <svg class="w-8 h-8 text-red-600 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
+                      </svg>
+                    </div>
+                    <div class="flex-1">
+                      <div class="font-bold text-red-900 text-sm">🎥 Video z dramatických nájezdů</div>
+                      <div class="text-xs text-red-700">Klikněte pro sledování na YouTube</div>
+                    </div>
+                    <div class="flex-shrink-0">
+                      <svg class="w-5 h-5 text-red-600 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                      </svg>
+                    </div>
+                  </a>
+                </a>
   
                 <a href="/turnaje/hobby-cup-litvinov-2025/zapas-10" class="block bg-gradient-to-r from-yellow-100 to-yellow-50 rounded-xl p-4 shadow-lg hover:shadow-xl transition-all border-2 border-yellow-500">
                   <div class="text-center text-yellow-700 font-black text-sm mb-2">🏆 FINÁLE</div>
