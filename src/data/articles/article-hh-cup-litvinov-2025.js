@@ -423,14 +423,17 @@ export const articleHHCupLitvinov2025 = {
                     <p class="text-red-700 text-sm mb-2">
                       Vedení soupeře 3:1 jsme dokázali postupně smazat a za stavu 4:4 došlo na nájezdy. "Bylo to neuvěřitelné drama, diváci museli být spokojení," vzpomínal brankář.
                     </p>
-                    <p class="text-red-700 text-sm mb-2">
+                    <p class="text-red-700 text-sm">
                       Po třech nájezdech na každé straně to bylo 2:2 a došlo na <strong>náhlou smrt</strong>. Bohužel soupeř hned v prvním nájezdu proměnil a my ne. Samozřejmě došlo ke zklamání, ale turnaj se hrál v přátelském duchu.
                     </p>
-                    <div class="bg-yellow-50 border border-yellow-400 rounded p-2 mt-2">
-                      <p class="text-yellow-800 text-xs">
-                        🎥 <a href="https://youtu.be/_kfj5Zp4NRU" target="_blank" class="text-red-600 hover:text-red-700 underline font-bold">Podívejte se na dramatické nájezdy na našem YouTube!</a>
-                      </p>
-                    </div>
+                  </div>
+                  <div class="mt-3 bg-gradient-to-r from-amber-50 to-white rounded-lg p-2 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-amber-600 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
+                    </svg>
+                    <a href="https://youtu.be/_kfj5Zp4NRU" target="_blank" class="text-sm text-amber-700 hover:text-amber-800 font-semibold transition-colors">
+                      Sledovat dramatické nájezdy na YouTube
+                    </a>
                   </div>
                 </a>
   
