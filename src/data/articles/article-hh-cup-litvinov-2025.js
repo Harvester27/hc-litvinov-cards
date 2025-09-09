@@ -399,7 +399,7 @@ export const articleHHCupLitvinov2025 = {
               </p>
   
               <div class="space-y-3">
-                <a href="/turnaje/hobby-cup-litvinov-2025/zapas-9" class="block bg-gradient-to-r from-amber-50 to-white rounded-xl p-4 shadow-md hover:shadow-xl transition-all border-2 border-amber-400">
+                <div class="block bg-gradient-to-r from-amber-50 to-white rounded-xl p-4 shadow-md hover:shadow-xl transition-all border-2 border-amber-400">
                   <div class="text-center text-amber-600 font-bold text-sm mb-2">🥉 O 3. MÍSTO</div>
                   <div class="flex items-center justify-between">
                     <div class="flex items-center gap-4">
@@ -435,7 +435,7 @@ export const articleHHCupLitvinov2025 = {
                       Sledovat dramatické nájezdy na YouTube
                     </a>
                   </div>
-                </a>
+                </div>
   
                 <a href="/turnaje/hobby-cup-litvinov-2025/zapas-10" class="block bg-gradient-to-r from-yellow-100 to-yellow-50 rounded-xl p-4 shadow-lg hover:shadow-xl transition-all border-2 border-yellow-500">
                   <div class="text-center text-yellow-700 font-black text-sm mb-2">🏆 FINÁLE</div>
