@@ -56,10 +56,10 @@ export const articleHHCupLitvinov2025 = {
         <div class="bg-white rounded-2xl p-6 shadow-lg">
           <h3 class="text-2xl font-black text-gray-900 mb-4">📅 Domácí turnaj plný emocí</h3>
           <p class="text-gray-700 mb-4">
-            Na konci srpna ve dnech <strong>29.-31. srpna 2025</strong> jsme se účastnili domácího turnaje, který pro nás znamenal velkou výzvu. Na našem ledě jsme přivítali tři kvalitní týmy z Berlína a mohli tak poměřit síly s mezinárodní konkurencí. Turnaj sliboval skvělou podívanou a my jsme se na něj pečlivě připravovali celé léto.
+            Na konci srpna ve dnech <strong>29.-31. srpna 2025</strong> jsme se účastnili domácího turnaje, který pro nás znamenal velkou výzvu. Na našem ledě jsme přivítali tři kvalitní týmy z Berlína a mohli tak poměřit síly s mezinárodní konkurencí. Turnaj sliboval skvělou podívanou.
           </p>
           <p class="text-gray-700 mb-4">
-            Organizace turnaje byla náročná, ale díky spolupráci celého týmu a vedení klubu se nám podařilo připravit důstojné podmínky pro všechny účastníky. Zimní stadion v Litvínově byl připraven na vrchol a my jsme se těšili na každý zápas.
+            I když šlo o turnaj organizovaný na našem domácím ledě, tak jsme se organizace nijak neúčastnili. Byli jsme na turnaj pozvaný a jsme moc rádi, že jsme se ho účastnili, protože to pro nás byl skvělý zážitek a hlavně i skvělá zkušenost. Zápasy se hráli ve vysokém tempu s velkou bojovností, která hráče jen posune ve svém progresu. Dá se říct, že to byla skvělá příprava před zápasy KHLA a Česého poháru.
           </p>
           
           <!-- YouTube odkazy -->
