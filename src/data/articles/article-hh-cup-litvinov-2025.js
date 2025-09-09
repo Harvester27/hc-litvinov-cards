@@ -64,14 +64,40 @@ export const articleHHCupLitvinov2025 = {
           
           <!-- YouTube odkazy -->
           <div class="bg-red-50 border-l-4 border-red-600 rounded-r-xl p-4">
-            <div class="font-semibold text-red-900 mb-2">📹 Sledujte naše videa z turnaje!</div>
-            <p class="text-sm text-gray-700 mb-2">
+            <div class="font-semibold text-red-900 mb-3">📹 Sledujte naše videa z turnaje!</div>
+            <p class="text-sm text-gray-700 mb-3">
               Podívejte se na záznamy z turnaje na našem <a href="https://www.youtube.com/@Litv%C3%ADnovLancers" target="_blank" class="text-red-600 hover:text-red-700 underline font-bold">YouTube kanálu</a>!
             </p>
-            <ul class="space-y-1 text-sm">
-              <li>🎥 <a href="https://www.youtube.com/watch?v=mRbXpNlHl6c" target="_blank" class="text-red-600 hover:text-red-700 underline">5 minut z prvního zápasu proti Alpha Team B</a></li>
-              <li>🥅 <a href="https://youtu.be/_kfj5Zp4NRU" target="_blank" class="text-red-600 hover:text-red-700 underline">Dramatické nájezdy o třetí místo</a></li>
-            </ul>
+            
+            <div class="space-y-2">
+              <!-- Video z prvního zápasu -->
+              <a href="https://www.youtube.com/watch?v=mRbXpNlHl6c" target="_blank" class="block bg-white rounded-lg p-3 flex items-center gap-3 hover:bg-red-100 transition-all border border-red-200 group">
+                <svg class="w-6 h-6 text-red-600 group-hover:scale-110 transition-transform flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
+                </svg>
+                <div class="flex-1">
+                  <div class="font-semibold text-red-900 text-sm">5 minut z prvního zápasu</div>
+                  <div class="text-xs text-gray-600">Sestřih utkání proti Alpha Team B</div>
+                </div>
+                <svg class="w-4 h-4 text-red-600 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </a>
+              
+              <!-- Video z nájezdů -->
+              <a href="https://youtu.be/_kfj5Zp4NRU" target="_blank" class="block bg-white rounded-lg p-3 flex items-center gap-3 hover:bg-red-100 transition-all border border-red-200 group">
+                <svg class="w-6 h-6 text-red-600 group-hover:scale-110 transition-transform flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
+                </svg>
+                <div class="flex-1">
+                  <div class="font-semibold text-red-900 text-sm">Dramatické nájezdy o 3. místo</div>
+                  <div class="text-xs text-gray-600">Rozhodující penaltový rozstřel</div>
+                </div>
+                <svg class="w-4 h-4 text-red-600 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </a>
+            </div>
           </div>
         </div>
   
