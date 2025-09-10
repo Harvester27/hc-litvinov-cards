@@ -33,6 +33,7 @@ export default function RewardsPage() {
   const [claiming, setClaiming] = useState(false);
   const [cardRevealing, setCardRevealing] = useState(false);
   const [claimSuccess, setClaimSuccess] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   
   // Načíst data při mountu
   useEffect(() => {
@@ -48,6 +49,7 @@ export default function RewardsPage() {
   
   const loadData = async () => {
     try {
+      setRefreshing(true);
       // Načíst profil
       const profileData = await getUserProfile(user.uid);
       setProfile(profileData);
@@ -63,6 +65,7 @@ export default function RewardsPage() {
       console.error('Error loading data:', error);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
   
@@ -100,11 +103,14 @@ export default function RewardsPage() {
   const handleCardSelection = async (card) => {
     if (claiming || selectedCard) return;
     
+    
+    // Znovu načíst nejnovější data před výběrem karty
+    await loadData();
     // Dodatečná kontrola - zkontrolovat, zda už není odměna vyzvednuta
     const currentQuiz = completedQuizzes.find(q => q.id === selectedQuiz.id);
     if (currentQuiz?.rewardClaimed) {
       console.warn("Reward already claimed for this quiz");
-      setSelectedQuiz(null);
+      alert("Tato odměna již byla vyzvednuta!"); setSelectedQuiz(null);
       return;
     }
     
@@ -320,7 +326,7 @@ export default function RewardsPage() {
                         </div>
                         
                         <button
-                          onClick={() => setSelectedQuiz(quiz)}
+                          onClick={async () => { await loadData(); setSelectedQuiz(quiz); }}
                           className="w-full px-4 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl font-bold hover:from-red-700 hover:to-red-800 transition-all transform hover:scale-105 flex items-center justify-center gap-2"
                         >
                           <Package size={20} />
