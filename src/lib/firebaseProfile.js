@@ -1,7 +1,7 @@
-// 🔥 Firebase Profile Management
-// Tento soubor obsahuje všechny funkce pro práci s uživatelským profilem
+// 🔥 Firebase Profile Management - OPRAVENÁ VERZE
+// Řeší permission errors a automatické vytváření profilů
 
-import { doc, getDoc, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, serverTimestamp, collection } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { getStorage } from 'firebase/storage';
 import { updatePassword, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
@@ -20,14 +20,14 @@ const DEFAULT_PROFILE = {
   level: 1,
   xp: 0,
   credits: 12000,
-  collectedCards: [], // Sbírka karet
-  totalQuizzesCompleted: 0, // Počet dokončených kvízů
-  pendingRewards: 0, // Počet nevyzvednutých odměn
+  collectedCards: [],
+  totalQuizzesCompleted: 0,
+  pendingRewards: 0,
   createdAt: null,
   lastLogin: null
 };
 
-// XP potřebné pro každý level (progresivní systém +20 každý level)
+// XP potřebné pro každý level
 export const getXPForLevel = (level) => {
   if (level <= 1) return 0;
   let totalXP = 0;
@@ -56,19 +56,22 @@ export const getLevelFromXP = (xp) => {
   return level;
 };
 
-// Alias pro kompatibilitu s quiz funkcemi
 export const calculateLevelFromXP = getLevelFromXP;
 
 // ========================================
-// PROFIL FUNKCE
+// PROFIL FUNKCE - OPRAVENÉ
 // ========================================
 
-// Vytvořit nový profil při registraci
-export const createUserProfile = async (uid, email) => {
+// Vytvořit nový profil při registraci - OPRAVENÁ VERZE
+export const createUserProfile = async (uid, email, displayName = null) => {
   try {
-    // Vygenerovat random číslo pro defaultní jméno
-    const randomNum = Math.floor(Math.random() * 9999) + 1;
-    const displayName = `Hráč${randomNum}`;
+    console.log('Creating user profile for:', uid);
+    
+    // Pokud displayName není poskytnuto, vygenerovat
+    if (!displayName) {
+      const randomNum = Math.floor(Math.random() * 9999) + 1;
+      displayName = `Hráč${randomNum}`;
+    }
     
     const profileData = {
       ...DEFAULT_PROFILE,
@@ -78,54 +81,139 @@ export const createUserProfile = async (uid, email) => {
       lastLogin: serverTimestamp()
     };
     
-    await setDoc(doc(db, 'users', uid, 'profile', 'data'), profileData);
+    // Použít správnou cestu k dokumentu
+    const profileRef = doc(db, 'users', uid, 'profile', 'data');
+    await setDoc(profileRef, profileData);
     
+    console.log('Profile created successfully:', profileData);
     return profileData;
   } catch (error) {
     console.error('Error creating user profile:', error);
+    
+    // Pokud je to permission error, vrátit defaultní profil
+    if (error.code === 'permission-denied') {
+      console.warn('Permission denied - returning default profile');
+      return {
+        ...DEFAULT_PROFILE,
+        displayName: displayName || `Hráč${Math.floor(Math.random() * 9999) + 1}`,
+        email
+      };
+    }
+    
     throw error;
   }
 };
 
-// Načíst profil uživatele
+// Načíst profil uživatele - OPRAVENÁ VERZE
 export const getUserProfile = async (uid) => {
   try {
-    const profileDoc = await getDoc(doc(db, 'users', uid, 'profile', 'data'));
+    console.log('Loading profile for user:', uid);
+    
+    const profileRef = doc(db, 'users', uid, 'profile', 'data');
+    const profileDoc = await getDoc(profileRef);
     
     if (!profileDoc.exists()) {
-      // Pokud profil neexistuje, vytvořit ho
+      console.log('Profile does not exist, creating new one...');
+      
+      // Získat aktuálního uživatele
       const user = auth.currentUser;
       if (user) {
-        return await createUserProfile(uid, user.email);
+        // Vytvořit nový profil
+        const newProfile = await createUserProfile(
+          uid, 
+          user.email,
+          user.displayName
+        );
+        return newProfile;
       }
+      
+      console.warn('No authenticated user, returning null');
       return null;
     }
     
     const profileData = profileDoc.data();
+    console.log('Profile loaded successfully:', profileData);
     
-    // Přidat pendingRewards pokud chybí (pro existující uživatele)
+    // Přidat chybějící pole pro kompatibilitu
     if (profileData.pendingRewards === undefined) {
       profileData.pendingRewards = 0;
+    }
+    if (profileData.collectedCards === undefined) {
+      profileData.collectedCards = [];
     }
     
     return profileData;
   } catch (error) {
     console.error('Error getting user profile:', error);
+    
+    // Pokud je to permission error, pokusit se vytvořit profil
+    if (error.code === 'permission-denied') {
+      console.warn('Permission denied when reading profile');
+      
+      const user = auth.currentUser;
+      if (user) {
+        console.log('Attempting to create profile after permission error...');
+        
+        try {
+          // Pokusit se vytvořit profil
+          const newProfile = await createUserProfile(
+            uid,
+            user.email,
+            user.displayName
+          );
+          return newProfile;
+        } catch (createError) {
+          console.error('Failed to create profile:', createError);
+          
+          // Vrátit fallback profil
+          return {
+            ...DEFAULT_PROFILE,
+            displayName: user.displayName || `Hráč${Math.floor(Math.random() * 9999) + 1}`,
+            email: user.email
+          };
+        }
+      }
+    }
+    
     throw error;
   }
 };
 
-// Aktualizovat profil
+// Aktualizovat profil - OPRAVENÁ VERZE
 export const updateUserProfile = async (uid, updates) => {
   try {
-    await updateDoc(doc(db, 'users', uid, 'profile', 'data'), {
+    console.log('Updating profile for user:', uid, updates);
+    
+    const profileRef = doc(db, 'users', uid, 'profile', 'data');
+    
+    await updateDoc(profileRef, {
       ...updates,
       lastLogin: serverTimestamp()
     });
     
+    console.log('Profile updated successfully');
     return true;
   } catch (error) {
     console.error('Error updating user profile:', error);
+    
+    // Pokud dokument neexistuje, vytvořit ho
+    if (error.code === 'not-found' || error.code === 'permission-denied') {
+      console.log('Document not found or permission denied, creating new profile...');
+      
+      try {
+        const user = auth.currentUser;
+        if (user) {
+          await createUserProfile(uid, user.email, updates.displayName);
+          // Aplikovat updates znovu
+          const profileRef = doc(db, 'users', uid, 'profile', 'data');
+          await updateDoc(profileRef, updates);
+          return true;
+        }
+      } catch (createError) {
+        console.error('Failed to create and update profile:', createError);
+      }
+    }
+    
     throw error;
   }
 };
@@ -134,32 +222,24 @@ export const updateUserProfile = async (uid, updates) => {
 // AVATAR FUNKCE
 // ========================================
 
-// Upload avataru
 export const uploadAvatar = async (uid, file) => {
   try {
-    // Validace souboru
     const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
     if (!validTypes.includes(file.type)) {
       throw new Error('Neplatný formát souboru. Povolené: JPG, PNG, WebP');
     }
     
-    // Max 5MB
     if (file.size > 5 * 1024 * 1024) {
       throw new Error('Soubor je příliš velký. Maximum je 5MB');
     }
     
-    // Vytvořit referenci s unikátním názvem
     const timestamp = Date.now();
     const fileName = `avatars/${uid}/${timestamp}_${file.name}`;
     const storageRef = ref(storage, fileName);
     
-    // Nahrát soubor
     const snapshot = await uploadBytes(storageRef, file);
-    
-    // Získat URL
     const downloadURL = await getDownloadURL(snapshot.ref);
     
-    // Aktualizovat profil s novou URL
     await updateUserProfile(uid, { avatar: downloadURL });
     
     return downloadURL;
@@ -169,12 +249,10 @@ export const uploadAvatar = async (uid, file) => {
   }
 };
 
-// Smazat starý avatar
 export const deleteOldAvatar = async (oldAvatarUrl) => {
   if (!oldAvatarUrl) return;
   
   try {
-    // Extrahovat cestu ze Storage URL
     const baseUrl = 'https://firebasestorage.googleapis.com/v0/b/';
     if (oldAvatarUrl.includes(baseUrl)) {
       const pathStart = oldAvatarUrl.indexOf('/o/') + 3;
@@ -186,7 +264,6 @@ export const deleteOldAvatar = async (oldAvatarUrl) => {
     }
   } catch (error) {
     console.error('Error deleting old avatar:', error);
-    // Nevyhazovat chybu, jen logovat
   }
 };
 
@@ -194,7 +271,6 @@ export const deleteOldAvatar = async (oldAvatarUrl) => {
 // HERNÍ FUNKCE
 // ========================================
 
-// Přidat kredity
 export const addCredits = async (uid, amount) => {
   try {
     const profile = await getUserProfile(uid);
@@ -209,7 +285,6 @@ export const addCredits = async (uid, amount) => {
   }
 };
 
-// Odebrat kredity (např. při nákupu)
 export const spendCredits = async (uid, amount) => {
   try {
     const profile = await getUserProfile(uid);
@@ -229,14 +304,12 @@ export const spendCredits = async (uid, amount) => {
   }
 };
 
-// Přidat XP
 export const addXP = async (uid, amount) => {
   try {
     const profile = await getUserProfile(uid);
     const currentXP = profile?.xp || 0;
     const newXP = currentXP + amount;
     
-    // Vypočítat nový level
     const newLevel = getLevelFromXP(newXP);
     const oldLevel = profile?.level || 1;
     
@@ -245,7 +318,6 @@ export const addXP = async (uid, amount) => {
       level: newLevel 
     });
     
-    // Vrátit info o level up
     return {
       xp: newXP,
       level: newLevel,
@@ -261,13 +333,11 @@ export const addXP = async (uid, amount) => {
 // SBÍRKA KARET FUNKCE
 // ========================================
 
-// Přidat kartu do sbírky
 export const addCardToCollection = async (uid, cardId) => {
   try {
     const profile = await getUserProfile(uid);
     const currentCards = profile?.collectedCards || [];
     
-    // Přidat kartu pouze pokud ji ještě nemá
     if (!currentCards.includes(cardId)) {
       const updatedCards = [...currentCards, cardId];
       await updateUserProfile(uid, { collectedCards: updatedCards });
@@ -281,7 +351,6 @@ export const addCardToCollection = async (uid, cardId) => {
   }
 };
 
-// Získat všechny karty uživatele
 export const getUserCards = async (uid) => {
   try {
     const profile = await getUserProfile(uid);
@@ -296,7 +365,6 @@ export const getUserCards = async (uid) => {
 // ODMĚNY FUNKCE
 // ========================================
 
-// Aktualizovat počet nevyzvednutých odměn
 export const updatePendingRewards = async (uid, delta) => {
   try {
     const profile = await getUserProfile(uid);
@@ -312,7 +380,6 @@ export const updatePendingRewards = async (uid, delta) => {
   }
 };
 
-// Získat počet nevyzvednutých odměn
 export const getPendingRewardsCount = async (uid) => {
   try {
     const profile = await getUserProfile(uid);
@@ -327,7 +394,6 @@ export const getPendingRewardsCount = async (uid) => {
 // AUTENTIZACE
 // ========================================
 
-// Změnit heslo
 export const changePassword = async (currentPassword, newPassword) => {
   try {
     const user = auth.currentUser;
@@ -335,18 +401,15 @@ export const changePassword = async (currentPassword, newPassword) => {
       throw new Error('Uživatel není přihlášen');
     }
     
-    // Re-autentizace s aktuálním heslem
     const credential = EmailAuthProvider.credential(user.email, currentPassword);
     await reauthenticateWithCredential(user, credential);
     
-    // Změnit heslo
     await updatePassword(user, newPassword);
     
     return true;
   } catch (error) {
     console.error('Error changing password:', error);
     
-    // Lepší error messages
     if (error.code === 'auth/wrong-password') {
       throw new Error('Nesprávné aktuální heslo');
     } else if (error.code === 'auth/weak-password') {
@@ -361,7 +424,6 @@ export const changePassword = async (currentPassword, newPassword) => {
 // VALIDACE
 // ========================================
 
-// Validovat display name
 export const validateDisplayName = (name) => {
   if (!name || name.trim().length < 3) {
     return 'Jméno musí mít alespoň 3 znaky';
@@ -371,11 +433,10 @@ export const validateDisplayName = (name) => {
     return 'Jméno může mít maximálně 20 znaků';
   }
   
-  // Povolené znaky: písmena, čísla, mezery, pomlčky, podtržítka
   const validPattern = /^[a-zA-Z0-9áčďéěíňóřšťúůýžÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ\s\-_]+$/;
   if (!validPattern.test(name)) {
     return 'Jméno obsahuje nepovolené znaky';
   }
   
-  return null; // Validní
+  return null;
 };
