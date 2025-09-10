@@ -142,6 +142,7 @@ export default function Navigation() {
     { id: 'historie', label: 'Historie', href: '/historie', icon: <Clock size={18} /> },
     { id: 'sin-slavy', label: 'Síň slávy', href: '/sin-slavy', icon: <Award size={18} /> },
     { id: 'hry', label: 'Hry', href: '/games', icon: <Gamepad2 size={18} /> },
+    { id: 'zebricek', label: 'Žebříček', href: '/zebricek', icon: <Trophy size={18} /> },
   ];
 
   const level = profile?.level ?? 1;
@@ -327,6 +328,14 @@ export default function Navigation() {
                               <Trophy size={18} />
                               <span>Úspěchy</span>
                             </Link>
+                            <Link
+                              href="/zebricek"
+                              className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-red-50 transition-all text-gray-700 hover:text-red-600"
+                              onClick={() => setIsProfileDropdownOpen(false)}
+                            >
+                              <Trophy size={18} />
+                              <span>Žebříček hráčů</span>
+                            </Link>
                             <button
                               onClick={handleLogout}
                               className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-red-50 transition-all text-red-600 hover:text-red-700"
@@ -402,6 +411,14 @@ export default function Navigation() {
                         </div>
                       </div>
                     </div>
+                    <Link
+                      href="/zebricek"
+                      className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all font-semibold"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      <Trophy size={18} />
+                      <span>Žebříček hráčů</span>
+                    </Link>
                     <button
                       onClick={handleLogout}
                       className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-all font-semibold"
