@@ -13,7 +13,9 @@ import {
   validateDisplayName,
   getXPForLevel
 } from '@/lib/firebaseProfile';
-import { syncToLeaderboard } from '@/lib/firebaseLeaderboardSync'; // PŘIDÁNO
+import { syncToLeaderboard } from '@/lib/firebaseLeaderboardSync';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 import { 
   User, Camera, Save, Lock, Loader, AlertCircle, 
   CheckCircle, Edit2, X, Shield, Zap, Coins,
@@ -64,10 +66,45 @@ export default function ProfilePage() {
       const profileData = await getUserProfile(user.uid);
       setProfile(profileData);
       setNewDisplayName(profileData?.displayName || '');
+      
+      // Po načtení profilu synchronizovat žebříček (pokud ještě není)
+      if (profileData) {
+        await syncProfileToLeaderboard(profileData);
+      }
     } catch (error) {
       console.error('Error loading profile:', error);
     } finally {
       setLoading(false);
+    }
+  };
+  
+  // Pomocná funkce pro synchronizaci s kompletními daty
+  const syncProfileToLeaderboard = async (profileData) => {
+    try {
+      // Načíst počet karet
+      const cardsRef = collection(db, 'users', user.uid, 'cardCollection');
+      const cardsSnap = await getDocs(cardsRef);
+      const totalCards = cardsSnap.size;
+      
+      // Načíst počet kvízů
+      const quizzesRef = collection(db, 'users', user.uid, 'completedQuizzes');
+      const quizzesSnap = await getDocs(quizzesRef);
+      const totalQuizzes = quizzesSnap.size;
+      
+      // Synchronizovat s žebříčkem
+      await syncToLeaderboard(user.uid, {
+        displayName: profileData.displayName || 'Anonymní hráč',
+        avatarUrl: profileData.avatar || null,
+        level: profileData.level || 1,
+        xp: profileData.xp || 0,
+        credits: profileData.credits || 0,
+        totalCards: totalCards,
+        totalQuizzes: totalQuizzes
+      });
+      
+      console.log('✅ Profile synchronized to leaderboard');
+    } catch (error) {
+      console.error('Error syncing to leaderboard:', error);
     }
   };
   
@@ -89,18 +126,11 @@ export default function ProfilePage() {
       const newAvatarUrl = await uploadAvatar(user.uid, file);
       
       // Aktualizovat lokální state
-      setProfile(prev => ({ ...prev, avatar: newAvatarUrl }));
+      const updatedProfile = { ...profile, avatar: newAvatarUrl };
+      setProfile(updatedProfile);
       
-      // PŘIDÁNO: Synchronizovat s žebříčkem
-      await syncToLeaderboard(user.uid, {
-        displayName: profile.displayName,
-        avatarUrl: newAvatarUrl,
-        level: profile.level,
-        xp: profile.xp,
-        credits: profile.credits,
-        collectedCards: profile.collectedCards || [],
-        completedQuizzes: profile.completedQuizzes || 0
-      });
+      // Synchronizovat s žebříčkem s novým avatarem
+      await syncProfileToLeaderboard(updatedProfile);
       
       // Reload aby se avatar zobrazil i v navigaci
       window.location.reload();
@@ -123,19 +153,14 @@ export default function ProfilePage() {
     
     try {
       await updateUserProfile(user.uid, { displayName: newDisplayName });
-      setProfile(prev => ({ ...prev, displayName: newDisplayName }));
+      
+      // Aktualizovat lokální state
+      const updatedProfile = { ...profile, displayName: newDisplayName };
+      setProfile(updatedProfile);
       setIsEditingName(false);
       
-      // PŘIDÁNO: Synchronizovat s žebříčkem
-      await syncToLeaderboard(user.uid, {
-        displayName: newDisplayName,
-        avatarUrl: profile.avatar,
-        level: profile.level,
-        xp: profile.xp,
-        credits: profile.credits,
-        collectedCards: profile.collectedCards || [],
-        completedQuizzes: profile.completedQuizzes || 0
-      });
+      // Synchronizovat s žebříčkem s novým jménem
+      await syncProfileToLeaderboard(updatedProfile);
       
       // Reload aby se jméno zobrazilo i v navigaci
       window.location.reload();

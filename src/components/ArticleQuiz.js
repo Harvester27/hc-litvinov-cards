@@ -21,9 +21,12 @@ import { useAuth } from '@/hooks/useAuth';
 import { 
   checkQuizCompletion, 
   saveQuizCompletion,
-  straubingQuizData 
+  straubingQuizData,
+  getCompletedQuizzes  // PŘIDÁNO - import chybějící funkce
 } from '@/lib/firebaseQuiz';
 import { getUserProfile } from '@/lib/firebaseProfile';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import confetti from 'canvas-confetti';
 
@@ -108,20 +111,32 @@ export default function ArticleQuiz({ quizId = 'straubing-2025-quiz' }) {
       setSavingCompletion(true);
       try {
         await saveQuizCompletion(user.uid, quizId);
-        // Přidejte:
+        
+        // OPRAVENÁ SYNCHRONIZACE - načíst kompletní data
         const currentProfile = await getUserProfile(user.uid);
-        const completedQuizzes = await getCompletedQuizzes(user.uid);
-
+        
+        // Načíst počet kvízů přímo z Firebase
+        const quizzesRef = collection(db, 'users', user.uid, 'completedQuizzes');
+        const quizzesSnap = await getDocs(quizzesRef);
+        const totalQuizzes = quizzesSnap.size;
+        
+        // Načíst počet karet
+        const cardsRef = collection(db, 'users', user.uid, 'cardCollection');
+        const cardsSnap = await getDocs(cardsRef);
+        const totalCards = cardsSnap.size;
+        
+        // Synchronizovat do žebříčku s kompletními daty
         await syncToLeaderboard(user.uid, {
-          displayName: currentProfile.displayName,
-          avatarUrl: currentProfile.avatarUrl || currentProfile.avatar,
-          level: currentProfile.level,
-          xp: currentProfile.xp,
-          credits: currentProfile.credits,
-          collectedCards: currentProfile.collectedCards || [],
-          completedQuizzes: completedQuizzes.length
+          displayName: currentProfile.displayName || 'Anonymní hráč',
+          avatarUrl: currentProfile.avatarUrl || currentProfile.avatar || null,
+          level: currentProfile.level || 1,
+          xp: currentProfile.xp || 0,
+          credits: currentProfile.credits || 0,
+          totalCards: totalCards,
+          totalQuizzes: totalQuizzes
         });
-        // ODSTRANĚNO automatické přesměrování - hráč musí kliknout sám
+        
+        console.log('✅ Quiz completion synced to leaderboard');
       } catch (error) {
         console.error('Error saving quiz completion:', error);
       } finally {
