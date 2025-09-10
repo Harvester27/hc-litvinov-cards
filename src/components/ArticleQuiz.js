@@ -65,7 +65,7 @@ export default function ArticleQuiz({ quizId = 'straubing-2025-quiz' }) {
   // Start quiz
   const startQuiz = () => {
     if (!user) {
-      router.push('/games/cards');
+      router.push('/');
       return;
     }
     setQuizStarted(true);
@@ -221,7 +221,7 @@ export default function ArticleQuiz({ quizId = 'straubing-2025-quiz' }) {
           Pro účast v kvízu a získání odměn se musíte přihlásit.
         </p>
         <button
-          onClick={() => router.push('/games/cards')}
+          onClick={() => router.push('/')}
           className="px-6 py-3 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition-all"
         >
           Přihlásit se
