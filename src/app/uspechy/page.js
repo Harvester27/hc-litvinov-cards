@@ -24,7 +24,7 @@ export default function AchievementsPage() {
   // Načíst profil
   useEffect(() => {
     if (!authLoading && !user) {
-      router.push('/games/cards');
+      router.push('/');
       return;
     }
     
