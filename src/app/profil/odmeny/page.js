@@ -100,6 +100,14 @@ export default function RewardsPage() {
   const handleCardSelection = async (card) => {
     if (claiming || selectedCard) return;
     
+    // Dodatečná kontrola - zkontrolovat, zda už není odměna vyzvednuta
+    const currentQuiz = completedQuizzes.find(q => q.id === selectedQuiz.id);
+    if (currentQuiz?.rewardClaimed) {
+      console.warn("Reward already claimed for this quiz");
+      setSelectedQuiz(null);
+      return;
+    }
+    
     setSelectedCard(card);
     setCardRevealing(true);
     
@@ -123,6 +131,11 @@ export default function RewardsPage() {
           
           setUserCards(prev => [...prev, card.id]);
           
+          
+          // Znovu načíst data z Firebase pro jistotu
+          setTimeout(() => {
+            loadData();
+          }, 500);
           // ODSTRANĚNO automatické zavření - hráč musí kliknout sám
         }
       } catch (error) {
