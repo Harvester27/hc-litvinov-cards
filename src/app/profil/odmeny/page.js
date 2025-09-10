@@ -11,6 +11,7 @@ import {
   getUserCards
 } from '@/lib/firebaseQuiz';
 import { getUserProfile } from '@/lib/firebaseProfile';
+import { syncToLeaderboard } from '@/lib/firebaseLeaderboardSync'; // PŘIDÁNO
 import { 
   Gift, Trophy, Star, Check, Loader, ArrowLeft,
   Calendar, Coins, Package, Lock, Sparkles,
@@ -110,7 +111,8 @@ export default function RewardsPage() {
     const currentQuiz = completedQuizzes.find(q => q.id === selectedQuiz.id);
     if (currentQuiz?.rewardClaimed) {
       console.warn("Reward already claimed for this quiz");
-      alert("Tato odměna již byla vyzvednuta!"); setSelectedQuiz(null);
+      alert("Tato odměna již byla vyzvednuta!"); 
+      setSelectedQuiz(null);
       return;
     }
     
@@ -137,12 +139,24 @@ export default function RewardsPage() {
           
           setUserCards(prev => [...prev, card.id]);
           
+          // PŘIDÁNO: Synchronizovat s žebříčkem
+          const updatedProfile = await getUserProfile(user.uid);
+          const updatedCards = await getUserCards(user.uid);
+          
+          await syncToLeaderboard(user.uid, {
+            displayName: updatedProfile.displayName,
+            avatarUrl: updatedProfile.avatarUrl || updatedProfile.avatar,
+            level: updatedProfile.level,
+            xp: updatedProfile.xp,
+            credits: updatedProfile.credits,
+            collectedCards: updatedCards,
+            completedQuizzes: completedQuizzes.length
+          });
           
           // Znovu načíst data z Firebase pro jistotu
           setTimeout(() => {
             loadData();
           }, 500);
-          // ODSTRANĚNO automatické zavření - hráč musí kliknout sám
         }
       } catch (error) {
         console.error('Error claiming reward:', error);

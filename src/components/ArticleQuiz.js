@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { syncToLeaderboard } from '@/lib/firebaseLeaderboardSync';
 import { 
   Trophy, 
   Award, 
@@ -107,6 +108,19 @@ export default function ArticleQuiz({ quizId = 'straubing-2025-quiz' }) {
       setSavingCompletion(true);
       try {
         await saveQuizCompletion(user.uid, quizId);
+        // Přidejte:
+        const currentProfile = await getUserProfile(user.uid);
+        const completedQuizzes = await getCompletedQuizzes(user.uid);
+
+        await syncToLeaderboard(user.uid, {
+          displayName: currentProfile.displayName,
+          avatarUrl: currentProfile.avatarUrl || currentProfile.avatar,
+          level: currentProfile.level,
+          xp: currentProfile.xp,
+          credits: currentProfile.credits,
+          collectedCards: currentProfile.collectedCards || [],
+          completedQuizzes: completedQuizzes.length
+        });
         // ODSTRANĚNO automatické přesměrování - hráč musí kliknout sám
       } catch (error) {
         console.error('Error saving quiz completion:', error);

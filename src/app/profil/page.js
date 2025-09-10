@@ -13,6 +13,7 @@ import {
   validateDisplayName,
   getXPForLevel
 } from '@/lib/firebaseProfile';
+import { syncToLeaderboard } from '@/lib/firebaseLeaderboardSync'; // PŘIDÁNO
 import { 
   User, Camera, Save, Lock, Loader, AlertCircle, 
   CheckCircle, Edit2, X, Shield, Zap, Coins,
@@ -90,6 +91,17 @@ export default function ProfilePage() {
       // Aktualizovat lokální state
       setProfile(prev => ({ ...prev, avatar: newAvatarUrl }));
       
+      // PŘIDÁNO: Synchronizovat s žebříčkem
+      await syncToLeaderboard(user.uid, {
+        displayName: profile.displayName,
+        avatarUrl: newAvatarUrl,
+        level: profile.level,
+        xp: profile.xp,
+        credits: profile.credits,
+        collectedCards: profile.collectedCards || [],
+        completedQuizzes: profile.completedQuizzes || 0
+      });
+      
       // Reload aby se avatar zobrazil i v navigaci
       window.location.reload();
     } catch (error) {
@@ -113,6 +125,17 @@ export default function ProfilePage() {
       await updateUserProfile(user.uid, { displayName: newDisplayName });
       setProfile(prev => ({ ...prev, displayName: newDisplayName }));
       setIsEditingName(false);
+      
+      // PŘIDÁNO: Synchronizovat s žebříčkem
+      await syncToLeaderboard(user.uid, {
+        displayName: newDisplayName,
+        avatarUrl: profile.avatar,
+        level: profile.level,
+        xp: profile.xp,
+        credits: profile.credits,
+        collectedCards: profile.collectedCards || [],
+        completedQuizzes: profile.completedQuizzes || 0
+      });
       
       // Reload aby se jméno zobrazilo i v navigaci
       window.location.reload();
