@@ -13,7 +13,7 @@ import { auth } from '@/lib/firebase';
 // 🔐 ADMIN KONFIGURACE
 const ADMIN_CONFIG = {
   // Nastavte silné heslo nebo použijte environment proměnnou
-  PASSWORD: process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'SuperTajneHeslo2024!@#$',
+  PASSWORD: process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'Super11111111112024!@#$',
   
   // Seznam povolených emailů pro reset
   ALLOWED_EMAILS: [
