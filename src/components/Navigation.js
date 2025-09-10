@@ -142,7 +142,6 @@ export default function Navigation() {
     { id: 'historie', label: 'Historie', href: '/historie', icon: <Clock size={18} /> },
     { id: 'sin-slavy', label: 'Síň slávy', href: '/sin-slavy', icon: <Award size={18} /> },
     { id: 'hry', label: 'Hry', href: '/games', icon: <Gamepad2 size={18} /> },
-    { id: 'zebricek', label: 'Žebříček', href: '/zebricek', icon: <Trophy size={18} /> },
   ];
 
   const level = profile?.level ?? 1;
