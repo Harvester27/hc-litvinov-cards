@@ -57,7 +57,7 @@ export const createAimArrow = (scene) => {
   // Špička šipky
   const arrowHeadGeometry = new THREE.ConeGeometry(0.15, 0.5, 8);
   const arrowHead = new THREE.Mesh(arrowHeadGeometry, arrowMaterial);
-  arrowHead.rotation.x = Math.PI / 2;
+  arrowHead.rotation.x = -Math.PI / 2;  // Otočíme šipku správným směrem
   arrowHead.position.z = -3.25;
   arrowGroup.add(arrowHead);
   
@@ -69,18 +69,31 @@ export const createAimArrow = (scene) => {
 export const animateBall = (ball, pins, spin) => {
   if (!ball || ball.userData.velocity.length() <= 0.01) return false;
   
+  // Debug info - vypíšeme každých 60 framů (cca 1x za sekundu)
+  if (Math.random() < 0.016) {
+    console.log('Koule se pohybuje:', {
+      pozice: { x: ball.position.x.toFixed(2), y: ball.position.y.toFixed(2), z: ball.position.z.toFixed(2) },
+      rychlost: ball.userData.velocity.length().toFixed(2),
+      směr_Z: ball.userData.velocity.z.toFixed(2)
+    });
+  }
+  
   // Pohyb koule
   ball.position.add(ball.userData.velocity.clone().multiplyScalar(0.016));
   
-  // Rotace koule podle směru pohybu
-  const rotationAxis = new THREE.Vector3(
-    ball.userData.velocity.z,
-    0,
-    -ball.userData.velocity.x
-  ).normalize();
-  
-  const rotationSpeed = ball.userData.velocity.length() * 0.1;
-  ball.rotateOnWorldAxis(rotationAxis, rotationSpeed);
+  // Rotace koule podle směru pohybu - opravíme směr rotace
+  if (ball.userData.velocity.length() > 0.1) {
+    const rotationAxis = new THREE.Vector3(
+      ball.userData.velocity.z,  // Správně
+      0,
+      -ball.userData.velocity.x  // Správně
+    ).normalize();
+    
+    const rotationSpeed = ball.userData.velocity.length() * 0.1;
+    if (rotationAxis.length() > 0) {
+      ball.rotateOnWorldAxis(rotationAxis, rotationSpeed);
+    }
+  }
   
   // Aplikace spinu (boční rotace)
   if (ball.userData.spin !== 0) {
@@ -100,7 +113,8 @@ export const animateBall = (ball, pins, spin) => {
   if (Math.abs(ball.position.x) > 1.3) {
     // Koule spadla do žlábku - rychlé zpomalení
     ball.userData.velocity.multiplyScalar(0.9);
-    ball.position.y = Math.max(0.3, ball.position.y - 0.01);  // Změněno z 0.2 na 0.3
+    ball.position.y = Math.max(0.3, ball.position.y - 0.01);
+    console.log('⚠️ Koule v žlábku!');
   }
   
   // Kontrola kolizí s kuželkami
@@ -111,6 +125,7 @@ export const animateBall = (ball, pins, spin) => {
       
       if (distance < 0.55) {
         // Kolize!
+        console.log('💥 Kolize s kuželkou!', pinGroup.userData.index);
         pinGroup.userData.standing = false;
         
         // Výpočet směru nárazu
@@ -143,8 +158,14 @@ export const animateBall = (ball, pins, spin) => {
   });
   
   // Reset koule když vyjede z dráhy
-  if (ball.position.z < -15 || Math.abs(ball.position.x) > 2.5) {
+  if (ball.position.z < -15) {
+    console.log('✅ Koule dojela na konec dráhy');
     return true; // Signál že koule dojela
+  }
+  
+  if (Math.abs(ball.position.x) > 2.5) {
+    console.log('❌ Koule mimo dráhu (do strany)');
+    return true;
   }
   
   return false;

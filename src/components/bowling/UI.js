@@ -40,7 +40,7 @@ export const GameHeader = ({ frame, throwsLeft, score, totalScore, lastThrowScor
   </div>
 );
 
-export const Controls = ({ isRolling, isPowerAdjusting, power, spin, onResetGame }) => (
+export const Controls = ({ isRolling, isPowerAdjusting, power, spin, onResetGame, onTestThrow }) => (
   <div className="absolute bottom-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent w-96">
     <div className="space-y-4">
       {!isRolling && (
@@ -80,6 +80,13 @@ export const Controls = ({ isRolling, isPowerAdjusting, power, spin, onResetGame
               <p className="text-xl">Drž šipku dolů! Síla: {power}%</p>
             </div>
           )}
+          
+          <button
+            onClick={onTestThrow}
+            className="w-full bg-yellow-600 hover:bg-yellow-500 text-white py-2 px-4 rounded transition-colors text-sm font-bold"
+          >
+            🎳 Rychlý hod (pro test)
+          </button>
         </>
       )}
       

@@ -27,7 +27,7 @@ const Bowling3D = () => {
   const [lastThrowScore, setLastThrowScore] = useState(null);
   const [frameScores, setFrameScores] = useState([]);
   const [ballPosition, setBallPosition] = useState({ x: 0, z: 12 });
-  const [aimDirection, setAimDirection] = useState({ x: 0, z: -1 });
+  const [aimDirection, setAimDirection] = useState({ x: 0, z: -1 });  // Správný směr ke kuželkám
   const [spin, setSpin] = useState(0);
   const [isAiming, setIsAiming] = useState(false);
 
@@ -110,10 +110,23 @@ const Bowling3D = () => {
       raycasterRef.current.ray.intersectPlane(plane, intersectPoint);
       
       if (intersectPoint && ballRef.current) {
-        // Výpočet směru od koule k místu kliknutí
+        // Cílový bod musí být před koulí (směrem ke kuželkám)
+        // Omezíme cílový bod tak, aby byl vždy směrem ke kuželkám
+        const targetZ = Math.min(intersectPoint.z, ballRef.current.position.z - 2);
+        const targetX = Math.max(-2, Math.min(2, intersectPoint.x));
+        
+        const targetPoint = new THREE.Vector3(targetX, 0, targetZ);
+        
+        // Výpočet směru od koule k cílovému bodu
         const direction = new THREE.Vector3()
-          .subVectors(intersectPoint, ballRef.current.position)
+          .subVectors(targetPoint, ballRef.current.position)
           .normalize();
+        
+        // Ujistíme se, že Z složka je záporná (směrem ke kuželkám)
+        if (direction.z > -0.5) {
+          direction.z = -0.9;
+          direction.normalize();
+        }
         
         setAimDirection({ x: direction.x, z: direction.z });
         
@@ -125,7 +138,7 @@ const Bowling3D = () => {
       }
       
       // Posouvání koule doleva/doprava před hodem
-      if (!isPowerAdjusting && ballRef.current) {
+      if (!isPowerAdjusting && ballRef.current && intersectPoint) {
         const newX = Math.max(-1.2, Math.min(1.2, intersectPoint.x));
         ballRef.current.position.x = newX;
         setBallPosition({ x: newX, z: ballRef.current.position.z });
@@ -252,13 +265,44 @@ const Bowling3D = () => {
     setIsRolling(true);
     setIsAiming(false);
     
-    // Nastavení rychlosti podle síly a směru
-    const speed = (power / 100) * 30;
+    // Pokud je síla 0, nastavíme alespoň nějakou minimální
+    const actualPower = power === 0 ? 50 : power;
+    
+    // Nastavení rychlosti podle síly
+    const speed = Math.max(15, (actualPower / 100) * 35);  // Minimální rychlost 15
+    
+    // Zajistíme, že koule vždy poletí směrem ke kuželkám
+    // Pokud není nastaven směr, použijeme přímý směr
+    let finalDirection = {
+      x: aimDirection.x || 0,
+      z: aimDirection.z || -1
+    };
+    
+    // Pokud je směr špatný (pozitivní Z), opravíme ho
+    if (finalDirection.z >= 0) {
+      console.log('Opravuji špatný směr!');
+      finalDirection = { x: 0, z: -1 };
+    }
+    
+    // Normalizace směru
+    const length = Math.sqrt(finalDirection.x * finalDirection.x + finalDirection.z * finalDirection.z);
+    const normalizedDirection = {
+      x: finalDirection.x / length,
+      z: finalDirection.z / length
+    };
+    
+    console.log('===== HOD KOULE =====');
+    console.log('Síla:', actualPower, '%');
+    console.log('Rychlost:', speed);
+    console.log('Směr X:', normalizedDirection.x.toFixed(2));
+    console.log('Směr Z:', normalizedDirection.z.toFixed(2));
+    console.log('Spin:', spin);
+    console.log('Pozice koule:', ballRef.current.position.toArray());
     
     ballRef.current.userData.velocity = new THREE.Vector3(
-      aimDirection.x * speed,
+      normalizedDirection.x * speed * 0.3,  // Menší boční pohyb
       0,
-      aimDirection.z * speed
+      normalizedDirection.z * speed  // Hlavní pohyb vpřed (záporný = ke kuželkám)
     );
     
     // Přidání spinu
@@ -343,6 +387,20 @@ const Bowling3D = () => {
     setIsRolling(false);
   };
 
+  const testThrow = () => {
+    if (isRolling || !ballRef.current) return;
+    
+    // Nastavíme automaticky sílu na 70% pro test
+    setPower(70);
+    setSpin(0);
+    setAimDirection({ x: 0, z: -1 }); // Přímo vpřed
+    
+    // Počkáme chvilku a hodíme
+    setTimeout(() => {
+      throwBall();
+    }, 100);
+  };
+
   return (
     <div className="w-full h-screen bg-gray-900 relative">
       <div ref={mountRef} className="w-full h-full" />
@@ -363,6 +421,7 @@ const Bowling3D = () => {
         power={power}
         spin={spin}
         onResetGame={resetGame}
+        onTestThrow={testThrow}
       />
       
       <ScoreHistory frameScores={frameScores} />
