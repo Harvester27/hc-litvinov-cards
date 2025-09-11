@@ -2,8 +2,8 @@
 
 import dynamic from 'next/dynamic';
 
-// Dynamicky importujeme komponentu bez SSR
-const Bowling3D = dynamic(() => import('@/components/Bowling3D'), {
+// Dynamicky importujeme komponentu bez SSR ze složky bowling
+const Bowling3D = dynamic(() => import('@/components/bowling/Bowling3D'), {
   ssr: false,
   loading: () => (
     <div className="w-full h-screen bg-gray-900 flex items-center justify-center">
