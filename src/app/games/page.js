@@ -320,65 +320,66 @@ export default function GamesPage() {
               </div>
             </div>
 
-            {/* NOVÁ HRA: Lancers Wrestling Game Card */}
+            {/* NOVÁ HRA: Lancers Bowling Game Card */}
             <div 
-              onClick={() => handleGameClick('/games/lancers-wrestling', 'Lancers Wrestling')}
-              className="group relative bg-gradient-to-br from-black via-red-900 to-black rounded-3xl overflow-hidden cursor-pointer transform transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl"
+              onClick={() => handleGameClick('/games/lancers-bowling', 'Lancers Bowling')}
+              className="group relative bg-gradient-to-br from-amber-900 via-amber-700 to-amber-900 rounded-3xl overflow-hidden cursor-pointer transform transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl"
             >
               {/* Lock icon overlay */}
               <div className="absolute top-6 left-6 w-8 h-8 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center">
                 <Lock className="text-white" size={16} />
               </div>
 
-              {/* Wrestling ring pattern background */}
+              {/* Bowling lane pattern background */}
               <div className="absolute inset-0">
                 <div className="absolute inset-0 opacity-30" style={{
                   backgroundImage: `
-                    linear-gradient(90deg, transparent 0%, rgba(255,0,0,0.1) 50%, transparent 100%),
-                    linear-gradient(0deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%)
+                    linear-gradient(90deg, transparent 20%, rgba(255,255,255,0.1) 21%, rgba(255,255,255,0.1) 22%, transparent 23%,
+                                          transparent 47%, rgba(255,255,255,0.1) 48%, rgba(255,255,255,0.1) 52%, transparent 53%,
+                                          transparent 77%, rgba(255,255,255,0.1) 78%, rgba(255,255,255,0.1) 79%, transparent 80%)
                   `
                 }} />
-                {/* Ring ropes effect */}
-                <div className="absolute top-[25%] left-0 right-0 h-[2px] bg-white/10" />
-                <div className="absolute top-[50%] left-0 right-0 h-[2px] bg-white/10" />
-                <div className="absolute top-[75%] left-0 right-0 h-[2px] bg-white/10" />
-                {/* Spotlight effect */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 bg-yellow-400/10 rounded-full blur-3xl animate-pulse" />
+                {/* Bowling pins pattern */}
+                <div className="absolute bottom-4 right-4 opacity-20">
+                  <div className="text-6xl">🎳</div>
+                </div>
+                {/* Ball effect */}
+                <div className="absolute top-1/2 left-1/4 w-20 h-20 bg-red-600/20 rounded-full blur-2xl animate-pulse" />
               </div>
 
               {/* Content */}
               <div className="relative p-8">
-                {/* FIGHT Badge */}
-                <div className="absolute top-6 right-6 bg-gradient-to-r from-red-600 to-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold animate-pulse shadow-lg">
-                  FIGHT! 🥊
+                {/* STRIKE Badge */}
+                <div className="absolute top-6 right-6 bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold animate-pulse shadow-lg">
+                  STRIKE! 🎳
                 </div>
 
                 {/* Icon */}
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl mb-6">
-                  <span className="text-4xl">🤼</span>
+                  <span className="text-4xl">🎳</span>
                 </div>
 
                 {/* Title & Description */}
-                <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-yellow-400 mb-3">
-                  Lancers Wrestling
+                <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-200 mb-3">
+                  Lancers Bowling
                 </h2>
                 <p className="text-white/90 mb-6">
-                  Vstup do ringu a staň se šampionem HC Litvínov Wrestling!
+                  Zamiř, hoď a sraz všechny kuželky v 3D bowlingu!
                 </p>
 
                 {/* Features */}
                 <div className="space-y-2 mb-8">
                   <div className="flex items-center gap-3 text-white/80 text-sm">
-                    <Dumbbell size={16} />
-                    <span>Brutální zápasy</span>
+                    <Target size={16} />
+                    <span>Realistická fyzika</span>
                   </div>
                   <div className="flex items-center gap-3 text-white/80 text-sm">
-                    <Award size={16} />
-                    <span>Turnajový mód</span>
+                    <Trophy size={16} />
+                    <span>10 framů výzvy</span>
                   </div>
                   <div className="flex items-center gap-3 text-white/80 text-sm">
-                    <Flame size={16} />
-                    <span>3D Wrestling ring</span>
+                    <Zap size={16} />
+                    <span>Spin a efekty</span>
                   </div>
                 </div>
 
