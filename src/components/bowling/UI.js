@@ -85,7 +85,7 @@ export const Controls = ({ isRolling, isPowerAdjusting, power, spin, onResetGame
       
       {isRolling && (
         <div className="text-center text-white">
-          <p className="text-xl animate-pulse">🎳 Koule letí...</p>
+          <p className="text-xl animate-pulse">🎳 Koule se kutálí...</p>
         </div>
       )}
       

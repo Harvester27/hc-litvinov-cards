@@ -49,11 +49,11 @@ export const createLane = (scene) => {
 };
 
 export const setupLighting = (scene) => {
-  // Světla
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+  // Světla - zvýšíme intenzitu
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);  // Zvýšeno z 0.4
   scene.add(ambientLight);
 
-  const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+  const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);  // Zvýšeno z 0.8
   directionalLight.position.set(5, 10, 5);
   directionalLight.castShadow = true;
   directionalLight.shadow.camera.near = 0.1;
@@ -65,12 +65,17 @@ export const setupLighting = (scene) => {
   scene.add(directionalLight);
 
   // Dodatečné bodové světlo pro lepší atmosféru
-  const spotLight = new THREE.SpotLight(0xffffff, 0.5);
+  const spotLight = new THREE.SpotLight(0xffffff, 0.8);  // Zvýšeno z 0.5
   spotLight.position.set(0, 10, 10);
   spotLight.angle = Math.PI / 6;
   spotLight.penumbra = 0.3;
   spotLight.castShadow = true;
   scene.add(spotLight);
+  
+  // Přidáme další světlo přímo na kouli
+  const pointLight = new THREE.PointLight(0xffffff, 0.5);
+  pointLight.position.set(0, 5, 12);  // Pozice nad koulí
+  scene.add(pointLight);
 };
 
 export const setupCamera = (aspectRatio) => {
@@ -80,8 +85,8 @@ export const setupCamera = (aspectRatio) => {
     0.1,
     100
   );
-  camera.position.set(0, 8, 15);
-  camera.lookAt(0, 0, -5);
+  camera.position.set(0, 10, 18);  // Zvýšíme kameru a posuneme blíž
+  camera.lookAt(0, 0, 0);  // Díváme se více na střed scény
   return camera;
 };
 

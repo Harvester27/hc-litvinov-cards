@@ -1,12 +1,14 @@
 import * as THREE from 'three';
 
 export const createBall = (scene) => {
-  // Koule s realistickým vzhledem
-  const ballGeometry = new THREE.SphereGeometry(0.4, 32, 32);
+  // Koule s realistickým vzhledem - ZVĚTŠÍME JI
+  const ballGeometry = new THREE.SphereGeometry(0.5, 32, 32); // Zvětšeno z 0.4 na 0.5
   const ballMaterial = new THREE.MeshPhongMaterial({ 
-    color: 0x8B0000,  // Tmavě červená bowlingová koule
+    color: 0xff0000,  // Jasnější červená pro lepší viditelnost
     shininess: 150,
-    specular: 0xffffff
+    specular: 0xffffff,
+    emissive: 0x220000,  // Přidáme emissive pro lepší viditelnost
+    emissiveIntensity: 0.2
   });
   const ball = new THREE.Mesh(ballGeometry, ballMaterial);
   
@@ -22,8 +24,9 @@ export const createBall = (scene) => {
     ball.add(hole);
   }
   
-  ball.position.set(0, 0.4, 12);
+  ball.position.set(0, 0.5, 12);  // Zvýšíme pozici Y z 0.4 na 0.5
   ball.castShadow = true;
+  ball.visible = true;  // Explicitně nastavíme viditelnost
   ball.userData = { 
     velocity: new THREE.Vector3(0, 0, 0), 
     angularVelocity: new THREE.Vector3(0, 0, 0),
@@ -31,6 +34,7 @@ export const createBall = (scene) => {
   };
   
   scene.add(ball);
+  console.log('Koule vytvořena na pozici:', ball.position);  // Debug log
   return ball;
 };
 
@@ -96,7 +100,7 @@ export const animateBall = (ball, pins, spin) => {
   if (Math.abs(ball.position.x) > 1.3) {
     // Koule spadla do žlábku - rychlé zpomalení
     ball.userData.velocity.multiplyScalar(0.9);
-    ball.position.y = Math.max(0.2, ball.position.y - 0.01);
+    ball.position.y = Math.max(0.3, ball.position.y - 0.01);  // Změněno z 0.2 na 0.3
   }
   
   // Kontrola kolizí s kuželkami
@@ -149,9 +153,11 @@ export const animateBall = (ball, pins, spin) => {
 export const resetBall = (ball) => {
   if (!ball) return;
   
-  ball.position.set(0, 0.4, 12);
+  ball.position.set(0, 0.5, 12);  // Stejná výška jako při vytvoření
   ball.userData.velocity.set(0, 0, 0);
   ball.userData.angularVelocity.set(0, 0, 0);
   ball.userData.spin = 0;
   ball.rotation.set(0, 0, 0);
+  ball.visible = true;  // Ujistíme se, že je viditelná
+  console.log('Koule resetována na pozici:', ball.position);  // Debug log
 };
