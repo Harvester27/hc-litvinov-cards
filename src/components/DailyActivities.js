@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { 
+import {
   X, Waves, Trophy, BriefcaseBusiness, Hotel, Users,
-  ChevronRight, CheckCircle2
+  ChevronRight, CheckCircle2, Target, Award
 } from 'lucide-react';
 
 // Import jednotlivých aktivit
@@ -12,6 +12,9 @@ import RunningActivity from './activities/RunningActivity';
 import JobPostingActivity from './activities/JobPostingActivity';
 import ExtraSleepActivity from './activities/ExtraSleepActivity';
 import TeamSelectionActivity from './activities/TeamSelectionActivity';
+import FriendlyMatchActivity from './activities/FriendlyMatchActivity';
+import TournamentActivity from './activities/TournamentActivity';
+import SeasonalChallengesActivity from './activities/SeasonalChallengesActivity';
 
 /**
  * Modal komponenta pro výběr denních aktivit
@@ -83,6 +86,36 @@ export default function DailyActivities({
       color: 'from-red-500 to-orange-600',
       benefits: 'Optimalizace sestavy',
       component: TeamSelectionActivity
+    },
+    {
+      id: 'friendlymatch',
+      name: 'Zahrát přáteláček',
+      description: 'Přátelský zápas proti různým soupeřům',
+      icon: '🏒',
+      iconComponent: Trophy,
+      color: 'from-blue-600 to-purple-600',
+      benefits: 'Kredity, zkušenosti, soudržnost',
+      component: FriendlyMatchActivity
+    },
+    {
+      id: 'tournament',
+      name: 'Zahrát turnaj',
+      description: 'Série zápasů s velkými odměnami',
+      icon: '🏆',
+      iconComponent: Award,
+      color: 'from-purple-600 to-pink-600',
+      benefits: 'Až 3100 kreditů + bonusy',
+      component: TournamentActivity
+    },
+    {
+      id: 'challenges',
+      name: 'Sezónní výzvy',
+      description: 'Speciální týdenní a měsíční výzvy',
+      icon: '🎯',
+      iconComponent: Target,
+      color: 'from-indigo-600 to-purple-600',
+      benefits: 'Exkluzivní karty a odměny',
+      component: SeasonalChallengesActivity
     }
   ];
   
