@@ -658,10 +658,10 @@ export default function TeamManager({
             
             <p className="text-xl text-blue-300 mb-2">Začíná sezóna 2024/2025</p>
             <p className="text-sm text-yellow-400 animate-pulse">
-              💡 Klikněte na aktuální den v kalendáři pro zobrazení denních aktivit!
+              💡 Klikněte na aktuální den v kalendáři pro výběr aktivity!
             </p>
             <p className="text-xs text-gray-400 mt-2">
-              Musíte dokončit všech 5 aktivit, než budete moci přejít na další den
+              Vyberte jednu aktivitu - Volno (posun dne) nebo Přáteláček (jen So+Ne)
             </p>
             
             {/* NOVÉ - Tip pro skill tree */}

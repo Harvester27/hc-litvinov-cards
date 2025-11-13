@@ -2,19 +2,12 @@
 
 import React, { useState } from "react";
 import {
-  X, Waves, Trophy, BriefcaseBusiness, Hotel, Users,
-  ChevronRight, CheckCircle2, Target, Award
+  X, ChevronRight, CheckCircle2, Coffee
 } from 'lucide-react';
 
 // Import jednotlivých aktivit
-import SwimmingActivity from './activities/SwimmingActivity';
-import RunningActivity from './activities/RunningActivity';
-import JobPostingActivity from './activities/JobPostingActivity';
-import ExtraSleepActivity from './activities/ExtraSleepActivity';
-import TeamSelectionActivity from './activities/TeamSelectionActivity';
+import DayOffActivity from './activities/DayOffActivity';
 import FriendlyMatchActivity from './activities/FriendlyMatchActivity';
-import TournamentActivity from './activities/TournamentActivity';
-import SeasonalChallengesActivity from './activities/SeasonalChallengesActivity';
 
 /**
  * Modal komponenta pro výběr denních aktivit
@@ -35,88 +28,33 @@ export default function DailyActivities({
   
   if (!isOpen) return null;
   
-  // Definice všech dostupných aktivit
+  // Získat den v týdnu (0 = neděle, 6 = sobota)
+  const dayOfWeek = currentDate.getDay();
+  const isWeekend = dayOfWeek === 0 || dayOfWeek === 6; // Neděle nebo sobota
+
+  // Definice dostupných aktivit (podle dne v týdnu)
   const activities = [
     {
-      id: 'swimming',
-      name: 'Jít plavat',
-      description: 'Zlepší kondici a regeneraci týmu',
-      icon: '🏊‍♂️',
-      iconComponent: Waves,
-      color: 'from-blue-500 to-cyan-600',
-      benefits: '+2 kondice, +1 regenerace',
-      component: SwimmingActivity
-    },
-    {
-      id: 'running',
-      name: 'Jít běhat',
-      description: 'Zvýší rychlost a vytrvalost hráčů',
-      icon: '🏃‍♂️',
-      iconComponent: null,
-      color: 'from-green-500 to-emerald-600',
-      benefits: '+2 rychlost, +1 vytrvalost',
-      component: RunningActivity
-    },
-    {
-      id: 'jobposting',
-      name: 'Napsat inzerát',
-      description: 'Hledání nových talentů na internetu',
-      icon: '💼',
-      iconComponent: BriefcaseBusiness,
-      color: 'from-purple-500 to-indigo-600',
-      benefits: 'Možnost získat nové hráče',
-      component: JobPostingActivity
-    },
-    {
-      id: 'extrasleep',
-      name: 'Extra spánek',
-      description: 'Důležitý odpočinek pro regeneraci',
-      icon: '😴',
-      iconComponent: Hotel,
+      id: 'dayoff',
+      name: 'Volno',
+      description: 'Den volna pro regeneraci týmu',
+      icon: '☕',
+      iconComponent: Coffee,
       color: 'from-gray-600 to-gray-700',
-      benefits: '+3 regenerace, +1 morálka',
-      component: ExtraSleepActivity
+      benefits: 'Posun na další den',
+      component: DayOffActivity
     },
-    {
-      id: 'teamselection',
-      name: 'Vybrat tým',
-      description: 'Sestavit základní sestavu z karet',
-      icon: '⚽',
-      iconComponent: Users,
-      color: 'from-red-500 to-orange-600',
-      benefits: 'Optimalizace sestavy',
-      component: TeamSelectionActivity
-    },
-    {
+    // Přáteláček je dostupný pouze o víkendu
+    ...(isWeekend ? [{
       id: 'friendlymatch',
       name: 'Zahrát přáteláček',
-      description: 'Přátelský zápas proti různým soupeřům',
+      description: 'Přátelský zápas (dostupné jen o víkendu)',
       icon: '🏒',
-      iconComponent: Trophy,
+      iconComponent: null,
       color: 'from-blue-600 to-purple-600',
-      benefits: 'Kredity, zkušenosti, soudržnost',
+      benefits: 'Zápas s možností výhry',
       component: FriendlyMatchActivity
-    },
-    {
-      id: 'tournament',
-      name: 'Zahrát turnaj',
-      description: 'Série zápasů s velkými odměnami',
-      icon: '🏆',
-      iconComponent: Award,
-      color: 'from-purple-600 to-pink-600',
-      benefits: 'Až 3100 kreditů + bonusy',
-      component: TournamentActivity
-    },
-    {
-      id: 'challenges',
-      name: 'Sezónní výzvy',
-      description: 'Speciální týdenní a měsíční výzvy',
-      icon: '🎯',
-      iconComponent: Target,
-      color: 'from-indigo-600 to-purple-600',
-      benefits: 'Exkluzivní karty a odměny',
-      component: SeasonalChallengesActivity
-    }
+    }] : [])
   ];
   
   // Handler pro výběr aktivity
@@ -196,19 +134,16 @@ export default function DailyActivities({
               </p>
               <div className="mt-2 flex items-center gap-2">
                 <span className="text-sm text-yellow-400">
-                  Dokončeno: {completedActivities.length}/5
+                  Dokončeno: {completedActivities.length}/1
                 </span>
                 <div className="flex gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <div
-                      key={i}
-                      className={`w-2 h-2 rounded-full ${
-                        i < completedActivities.length 
-                          ? 'bg-green-400' 
-                          : 'bg-gray-600'
-                      }`}
-                    />
-                  ))}
+                  <div
+                    className={`w-2 h-2 rounded-full ${
+                      completedActivities.length > 0
+                        ? 'bg-green-400'
+                        : 'bg-gray-600'
+                    }`}
+                  />
                 </div>
               </div>
             </div>
@@ -285,12 +220,12 @@ export default function DailyActivities({
             })}
           </div>
           
-          {/* Info pokud jsou všechny dokončené */}
-          {completedActivities.length >= 5 && (
+          {/* Info pokud je aktivita dokončená */}
+          {completedActivities.length >= 1 && (
             <div className="mt-6 p-4 bg-green-600/20 border border-green-500/30 rounded-xl text-center">
-              <Trophy className="text-green-400 mx-auto mb-2" size={32} />
+              <CheckCircle2 className="text-green-400 mx-auto mb-2" size={32} />
               <p className="text-green-400 font-bold">
-                Výborně! Všechny denní aktivity jsou dokončené.
+                Výborně! Dnešní aktivita je dokončená.
               </p>
               <p className="text-green-300 text-sm mt-1">
                 Můžeš přejít na další den v kalendáři.

@@ -36,16 +36,16 @@ export default function Calendar({
   // Zkontrolovat, jestli může jít na další den
   const canAdvanceToNextDay = () => {
     const progress = getDayProgress(gameDay);
-    return progress.completed >= 5;
+    return progress.completed >= 1;
   };
-  
+
   // Handler pro dokončení aktivity
   const handleActivityComplete = (activityType) => {
     const dateKey = `${gameDay.getFullYear()}-${gameDay.getMonth()}-${gameDay.getDate()}`;
     const currentProgress = getDayProgress(gameDay);
-    
+
     // Přidat aktivitu pokud ještě není dokončená
-    if (!currentProgress.activities.includes(activityType) && currentProgress.completed < 5) {
+    if (!currentProgress.activities.includes(activityType) && currentProgress.completed < 1) {
       setDailyProgress(prev => ({
         ...prev,
         [dateKey]: {
@@ -144,7 +144,7 @@ export default function Calendar({
   // Přejít na další den
   const goToNextDay = () => {
     if (!canAdvanceToNextDay()) {
-      alert('Musíš dokončit všech 5 denních aktivit!');
+      alert('Musíš dokončit dnešní aktivitu!');
       return;
     }
     
