@@ -47,16 +47,16 @@ export default function HomePage() {
     return () => clearInterval(interval);
   }, []);
 
-  // KHLA tabulka
+  // KHLA tabulka - Sezóna 2025/2026
   const khlaStandings = [
-    { position: 1, team: 'HC Krokodýl', games: 14, points: 30 },
-    { position: 2, team: 'HC Kopyta', games: 14, points: 29 },
-    { position: 3, team: 'HC Žíhadla', games: 14, points: 28 },
-    { position: 4, team: 'HC Band Of Brothers', games: 14, points: 25 },
-    { position: 5, team: 'HC North Blades', games: 14, points: 15 },
-    { position: 6, team: 'HC F.R.I.E.N.D.S.', games: 14, points: 14 },
-    { position: 7, team: 'HC Lancers', games: 14, points: 14, isOurTeam: true },
-    { position: 8, team: 'HC Warriors', games: 14, points: 8 }
+    { position: 1, team: 'HC F.R.I.E.N.D.S.', games: 6, points: 15 },
+    { position: 2, team: 'HC Žíhadla', games: 6, points: 12 },
+    { position: 3, team: 'HC Warriors', games: 6, points: 10 },
+    { position: 4, team: 'HC Band Of Brothers', games: 6, points: 10 },
+    { position: 5, team: 'HC Krokodýl', games: 6, points: 9 },
+    { position: 6, team: 'HC Lancers', games: 5, points: 6, isOurTeam: true },
+    { position: 7, team: 'HC Kopyta', games: 6, points: 6 },
+    { position: 8, team: 'HC North Blades', games: 5, points: 0 }
   ];
 
   const topPlayers = [
@@ -223,19 +223,19 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-white text-center">
             <div>
-              <div className="text-4xl font-black">7.</div>
+              <div className="text-4xl font-black">6.</div>
               <div className="text-sm font-light uppercase tracking-wider opacity-90">Místo v lize</div>
             </div>
             <div>
-              <div className="text-4xl font-black">4/8</div>
+              <div className="text-4xl font-black">2/3</div>
               <div className="text-sm font-light uppercase tracking-wider opacity-90">Výhry/Prohry</div>
             </div>
             <div>
-              <div className="text-4xl font-black">58</div>
+              <div className="text-4xl font-black">25</div>
               <div className="text-sm font-light uppercase tracking-wider opacity-90">Vstřelené góly</div>
             </div>
             <div>
-              <div className="text-4xl font-black text-yellow-400">14</div>
+              <div className="text-4xl font-black text-yellow-400">6</div>
               <div className="text-sm font-light uppercase tracking-wider opacity-90">Bodů</div>
             </div>
           </div>
