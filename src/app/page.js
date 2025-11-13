@@ -18,10 +18,11 @@ export default function HomePage() {
   const [timeToNextGame, setTimeToNextGame] = useState('');
   const [selectedMatch, setSelectedMatch] = useState(null);
   const [showMatchDetail, setShowMatchDetail] = useState(false);
+  const [selectedSeason, setSelectedSeason] = useState('2025/2026'); // State pro výběr sezóny
 
   // Získat poslední 2 zápasy
   const recentMatches = getRecentMatches(2);
-  
+
   // Získat články
   const articles = getAllArticles();
 
@@ -47,17 +48,50 @@ export default function HomePage() {
     return () => clearInterval(interval);
   }, []);
 
-  // KHLA tabulka - Sezóna 2025/2026
-  const khlaStandings = [
-    { position: 1, team: 'HC F.R.I.E.N.D.S.', games: 6, points: 15 },
-    { position: 2, team: 'HC Žíhadla', games: 6, points: 12 },
-    { position: 3, team: 'HC Warriors', games: 6, points: 10 },
-    { position: 4, team: 'HC Band Of Brothers', games: 6, points: 10 },
-    { position: 5, team: 'HC Krokodýl', games: 6, points: 9 },
-    { position: 6, team: 'HC Lancers', games: 5, points: 6, isOurTeam: true },
-    { position: 7, team: 'HC Kopyta', games: 6, points: 6 },
-    { position: 8, team: 'HC North Blades', games: 5, points: 0 }
-  ];
+  // KHLA tabulka - Data pro všechny sezóny
+  const seasonsData = {
+    '2024/2025': {
+      standings: [
+        { position: 1, team: 'HC Krokodýl', games: 14, points: 30 },
+        { position: 2, team: 'HC Kopyta', games: 14, points: 29 },
+        { position: 3, team: 'HC Žíhadla', games: 14, points: 28 },
+        { position: 4, team: 'HC Band Of Brothers', games: 14, points: 25 },
+        { position: 5, team: 'HC North Blades', games: 14, points: 15 },
+        { position: 6, team: 'HC F.R.I.E.N.D.S.', games: 14, points: 14 },
+        { position: 7, team: 'HC Lancers', games: 14, points: 14, isOurTeam: true },
+        { position: 8, team: 'HC Warriors', games: 14, points: 8 }
+      ],
+      stats: {
+        position: 7,
+        record: '4/8',
+        goals: 58,
+        points: 14
+      }
+    },
+    '2025/2026': {
+      standings: [
+        { position: 1, team: 'HC F.R.I.E.N.D.S.', games: 6, points: 15 },
+        { position: 2, team: 'HC Žíhadla', games: 6, points: 12 },
+        { position: 3, team: 'HC Warriors', games: 6, points: 10 },
+        { position: 4, team: 'HC Band Of Brothers', games: 6, points: 10 },
+        { position: 5, team: 'HC Krokodýl', games: 6, points: 9 },
+        { position: 6, team: 'HC Lancers', games: 5, points: 6, isOurTeam: true },
+        { position: 7, team: 'HC Kopyta', games: 6, points: 6 },
+        { position: 8, team: 'HC North Blades', games: 5, points: 0 }
+      ],
+      stats: {
+        position: 6,
+        record: '2/3',
+        goals: 25,
+        points: 6
+      }
+    }
+  };
+
+  // Vybraná sezóna
+  const currentSeasonData = seasonsData[selectedSeason];
+  const khlaStandings = currentSeasonData.standings;
+  const teamStats = currentSeasonData.stats;
 
   const topPlayers = [
     { name: 'Roman Šimek', number: 27, position: 'Obránce', goals: 4, assists: 8, points: 12 },
@@ -223,19 +257,19 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-white text-center">
             <div>
-              <div className="text-4xl font-black">6.</div>
+              <div className="text-4xl font-black">{teamStats.position}.</div>
               <div className="text-sm font-light uppercase tracking-wider opacity-90">Místo v lize</div>
             </div>
             <div>
-              <div className="text-4xl font-black">2/3</div>
+              <div className="text-4xl font-black">{teamStats.record}</div>
               <div className="text-sm font-light uppercase tracking-wider opacity-90">Výhry/Prohry</div>
             </div>
             <div>
-              <div className="text-4xl font-black">25</div>
+              <div className="text-4xl font-black">{teamStats.goals}</div>
               <div className="text-sm font-light uppercase tracking-wider opacity-90">Vstřelené góly</div>
             </div>
             <div>
-              <div className="text-4xl font-black text-yellow-400">6</div>
+              <div className="text-4xl font-black text-yellow-400">{teamStats.points}</div>
               <div className="text-sm font-light uppercase tracking-wider opacity-90">Bodů</div>
             </div>
           </div>
@@ -420,6 +454,36 @@ export default function HomePage() {
                 KHLA Sportega Liga
               </h3>
             </div>
+
+            {/* Přepínač sezón */}
+            <div className="px-4 pt-4 pb-2">
+              <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
+                <button
+                  onClick={() => setSelectedSeason('2024/2025')}
+                  className={`flex-1 px-3 py-2 rounded-md text-sm font-bold transition-all ${
+                    selectedSeason === '2024/2025'
+                      ? 'bg-red-600 text-white shadow-md'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  2024/2025
+                </button>
+                <button
+                  onClick={() => setSelectedSeason('2025/2026')}
+                  className={`flex-1 px-3 py-2 rounded-md text-sm font-bold transition-all ${
+                    selectedSeason === '2025/2026'
+                      ? 'bg-red-600 text-white shadow-md'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  2025/2026
+                </button>
+              </div>
+              <p className="text-xs text-gray-500 mt-2 text-center">
+                Sezóna: <span className="font-bold text-gray-700">{selectedSeason}</span>
+              </p>
+            </div>
+
             <div className="p-4 space-y-2">
               {khlaStandings.map((team) => (
                 <div 
