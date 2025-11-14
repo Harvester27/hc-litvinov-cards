@@ -14,12 +14,12 @@ import {
 } from '@/data/lancersDynasty/obycejneKartyLancers';
 
 // Komponenta pro jednu kartu ve sbírce
-const CollectionCard = ({ cardData, userCardData, onUpgrade, credits, onClick }) => {
+const CollectionCard = ({ cardData, userCardData, onUpgrade, credits, onClick, duplicateCount }) => {
   const cardInfo = getCardById(cardData.id);
   const overall = calculateOverall(userCardData.attributes || {});
 
   return (
-    <div 
+    <div
       className="relative w-56 h-80 mx-auto cursor-pointer hover:scale-105 transition-transform"
       onClick={() => onClick(cardData)}
       style={{ transformStyle: 'preserve-3d' }}
@@ -40,7 +40,7 @@ const CollectionCard = ({ cardData, userCardData, onUpgrade, credits, onClick })
 
           {/* Obrázek hráče */}
           <div className="relative h-48 bg-gradient-to-b from-gray-600 to-gray-500 flex items-center justify-center">
-            <img 
+            <img
               src={cardInfo.imageUrl}
               alt={cardInfo.name}
               className="h-full w-full object-cover"
@@ -52,11 +52,18 @@ const CollectionCard = ({ cardData, userCardData, onUpgrade, credits, onClick })
             <div className="absolute inset-0 items-center justify-center hidden">
               <User className="text-gray-400" size={60} />
             </div>
-            
+
             {/* Číslo dresu */}
             <div className="absolute top-2 right-2 bg-red-600/80 backdrop-blur-sm rounded-full w-8 h-8 flex items-center justify-center">
               <span className="text-white text-sm font-bold">#{cardInfo.number}</span>
             </div>
+
+            {/* Badge s počtem duplikátů */}
+            {duplicateCount > 1 && (
+              <div className="absolute bottom-2 right-2 bg-yellow-500/90 backdrop-blur-sm rounded-full w-10 h-10 flex items-center justify-center border-2 border-yellow-300">
+                <span className="text-gray-900 text-sm font-black">{duplicateCount}x</span>
+              </div>
+            )}
           </div>
 
           {/* Jméno hráče a typ karty s logem */}
@@ -64,10 +71,10 @@ const CollectionCard = ({ cardData, userCardData, onUpgrade, credits, onClick })
             <h3 className="text-white font-bold text-center text-base mb-3">
               {cardInfo.name}
             </h3>
-            
+
             {/* Logo a typ karty */}
             <div className="flex items-center gap-2">
-              <img 
+              <img
                 src="/images/loga/lancers-logo.png"
                 alt="HC Litvínov"
                 className="h-6 w-6 object-contain"
@@ -84,10 +91,10 @@ const CollectionCard = ({ cardData, userCardData, onUpgrade, credits, onClick })
 };
 
 // Modal komponenta pro zvětšenou kartu
-const CardModal = ({ cardData, isOpen, onClose, onNext, onPrev, credits, onUpgrade }) => {
+const CardModal = ({ cardData, isOpen, onClose, onNext, onPrev, credits, onUpgrade, duplicates, currentDuplicateIndex, onNextDuplicate, onPrevDuplicate }) => {
   const [isFlipped, setIsFlipped] = useState(false);
   const [activeTab, setActiveTab] = useState('attributes');
-  
+
   const cardInfo = getCardById(cardData?.id);
   const overall = cardData ? calculateOverall(cardData.attributes || {}) : 1;
 
@@ -95,7 +102,7 @@ const CardModal = ({ cardData, isOpen, onClose, onNext, onPrev, credits, onUpgra
     // Reset při změně karty
     setIsFlipped(false);
     setActiveTab('attributes');
-  }, [cardData?.id]);
+  }, [cardData?.uniqueId]);
 
   useEffect(() => {
     // ESC pro zavření
@@ -272,6 +279,33 @@ const CardModal = ({ cardData, isOpen, onClose, onNext, onPrev, credits, onUpgra
                   <span className="text-white font-bold text-base">{cardInfo.name}</span>
                   <span className="text-white/90 text-sm">OVR: {overall}</span>
                 </div>
+
+                {/* Přepínač duplikátů - zobrazí se pouze pokud má hráč více stejných karet */}
+                {duplicates && duplicates.length > 1 && (
+                  <div className="flex items-center justify-center gap-3 mt-2 pt-2 border-t border-red-500/30">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onPrevDuplicate();
+                      }}
+                      className="w-6 h-6 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all"
+                    >
+                      <ChevronLeft className="text-white" size={14} />
+                    </button>
+                    <span className="text-white/80 text-xs font-medium">
+                      Karta {currentDuplicateIndex + 1} z {duplicates.length}
+                    </span>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onNextDuplicate();
+                      }}
+                      className="w-6 h-6 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all"
+                    >
+                      <ChevronRight className="text-white" size={14} />
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Tabs */}
@@ -424,18 +458,20 @@ const CardModal = ({ cardData, isOpen, onClose, onNext, onPrev, credits, onUpgra
 };
 
 // Hlavní komponenta sbírky
-export default function LancersDynastyCollection({ 
-  collection, 
-  onBack, 
-  credits, 
-  onUpgradeCard 
+export default function LancersDynastyCollection({
+  collection,
+  onBack,
+  credits,
+  onUpgradeCard
 }) {
   const [filter, setFilter] = useState('all');
   const [selectedCard, setSelectedCard] = useState(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  
-  const filteredCollection = filter === 'all' 
-    ? collection 
+  const [currentDuplicates, setCurrentDuplicates] = useState([]);
+  const [currentDuplicateIndex, setCurrentDuplicateIndex] = useState(0);
+
+  const filteredCollection = filter === 'all'
+    ? collection
     : collection.filter(card => {
         const cardInfo = getCardById(card.id);
         if (filter === 'attack') return cardInfo.position === 'Útočník';
@@ -444,53 +480,89 @@ export default function LancersDynastyCollection({
         return true;
       });
 
+  // Seskupit karty podle ID (aby se duplikáty zobrazily jako jedna karta)
+  const groupedCollection = filteredCollection.reduce((acc, card) => {
+    const existing = acc.find(item => item.id === card.id);
+    if (existing) {
+      existing.duplicates.push(card);
+      existing.count++;
+    } else {
+      acc.push({
+        id: card.id,
+        card: card, // První karta z této skupiny
+        duplicates: [card], // Všechny instance této karty
+        count: 1
+      });
+    }
+    return acc;
+  }, []);
+
   // Spočítat unikátní karty
   const uniqueCards = [...new Set(collection.map(c => c.id))];
   const duplicates = collection.length - uniqueCards.length;
 
   // Aktualizovat selectedCard když se změní collection (po vylepšení)
   useEffect(() => {
-    if (selectedCard) {
-      // Najít aktualizovanou verzi karty v kolekci
-      const updatedCard = collection.find((card, idx) => {
-        // Najít kartu podle ID a původního indexu
-        return card.id === selectedCard.id && collection.indexOf(card) === selectedIndex;
-      });
-      
-      if (!updatedCard && collection.length > 0) {
-        // Pokud karta neexistuje, použij kartu na stejném indexu
-        const cardAtIndex = filteredCollection[selectedIndex];
-        if (cardAtIndex) {
-          setSelectedCard(cardAtIndex);
-        }
-      } else if (updatedCard) {
-        // Aktualizovat vybranou kartu
-        setSelectedCard(updatedCard);
+    if (selectedCard && currentDuplicates.length > 0) {
+      // Najít aktualizované duplikáty
+      const updatedDuplicates = collection.filter(c => c.id === selectedCard.id);
+      setCurrentDuplicates(updatedDuplicates);
+
+      // Aktualizovat aktuálně vybranou kartu
+      if (updatedDuplicates[currentDuplicateIndex]) {
+        setSelectedCard(updatedDuplicates[currentDuplicateIndex]);
       }
     }
-  }, [collection]); // Sledovat pouze změny v collection
+  }, [collection]);
 
-  const handleCardClick = (card) => {
-    const index = filteredCollection.findIndex((c, idx) => 
-      c.id === card.id && idx === filteredCollection.indexOf(card)
-    );
+  const handleCardClick = (groupItem) => {
+    // Najít index ve seskupené kolekci
+    const index = groupedCollection.findIndex(item => item.id === groupItem.id);
     setSelectedIndex(index);
-    setSelectedCard(card);
+
+    // Nastavit duplikáty a vybranou kartu (první z duplikátů)
+    setCurrentDuplicates(groupItem.duplicates);
+    setCurrentDuplicateIndex(0);
+    setSelectedCard(groupItem.duplicates[0]);
   };
 
   const handleNext = () => {
-    if (filteredCollection.length > 0) {
-      const nextIndex = (selectedIndex + 1) % filteredCollection.length;
+    if (groupedCollection.length > 0) {
+      const nextIndex = (selectedIndex + 1) % groupedCollection.length;
       setSelectedIndex(nextIndex);
-      setSelectedCard(filteredCollection[nextIndex]);
+
+      const nextGroup = groupedCollection[nextIndex];
+      setCurrentDuplicates(nextGroup.duplicates);
+      setCurrentDuplicateIndex(0);
+      setSelectedCard(nextGroup.duplicates[0]);
     }
   };
 
   const handlePrev = () => {
-    if (filteredCollection.length > 0) {
-      const prevIndex = selectedIndex === 0 ? filteredCollection.length - 1 : selectedIndex - 1;
+    if (groupedCollection.length > 0) {
+      const prevIndex = selectedIndex === 0 ? groupedCollection.length - 1 : selectedIndex - 1;
       setSelectedIndex(prevIndex);
-      setSelectedCard(filteredCollection[prevIndex]);
+
+      const prevGroup = groupedCollection[prevIndex];
+      setCurrentDuplicates(prevGroup.duplicates);
+      setCurrentDuplicateIndex(0);
+      setSelectedCard(prevGroup.duplicates[0]);
+    }
+  };
+
+  const handleNextDuplicate = () => {
+    if (currentDuplicates.length > 0) {
+      const nextIdx = (currentDuplicateIndex + 1) % currentDuplicates.length;
+      setCurrentDuplicateIndex(nextIdx);
+      setSelectedCard(currentDuplicates[nextIdx]);
+    }
+  };
+
+  const handlePrevDuplicate = () => {
+    if (currentDuplicates.length > 0) {
+      const prevIdx = currentDuplicateIndex === 0 ? currentDuplicates.length - 1 : currentDuplicateIndex - 1;
+      setCurrentDuplicateIndex(prevIdx);
+      setSelectedCard(currentDuplicates[prevIdx]);
     }
   };
 
@@ -571,16 +643,17 @@ export default function LancersDynastyCollection({
         </div>
 
         {/* Cards Grid */}
-        {filteredCollection.length > 0 ? (
+        {groupedCollection.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-            {filteredCollection.map((card, index) => (
-              <div key={`${card.id}-${index}`}>
-                <CollectionCard 
-                  cardData={card}
-                  userCardData={card}
+            {groupedCollection.map((groupItem, index) => (
+              <div key={`${groupItem.id}-${index}`}>
+                <CollectionCard
+                  cardData={groupItem.card}
+                  userCardData={groupItem.card}
                   credits={credits}
                   onUpgrade={onUpgradeCard}
-                  onClick={handleCardClick}
+                  onClick={() => handleCardClick(groupItem)}
+                  duplicateCount={groupItem.count}
                 />
               </div>
             ))}
@@ -603,6 +676,10 @@ export default function LancersDynastyCollection({
         onPrev={handlePrev}
         credits={credits}
         onUpgrade={onUpgradeCard}
+        duplicates={currentDuplicates}
+        currentDuplicateIndex={currentDuplicateIndex}
+        onNextDuplicate={handleNextDuplicate}
+        onPrevDuplicate={handlePrevDuplicate}
       />
 
     </div>
