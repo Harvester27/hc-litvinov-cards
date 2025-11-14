@@ -58,21 +58,31 @@ export const savePlayerCollection = async (userId, collection) => {
 export const addCardsToCollection = async (userId, newCards) => {
   try {
     const docRef = doc(db, 'users', userId, 'lancersDynasty', 'data');
-    
+
     // Nejdřív načti současnou sbírku
     const docSnap = await getDoc(docRef);
-    const currentData = docSnap.exists() ? docSnap.data() : { collection: [] };
-    
-    // Přidej nové karty
-    const updatedCollection = [...currentData.collection, ...newCards];
-    
-    await updateDoc(docRef, {
-      collection: updatedCollection,
-      packsOpened: increment(1),
-      totalCardsCollected: updatedCollection.length,
-      lastUpdated: new Date().toISOString()
-    });
-    
+
+    if (docSnap.exists()) {
+      // Dokument existuje - použij updateDoc
+      const currentData = docSnap.data();
+      const updatedCollection = [...(currentData.collection || []), ...newCards];
+
+      await updateDoc(docRef, {
+        collection: updatedCollection,
+        packsOpened: increment(1),
+        totalCardsCollected: updatedCollection.length,
+        lastUpdated: new Date().toISOString()
+      });
+    } else {
+      // Dokument neexistuje - vytvoř ho pomocí setDoc
+      await setDoc(docRef, {
+        collection: newCards,
+        packsOpened: 1,
+        totalCardsCollected: newCards.length,
+        lastUpdated: new Date().toISOString()
+      });
+    }
+
     console.log('Cards added to collection');
     return true;
   } catch (error) {

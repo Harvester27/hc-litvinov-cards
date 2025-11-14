@@ -130,14 +130,14 @@ const CardModal = ({ cardData, isOpen, onClose, onNext, onPrev, credits, onUpgra
   const handleUpgradeAttribute = (attrKey) => {
     const currentLevel = cardData.attributes[attrKey];
     if (currentLevel >= 10) return;
-    
+
     const cost = getUpgradeCost(currentLevel);
     if (credits < cost) {
       alert('Nedostatek kreditů!');
       return;
     }
 
-    onUpgrade(cardData.id, attrKey, cost);
+    onUpgrade(cardData.uniqueId, attrKey, cost);
   };
 
   return (
