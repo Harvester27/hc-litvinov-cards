@@ -10,9 +10,9 @@ import {
   addCardsToCollection, 
   updatePlayerCredits 
 } from '@/lib/firebaseLancersDynasty';
-import { 
+import {
   ArrowLeft, Package, Sparkles, User, TrendingUp, Coins,
-  Star, BookOpen, Grid3x3, Send, Map
+  Star, BookOpen, Grid3x3, Send, Map, ShoppingCart
 } from 'lucide-react';
 import LancersDynastyCollection from '@/components/LancersDynastyCollection';
 import TeamManager from '@/components/TeamManager';
@@ -357,6 +357,17 @@ export default function LancersDynastyPage() {
                   Sbírka ({myCollection.length})
                 </button>
                 <button
+                  onClick={() => setCurrentView('marketplace')}
+                  className={`px-4 py-1 rounded-lg font-bold transition-all flex items-center gap-2 ${
+                    currentView === 'marketplace'
+                      ? 'bg-red-600 text-white'
+                      : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                  }`}
+                >
+                  <ShoppingCart size={16} />
+                  Obchod
+                </button>
+                <button
                   onClick={() => setCurrentView('manager')}
                   className={`px-4 py-1 rounded-lg font-bold transition-all flex items-center gap-2 ${
                     currentView === 'manager'
@@ -399,14 +410,33 @@ export default function LancersDynastyPage() {
 
       {/* Main Content */}
       {currentView === 'collection' ? (
-        <LancersDynastyCollection 
-          collection={myCollection} 
+        <LancersDynastyCollection
+          collection={myCollection}
           onBack={() => setCurrentView('packs')}
           credits={credits}
           onUpgradeCard={handleUpgradeCard}
         />
+      ) : currentView === 'marketplace' ? (
+        <div className="min-h-[calc(100vh-80px)] p-8">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-4xl font-black text-white">Obchod</h2>
+              <button
+                onClick={() => setCurrentView('packs')}
+                className="px-6 py-2 bg-gradient-to-r from-gray-700 to-gray-800 text-white font-bold rounded-lg hover:from-gray-800 hover:to-gray-900 transition-all"
+              >
+                Zpět na balíčky
+              </button>
+            </div>
+            <div className="bg-black/30 backdrop-blur-sm rounded-xl p-8 text-center">
+              <ShoppingCart className="text-gray-600 mx-auto mb-4" size={64} />
+              <h3 className="text-2xl font-bold text-gray-400 mb-2">Marketplace bude brzy!</h3>
+              <p className="text-gray-500">Brzy zde budeš moci kupovat a prodávat karty</p>
+            </div>
+          </div>
+        </div>
       ) : currentView === 'manager' ? (
-        <TeamManager 
+        <TeamManager
           myCollection={myCollection}
           credits={credits}
           getCardById={getCardById}
