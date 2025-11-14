@@ -4,18 +4,20 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { auth } from '@/lib/firebase';
 import { getUserProfile } from '@/lib/firebaseProfile';
-import { 
-  loadPlayerCollection, 
-  savePlayerCollection, 
-  addCardsToCollection, 
-  updatePlayerCredits 
+import {
+  loadPlayerCollection,
+  savePlayerCollection,
+  addCardsToCollection,
+  updatePlayerCredits
 } from '@/lib/firebaseLancersDynasty';
+import { createListing } from '@/lib/firebaseLancersDynastyMarketplace';
 import {
   ArrowLeft, Package, Sparkles, User, TrendingUp, Coins,
   Star, BookOpen, Grid3x3, Send, Map, ShoppingCart
 } from 'lucide-react';
 import LancersDynastyCollection from '@/components/LancersDynastyCollection';
 import TeamManager from '@/components/TeamManager';
+import LancersDynastyMarketplace from '@/components/LancersDynastyMarketplace';
 import { 
   getDefaultAttributes, 
   getCardById, 
@@ -275,6 +277,25 @@ export default function LancersDynastyPage() {
     console.log(`Upgraded ${attrKey} for card ${cardUniqueId}, cost: ${cost}`);
   };
 
+  const handleSellCard = async (card, price) => {
+    if (!user) return;
+
+    const result = await createListing(
+      user.uid,
+      profile?.displayName || 'Hráč',
+      card,
+      price,
+      myCollection
+    );
+
+    if (result.success) {
+      setMyCollection(result.updatedCollection);
+      alert(`Karta ${getCardById(card.id).name} byla umístěna do obchodu za ${price} kreditů!`);
+    } else {
+      alert(`Chyba: ${result.error}`);
+    }
+  };
+
   const resetPack = () => {
     setIsOpening(false);
     setShowCards(false);
@@ -415,26 +436,18 @@ export default function LancersDynastyPage() {
           onBack={() => setCurrentView('packs')}
           credits={credits}
           onUpgradeCard={handleUpgradeCard}
+          onSellCard={handleSellCard}
         />
       ) : currentView === 'marketplace' ? (
-        <div className="min-h-[calc(100vh-80px)] p-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-4xl font-black text-white">Obchod</h2>
-              <button
-                onClick={() => setCurrentView('packs')}
-                className="px-6 py-2 bg-gradient-to-r from-gray-700 to-gray-800 text-white font-bold rounded-lg hover:from-gray-800 hover:to-gray-900 transition-all"
-              >
-                Zpět na balíčky
-              </button>
-            </div>
-            <div className="bg-black/30 backdrop-blur-sm rounded-xl p-8 text-center">
-              <ShoppingCart className="text-gray-600 mx-auto mb-4" size={64} />
-              <h3 className="text-2xl font-bold text-gray-400 mb-2">Marketplace bude brzy!</h3>
-              <p className="text-gray-500">Brzy zde budeš moci kupovat a prodávat karty</p>
-            </div>
-          </div>
-        </div>
+        <LancersDynastyMarketplace
+          onBack={() => setCurrentView('packs')}
+          credits={credits}
+          userId={user.uid}
+          userDisplayName={profile?.displayName || 'Hráč'}
+          userCollection={myCollection}
+          onCollectionUpdate={(newCollection) => setMyCollection(newCollection)}
+          onCreditsUpdate={(newCredits) => setCredits(newCredits)}
+        />
       ) : currentView === 'manager' ? (
         <TeamManager
           myCollection={myCollection}

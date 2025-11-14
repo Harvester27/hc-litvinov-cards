@@ -91,9 +91,11 @@ const CollectionCard = ({ cardData, userCardData, onUpgrade, credits, onClick, d
 };
 
 // Modal komponenta pro zvětšenou kartu
-const CardModal = ({ cardData, isOpen, onClose, onNext, onPrev, credits, onUpgrade, duplicates, currentDuplicateIndex, onNextDuplicate, onPrevDuplicate }) => {
+const CardModal = ({ cardData, isOpen, onClose, onNext, onPrev, credits, onUpgrade, duplicates, currentDuplicateIndex, onNextDuplicate, onPrevDuplicate, onSell }) => {
   const [isFlipped, setIsFlipped] = useState(false);
   const [activeTab, setActiveTab] = useState('attributes');
+  const [showSellModal, setShowSellModal] = useState(false);
+  const [sellPrice, setSellPrice] = useState('');
 
   const cardInfo = getCardById(cardData?.id);
   const overall = cardData ? calculateOverall(cardData.attributes || {}) : 1;
@@ -438,14 +440,90 @@ const CardModal = ({ cardData, isOpen, onClose, onNext, onPrev, credits, onUpgra
                 )}
               </div>
 
+              {/* Tlačítko prodat */}
+              <div className="absolute bottom-3 left-3 right-3">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowSellModal(true);
+                  }}
+                  className="w-full px-4 py-2 bg-gradient-to-r from-yellow-600 to-yellow-700 text-white font-bold rounded-lg hover:from-yellow-700 hover:to-yellow-800 transition-all flex items-center justify-center gap-2"
+                >
+                  <Coins size={16} />
+                  Prodat kartu
+                </button>
+              </div>
+
               {/* Hint pro otočení zpět */}
-              <div className="absolute bottom-3 right-3 bg-black/50 backdrop-blur-sm rounded-full px-3 py-1">
+              <div className="absolute bottom-16 right-3 bg-black/50 backdrop-blur-sm rounded-full px-3 py-1">
                 <span className="text-white/60 text-xs">Pravý klik zpět</span>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Modal pro prodej karty */}
+      {showSellModal && (
+        <div
+          className="absolute inset-0 z-10 flex items-center justify-center bg-black/80"
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowSellModal(false);
+            setSellPrice('');
+          }}
+        >
+          <div
+            className="bg-gray-800 rounded-xl p-6 w-80"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-white font-bold text-xl mb-4">Prodat {cardInfo.name}</h3>
+            <p className="text-gray-400 text-sm mb-4">
+              Nastav cenu v kreditech. Karta zmizí ze tvé sbírky a objeví se v marketplace.
+            </p>
+            <div className="mb-4">
+              <label className="text-gray-300 text-sm mb-2 block">Cena (kredity)</label>
+              <input
+                type="number"
+                value={sellPrice}
+                onChange={(e) => setSellPrice(e.target.value)}
+                placeholder="např. 500"
+                className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                min="1"
+              />
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowSellModal(false);
+                  setSellPrice('');
+                }}
+                className="flex-1 px-4 py-2 bg-gray-700 text-white font-bold rounded-lg hover:bg-gray-600 transition-all"
+              >
+                Zrušit
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const price = parseInt(sellPrice);
+                  if (!price || price < 1) {
+                    alert('Zadej platnou cenu (minimálně 1 kredit)');
+                    return;
+                  }
+                  onSell(cardData, price);
+                  setShowSellModal(false);
+                  setSellPrice('');
+                  onClose();
+                }}
+                className="flex-1 px-4 py-2 bg-gradient-to-r from-yellow-600 to-yellow-700 text-white font-bold rounded-lg hover:from-yellow-700 hover:to-yellow-800 transition-all"
+              >
+                Prodat
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Navigační hinty */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-sm rounded-full px-4 py-2">
@@ -462,7 +540,8 @@ export default function LancersDynastyCollection({
   collection,
   onBack,
   credits,
-  onUpgradeCard
+  onUpgradeCard,
+  onSellCard
 }) {
   const [filter, setFilter] = useState('all');
   const [selectedCard, setSelectedCard] = useState(null);
@@ -680,6 +759,7 @@ export default function LancersDynastyCollection({
         currentDuplicateIndex={currentDuplicateIndex}
         onNextDuplicate={handleNextDuplicate}
         onPrevDuplicate={handlePrevDuplicate}
+        onSell={onSellCard}
       />
 
     </div>
