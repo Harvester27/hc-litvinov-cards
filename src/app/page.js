@@ -27,7 +27,7 @@ export default function HomePage() {
 
   useEffect(() => {
     const calculateTimeToGame = () => {
-      const nextGame = new Date('2025-09-13T16:00:00');
+      const nextGame = new Date('2026-09-05T17:30:00+02:00');
       const now = new Date();
       const diff = nextGame - now;
       
@@ -119,13 +119,10 @@ export default function HomePage() {
         {/* Zápasy widget - poslední + nadcházející */}
         <div className="absolute bottom-8 right-8 bg-white rounded-2xl p-6 text-black max-w-md shadow-2xl">
           {/* Poslední zápas */}
-          <div 
-            className="pb-4 border-b border-gray-200 cursor-pointer hover:bg-gray-50 rounded-lg p-2 transition-colors"
-            onClick={() => router.push('/turnaje/hobby-cup-litvinov-2025')}
-          >
+          <div className="pb-4 border-b border-gray-200 rounded-lg p-2">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-2 h-2 bg-red-600 rounded-full"></div>
-              <span className="text-red-600 font-bold text-sm uppercase tracking-wider">Poslední zápas - PROHRA</span>
+              <span className="text-red-600 font-bold text-sm uppercase tracking-wider">Poslední zápas - VÝHRA</span>
             </div>
             <div className="flex items-center gap-3 mb-2">
               <Image 
@@ -137,34 +134,27 @@ export default function HomePage() {
               />
               <div className="text-center">
                 <div className="text-3xl font-black">
-                  <span className="text-red-600">4</span>
+                  <span className="text-green-600">11</span>
                   <span className="text-gray-600 mx-2">:</span>
-                  <span className="text-green-600">5</span>
+                  <span className="text-red-600">8</span>
                 </div>
-                <div className="text-xs text-gray-500 font-semibold">po nájezdech</div>
               </div>
               <Image 
-                src="/images/loga/AlphaA.png" 
-                alt="ALPHA Team A"
+                src="/images/loga/Berlin.png"
+                alt="Berlín All Stars"
                 width={40}
                 height={40}
                 className="object-contain"
               />
             </div>
-            <div className="text-2xl font-black mb-2">Zápas o 3. místo</div>
+            <div className="text-2xl font-black mb-2">Berlín All Stars</div>
             <div className="text-gray-600 flex items-center gap-2 mb-4">
-              <Trophy size={16} className="text-amber-600" />
-              HH Cup Litvínov 2025
+              <MapPin size={16} className="text-red-600" />
+              Domácí zápas v Litvínově
             </div>
-            <div className="bg-gradient-to-r from-amber-600 to-amber-700 rounded-xl px-4 py-3 text-center">
-              <div className="text-white text-sm font-semibold">30. srpna 2025 • Litvínov</div>
-              <div className="text-2xl font-black text-white">4. místo na turnaji</div>
-            </div>
-            <div className="mt-2 text-center">
-              <span className="text-sm text-blue-600 hover:text-blue-800 font-semibold flex items-center justify-center gap-1">
-                Zobrazit celý turnaj
-                <ChevronRight size={14} />
-              </span>
+            <div className="bg-gradient-to-r from-green-600 to-green-700 rounded-xl px-4 py-3 text-center">
+              <div className="text-white text-sm font-semibold">29. srpna 2026 • Litvínov</div>
+              <div className="text-2xl font-black text-white">Domácí výhra 11:8</div>
             </div>
           </div>
 
@@ -176,20 +166,20 @@ export default function HomePage() {
             </div>
             
             <div className="space-y-2">
-              {/* Hlavní příští zápas - Berlín All Stars */}
+              {/* Hlavní příští zápas - Viper Ústí nad Labem */}
               <div className="bg-gradient-to-r from-red-50 to-white rounded-lg p-3 border-2 border-red-600">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <Image src="/images/loga/Berlin.png" alt="Berlín All Stars" width={32} height={32} className="object-contain" />
+                    <Image src="/images/loga/Viper.png" alt="Viper Ústí nad Labem" width={32} height={32} className="object-contain" />
                     <div>
-                      <span className="font-black text-lg">Berlín All Stars</span>
-                      <div className="text-xs text-red-600 font-semibold">Přátelský zápas</div>
+                      <span className="font-black text-lg leading-tight">Viper Ústí nad Labem</span>
+                      <div className="text-xs text-red-600 font-semibold">Domácí zápas</div>
                     </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Calendar size={14} />
-                  <span className="font-semibold">13.9. 16:00</span>
+                  <span className="font-semibold">5. 9. 2026 • 17:30</span>
                   <MapPin size={14} />
                   <span>Litvínov</span>
                 </div>
