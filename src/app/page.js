@@ -211,22 +211,18 @@ export default function HomePage() {
       {/* Stats Bar - černo-červený */}
       <section className="bg-gradient-to-r from-black via-red-600 to-black py-8">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-white text-center">
-            <div>
-              <div className="text-4xl font-black">7.</div>
-              <div className="text-sm font-light uppercase tracking-wider opacity-90">Místo v lize</div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-white/20 text-white text-center">
+            <div className="px-4 py-4 sm:py-1">
+              <div className="text-2xl md:text-3xl font-black leading-tight text-gray-200">Vícemistři</div>
+              <div className="mt-1 text-sm font-light uppercase tracking-wider opacity-90">Českého poháru 24/25</div>
             </div>
-            <div>
-              <div className="text-4xl font-black">4/8</div>
-              <div className="text-sm font-light uppercase tracking-wider opacity-90">Výhry/Prohry</div>
+            <div className="px-4 py-4 sm:py-1">
+              <div className="text-2xl md:text-3xl font-black leading-tight text-yellow-400">Mistři</div>
+              <div className="mt-1 text-sm font-light uppercase tracking-wider opacity-90">Českého poháru 25/26</div>
             </div>
-            <div>
-              <div className="text-4xl font-black">58</div>
-              <div className="text-sm font-light uppercase tracking-wider opacity-90">Vstřelené góly</div>
-            </div>
-            <div>
-              <div className="text-4xl font-black text-yellow-400">14</div>
-              <div className="text-sm font-light uppercase tracking-wider opacity-90">Bodů</div>
+            <div className="px-4 py-4 sm:py-1">
+              <div className="text-2xl md:text-3xl font-black leading-tight">2× 5. místo</div>
+              <div className="mt-1 text-sm font-light uppercase tracking-wider opacity-90">v KHLA</div>
             </div>
           </div>
         </div>
