@@ -24,6 +24,44 @@ export default function MatchDetail({ match, isOpen, onClose }) {
     return <span className="font-semibold">{name}</span>;
   };
 
+  const renderPlayerList = (players = []) =>
+    players.map((player, index) => (
+      <span key={`${player}-${index}`}>
+        {index > 0 && ', '}
+        {renderPlayerName(player)}
+      </span>
+    ));
+
+  const LineupCard = ({ team, lineup, tone = 'neutral' }) => {
+    const groups = [
+      { label: 'Obránci', players: lineup.defenders },
+      { label: 'Útočníci', players: lineup.forwards },
+      { label: '1. řada', players: lineup.line1 },
+      { label: '2. řada', players: lineup.line2 },
+      { label: '3. řada', players: lineup.line3 }
+    ].filter((group) => group.players?.length);
+
+    return (
+      <div className={tone === 'red' ? 'bg-red-50 rounded-xl p-4 border-2 border-red-200' : 'bg-gray-50 rounded-xl p-4'}>
+        <h3 className="font-bold text-lg mb-3">Sestava {team}</h3>
+        <div className="space-y-2 text-sm">
+          {lineup.goalie && (
+            <div>
+              <span className="text-gray-500">Brankář:</span>{' '}
+              {renderPlayerName(lineup.goalie)}
+            </div>
+          )}
+          {groups.map((group) => (
+            <div key={group.label}>
+              <span className="text-gray-500">{group.label}:</span>{' '}
+              {renderPlayerList(group.players)}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70" onClick={onClose}>
       <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl" onClick={(e) => e.stopPropagation()}>
@@ -52,6 +90,11 @@ export default function MatchDetail({ match, isOpen, onClose }) {
               {match.score}
             </div>
             {match.periods && <div className="text-xl text-gray-600">{match.periods}</div>}
+            {match.format && (
+              <div className="mt-3 inline-flex rounded-full bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-700">
+                {match.format}
+              </div>
+            )}
           </div>
 
           {/* Saves */}
@@ -67,93 +110,10 @@ export default function MatchDetail({ match, isOpen, onClose }) {
           )}
 
           {/* Lineups */}
-          {match.homeLineup && match.awayLineup && (
-            <div className="grid md:grid-cols-2 gap-6 mb-6">
-              <div className="bg-gray-50 rounded-xl p-4">
-                <h3 className="font-bold text-lg mb-3">Sestava {match.homeTeam}</h3>
-                <div className="space-y-2 text-sm">
-                  <div>
-                    <span className="text-gray-500">Brankář:</span>{' '}
-                    {renderPlayerName(match.homeLineup.goalie)}
-                  </div>
-                  {match.homeLineup.line1 && (
-                    <div>
-                      <span className="text-gray-500">1. řada:</span>{' '}
-                      {match.homeLineup.line1.map((player, index) => (
-                        <span key={index}>
-                          {index > 0 && ', '}
-                          {renderPlayerName(player)}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                  {match.homeLineup.line2 && (
-                    <div>
-                      <span className="text-gray-500">2. řada:</span>{' '}
-                      {match.homeLineup.line2.map((player, index) => (
-                        <span key={index}>
-                          {index > 0 && ', '}
-                          {renderPlayerName(player)}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                  {match.homeLineup.line3 && (
-                    <div>
-                      <span className="text-gray-500">3. řada:</span>{' '}
-                      {match.homeLineup.line3.map((player, index) => (
-                        <span key={index}>
-                          {index > 0 && ', '}
-                          {renderPlayerName(player)}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-              
-              <div className="bg-red-50 rounded-xl p-4 border-2 border-red-200">
-                <h3 className="font-bold text-lg mb-3">Sestava {match.awayTeam}</h3>
-                <div className="space-y-2 text-sm">
-                  <div>
-                    <span className="text-gray-500">Brankář:</span>{' '}
-                    {renderPlayerName(match.awayLineup.goalie)}
-                  </div>
-                  {match.awayLineup.line1 && (
-                    <div>
-                      <span className="text-gray-500">1. řada:</span>{' '}
-                      {match.awayLineup.line1.map((player, index) => (
-                        <span key={index}>
-                          {index > 0 && ', '}
-                          {renderPlayerName(player)}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                  {match.awayLineup.line2 && (
-                    <div>
-                      <span className="text-gray-500">2. řada:</span>{' '}
-                      {match.awayLineup.line2.map((player, index) => (
-                        <span key={index}>
-                          {index > 0 && ', '}
-                          {renderPlayerName(player)}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                  {match.awayLineup.line3 && (
-                    <div>
-                      <span className="text-gray-500">3. řada:</span>{' '}
-                      {match.awayLineup.line3.map((player, index) => (
-                        <span key={index}>
-                          {index > 0 && ', '}
-                          {renderPlayerName(player)}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
+          {(match.homeLineup || match.awayLineup) && (
+            <div className={`grid gap-6 mb-6 ${match.homeLineup && match.awayLineup ? 'md:grid-cols-2' : ''}`}>
+              {match.homeLineup && <LineupCard team={match.homeTeam} lineup={match.homeLineup} />}
+              {match.awayLineup && <LineupCard team={match.awayTeam} lineup={match.awayLineup} tone="red" />}
             </div>
           )}
 
@@ -226,7 +186,7 @@ export default function MatchDetail({ match, isOpen, onClose }) {
           {match.summary && (
             <div className="mt-6 p-4 bg-amber-50 rounded-xl border border-amber-200">
               <h3 className="font-bold text-lg mb-2">Shrnutí zápasu</h3>
-              <p className="text-gray-700">{match.summary}</p>
+              <p className="text-gray-700 leading-relaxed">{match.summary}</p>
             </div>
           )}
         </div>

@@ -17,13 +17,17 @@ export const getPlayerMatches = (playerId, matches = matchData) => {
     const allHomePlayers = [
       ...(match.homeLineup?.line1 || []),
       ...(match.homeLineup?.line2 || []),
-      ...(match.homeLineup?.line3 || [])
+      ...(match.homeLineup?.line3 || []),
+      ...(match.homeLineup?.defenders || []),
+      ...(match.homeLineup?.forwards || [])
     ];
     
     const allAwayPlayers = [
       ...(match.awayLineup?.line1 || []),
       ...(match.awayLineup?.line2 || []),
-      ...(match.awayLineup?.line3 || [])
+      ...(match.awayLineup?.line3 || []),
+      ...(match.awayLineup?.defenders || []),
+      ...(match.awayLineup?.forwards || [])
     ];
     
     return allHomePlayers.includes(player.name) || 
@@ -37,9 +41,10 @@ export const getPlayerStats = (playerId, matches = matchData) => {
   if (!player) return null;
   
   const playerMatches = getPlayerMatches(playerId, matches);
+  const completedStatMatches = playerMatches.filter((match) => match.statsComplete !== false);
   
   let stats = {
-    gamesPlayed: playerMatches.length,
+    gamesPlayed: completedStatMatches.length,
     goals: 0,
     assists: 0,
     points: 0,
@@ -52,14 +57,16 @@ export const getPlayerStats = (playerId, matches = matchData) => {
     losses: 0
   };
   
-  playerMatches.forEach(match => {
+  completedStatMatches.forEach(match => {
     // Zjistit, za který tým hráč hrál
     const isHomeTeam = 
       match.homeLineup?.goalie === player.name ||
       [
         ...(match.homeLineup?.line1 || []),
         ...(match.homeLineup?.line2 || []),
-        ...(match.homeLineup?.line3 || [])
+        ...(match.homeLineup?.line3 || []),
+        ...(match.homeLineup?.defenders || []),
+        ...(match.homeLineup?.forwards || [])
       ].includes(player.name);
     
     const teamSide = isHomeTeam ? 'home' : 'away';
@@ -97,7 +104,6 @@ export const getPlayerStats = (playerId, matches = matchData) => {
         
         if (match.saves) {
           stats.saves += match.saves[teamSide] || 0;
-          const opponentSide = teamSide === 'home' ? 'away' : 'home';
           stats.goalsAgainst += parseInt(match.score.split(':')[teamSide === 'home' ? 1 : 0]) || 0;
         }
         
