@@ -122,6 +122,72 @@ export const playerData = [
     nationality: '🇨🇿', 
     category: 'defenders',
     photo: '/images/players/roster/coufal-lubos.webp',
+    profileMedia: [
+      {
+        src: '/images/players/profiles/coufal-lubos/01-pohar-v-dresu.webp',
+        alt: 'Luboš Coufal v dresu klečí s mistrovským pohárem.',
+        caption: 'S mistrovským pohárem v dresu Litvínov Lancers',
+        featured: true
+      },
+      {
+        src: '/images/players/profiles/coufal-lubos/02-pohar-na-lede.webp',
+        alt: 'Luboš Coufal v dresu s pohárem na ledě.',
+        caption: 'S pohárem přímo na ledě',
+        featured: true
+      },
+      {
+        src: '/images/players/profiles/coufal-lubos/03-vlajka-a-pohar.webp',
+        alt: 'Luboš Coufal s českou vlajkou a pohárem na stadionu.',
+        caption: 'S českou vlajkou a pohárem na stadionu',
+        featured: true
+      },
+      {
+        src: '/images/players/profiles/coufal-lubos/04-mistrovsky-pohar-v-satne.webp',
+        alt: 'Luboš Coufal s mistrovským pohárem v šatně.',
+        caption: 'S mistrovským pohárem v šatně',
+        featured: true
+      },
+      {
+        src: '/images/players/profiles/coufal-lubos/05-souboj-se-souperi.webp',
+        alt: 'Luboš Coufal v souboji se dvěma protihráči.',
+        caption: 'V souboji se dvěma protihráči'
+      },
+      {
+        src: '/images/players/profiles/coufal-lubos/06-souboj-o-puk.webp',
+        alt: 'Luboš Coufal bojuje o puk s protihráčem.',
+        caption: 'Souboj o puk'
+      },
+      {
+        src: '/images/players/profiles/coufal-lubos/07-pronasledovani-soupere.webp',
+        alt: 'Luboš Coufal pronásleduje soupeře s pukem.',
+        caption: 'Návrat do obrany'
+      },
+      {
+        src: '/images/players/profiles/coufal-lubos/08-oslava-na-lede.webp',
+        alt: 'Luboš Coufal slaví na ledě se zdviženými pažemi.',
+        caption: 'Radost na ledě'
+      },
+      {
+        src: '/images/players/profiles/coufal-lubos/09-radost-u-mantinely.webp',
+        alt: 'Hráči Litvínov Lancers slaví společně u mantinelu.',
+        caption: 'Společná radost u mantinelu'
+      },
+      {
+        src: '/images/players/profiles/coufal-lubos/10-pohar-se-spoluhracem.webp',
+        alt: 'Luboš Coufal se spoluhráčem drží mistrovský pohár na ledě.',
+        caption: 'Mistrovský pohár se spoluhráčem'
+      },
+      {
+        src: '/images/players/profiles/coufal-lubos/11-profilova-grafika.webp',
+        alt: 'Profilová grafika Luboše Coufala v dresu Litvínov Lancers s číslem 33.',
+        caption: 'Profilová grafika Litvínov Lancers'
+      },
+      {
+        src: '/images/players/profiles/coufal-lubos/12-strela-na-branku.webp',
+        alt: 'Luboš Coufal střílí na branku během utkání.',
+        caption: 'Střela na branku'
+      }
+    ],
     joinedTeam: '2020',
     shoots: 'R',
     description: 'Zkušený obránce s výbornou přihrávkou. Zaznamenal 2 asistence ve výhře 10:3 nad Gurmány. Výjimečně hrál v útoku proti Viper Ústí. Účastník turnaje ve Straubingu 2025.'

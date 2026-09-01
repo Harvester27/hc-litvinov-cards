@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Navigation from '@/components/Navigation';
 import MatchDetail from '@/components/MatchDetail';
+import PlayerProfileMedia from '@/components/PlayerProfileMedia';
 import { getPlayerById } from '@/data/playerData';
 import {
   getPlayerStats,
@@ -153,9 +154,19 @@ export default function PlayerProfilePage() {
               {/* Player Info */}
               <div className="md:col-span-1">
                 <div className="flex flex-col items-center text-center">
-                  <div className={`w-32 h-32 bg-gradient-to-br ${getPositionColor(player.position)} rounded-full flex items-center justify-center shadow-2xl mb-4`}>
-                    <span className="text-white text-5xl font-black">#{player.number ?? '—'}</span>
-                  </div>
+                  {player.profileMedia?.length > 0 ? (
+                    <div className="mb-6 w-full">
+                      <PlayerProfileMedia
+                        playerName={player.name}
+                        playerNumber={player.number}
+                        media={player.profileMedia}
+                      />
+                    </div>
+                  ) : (
+                    <div className={`w-32 h-32 bg-gradient-to-br ${getPositionColor(player.position)} rounded-full flex items-center justify-center shadow-2xl mb-4`}>
+                      <span className="text-white text-5xl font-black">#{player.number ?? '—'}</span>
+                    </div>
+                  )}
                   <h1 className="text-3xl font-black text-black mb-2">{player.name}</h1>
                   <div className="flex items-center gap-2 text-red-600 mb-4">
                     {getPositionIcon(player.position)}
