@@ -2,11 +2,11 @@ import { matchData } from './matchData';
 import { getPlayerById } from './playerData';
 
 // Získat všechny zápasy, ve kterých hráč hrál
-export const getPlayerMatches = (playerId) => {
+export const getPlayerMatches = (playerId, matches = matchData) => {
   const player = getPlayerById(playerId);
   if (!player) return [];
   
-  return matchData.filter(match => {
+  return matches.filter(match => {
     // Kontrola brankářů
     if (match.homeLineup?.goalie === player.name || 
         match.awayLineup?.goalie === player.name) {
@@ -32,11 +32,11 @@ export const getPlayerMatches = (playerId) => {
 };
 
 // Získat statistiky hráče
-export const getPlayerStats = (playerId) => {
+export const getPlayerStats = (playerId, matches = matchData) => {
   const player = getPlayerById(playerId);
   if (!player) return null;
   
-  const playerMatches = getPlayerMatches(playerId);
+  const playerMatches = getPlayerMatches(playerId, matches);
   
   let stats = {
     gamesPlayed: playerMatches.length,

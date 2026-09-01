@@ -1,5 +1,46 @@
 // Databáze všech zápasů HC Litvínov Lancers
-export const matchData = [
+const friendlyMatches = [
+  {
+    id: 'friendly-berlin-2026-08-29',
+    title: 'Vítězný přátelský zápas s Berlín All Stars',
+    date: '29.8.2026',
+    time: '17:00',
+    location: 'Litvínov',
+    category: 'Přátelský zápas',
+    season: '2026/27',
+    competition: 'friendly',
+    stage: 'friendly',
+    status: 'completed',
+    image: '🤝',
+    excerpt: 'Lancers zvítězili v domácím přátelském utkání 11:8.',
+    homeTeam: 'Litvínov Lancers',
+    awayTeam: 'Berlín All Stars',
+    score: '11:8',
+    periods: '',
+    summary: 'Litvínov Lancers porazili v domácím přátelském utkání Berlín All Stars 11:8.'
+  },
+  {
+    id: 'friendly-berlin-2026-08-28',
+    title: 'Těsná výhra nad Berlín All Stars',
+    date: '28.8.2026',
+    time: '19:00',
+    location: 'Litvínov',
+    category: 'Přátelský zápas',
+    season: '2026/27',
+    competition: 'friendly',
+    stage: 'friendly',
+    status: 'completed',
+    image: '🤝',
+    excerpt: 'Lancers zvládli domácí přátelské utkání a zvítězili 9:8.',
+    homeTeam: 'Litvínov Lancers',
+    awayTeam: 'Berlín All Stars',
+    score: '9:8',
+    periods: '',
+    summary: 'Litvínov Lancers zvítězili v domácím přátelském utkání nad Berlín All Stars 9:8.'
+  }
+];
+
+const historicalMatches = [
     {
         id: 'finale-cp-2025',
         title: 'Finále Českého poháru - těsná prohra',
@@ -658,18 +699,49 @@ export const matchData = [
         summary: 'Historický zápas rodiny Schubadů! Pavel st. (obránce), Jan, Adam a Pavel ml. (útočníci) všichni skórovali. Pavel ml. dal hattrick! Pavel Novák a Jiří Šalanda přidali po dvou gólech. Tomáš Tureček opět musel chytat místo obránce. Lancers dominovali od začátku - vedli 4:0 po první třetině.'
       }
   ];
-    
-    // Funkce pro získání zápasu podle ID
-    export const getMatchById = (id) => {
-      return matchData.find(match => match.id === id);
-    };
-    
-    // Funkce pro získání posledních N zápasů
-    export const getRecentMatches = (count = 5) => {
-      return matchData.slice(0, count);
-    };
-    
-    // Funkce pro získání zápasů podle kategorie
-    export const getMatchesByCategory = (category) => {
-      return matchData.filter(match => match.category === category);
-    };
+
+const getCupStage = (category = '') => {
+  if (category.includes('Semifinále')) return 'semifinal';
+  if (category.includes('Čtvrtfinále')) return 'quarterfinal';
+  if (category.includes('Finále')) return 'final';
+  return 'group';
+};
+
+const completedCzechCupMatches = historicalMatches.map((match) => ({
+  ...match,
+  season: '2024/25',
+  competition: 'czech-cup',
+  stage: getCupStage(match.category),
+  status: 'completed'
+}));
+
+export const matchData = [...friendlyMatches, ...completedCzechCupMatches];
+
+const getMatchTimestamp = (match) => {
+  const [day = 1, month = 1, year = 1900] = String(match.date || '')
+    .split('.')
+    .map((value) => parseInt(value, 10));
+  const [hour = 0, minute = 0] = String(match.time || '00:00')
+    .split(':')
+    .map((value) => parseInt(value, 10));
+
+  return new Date(year, month - 1, day, hour, minute).getTime();
+};
+
+// Funkce pro získání zápasu podle ID
+export const getMatchById = (id) => {
+  return matchData.find(match => match.id === id);
+};
+
+// Funkce pro získání posledních N odehraných zápasů
+export const getRecentMatches = (count = 5) => {
+  return [...matchData]
+    .filter((match) => match.status === 'completed')
+    .sort((a, b) => getMatchTimestamp(b) - getMatchTimestamp(a))
+    .slice(0, count);
+};
+
+// Funkce pro získání zápasů podle kategorie
+export const getMatchesByCategory = (category) => {
+  return matchData.filter(match => match.category === category);
+};
