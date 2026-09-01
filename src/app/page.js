@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Navigation from '@/components/Navigation';
 import MatchDetail from '@/components/MatchDetail';
+import HeroTeamCarousel from '@/components/HeroTeamCarousel';
 import { getRecentMatches } from '@/data/matchData';
 import { getAllArticles } from '@/data/articleData';
 import { 
@@ -81,10 +82,10 @@ export default function HomePage() {
       
       {/* Hero Section - Modern minimalist */}
       <section className="relative h-[750px] overflow-hidden bg-gradient-to-br from-black via-gray-900 to-black mt-28">
-        <div className="absolute inset-0 bg-[url('/images/stadium-bg.jpg')] bg-cover bg-center opacity-20"></div>
+        <HeroTeamCarousel />
         
         {/* Animated red accent */}
-        <div className="absolute inset-0 bg-gradient-to-r from-red-600/10 via-transparent to-red-600/10"></div>
+        <div className="absolute inset-0 z-[4] bg-gradient-to-r from-red-600/10 via-transparent to-red-600/10 pointer-events-none"></div>
         
         <div className="relative z-10 h-full flex items-center">
           <div className="max-w-7xl mx-auto px-4 w-full">
@@ -117,7 +118,7 @@ export default function HomePage() {
         </div>
         
         {/* Zápasy widget - poslední + nadcházející */}
-        <div className="absolute bottom-8 right-8 bg-white rounded-2xl p-6 text-black max-w-md shadow-2xl">
+        <div className="absolute bottom-8 right-8 z-20 bg-white rounded-2xl p-6 text-black max-w-md shadow-2xl">
           {/* Poslední zápas */}
           <div className="pb-4 border-b border-gray-200 rounded-lg p-2">
             <div className="flex items-center gap-2 mb-3">
