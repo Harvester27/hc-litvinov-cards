@@ -5,21 +5,32 @@ import { articles } from './articleData';
 // Vytvoří mapu jmen hráčů pro rychlé vyhledávání
 const createPlayerNameMap = () => {
   const nameMap = new Map();
+  const surnameCounts = playerData.reduce((counts, player) => {
+    const surname = player.name.split(' ').pop().toLowerCase();
+    counts.set(surname, (counts.get(surname) || 0) + 1);
+    return counts;
+  }, new Map());
   
   playerData.forEach(player => {
     // Přidáme celé jméno
     nameMap.set(player.name.toLowerCase(), player);
+
+    player.aliases?.forEach(alias => {
+      nameMap.set(alias.toLowerCase(), player);
+    });
     
-    // Přidáme jen příjmení
+    // Samotné příjmení použijeme jen tehdy, když není v soupisce duplicitní.
     const lastName = player.name.split(' ').pop();
-    nameMap.set(lastName.toLowerCase(), player);
+    if (surnameCounts.get(lastName.toLowerCase()) === 1) {
+      nameMap.set(lastName.toLowerCase(), player);
+    }
     
     // Speciální případy a zkrácené verze
     const specialCases = {
       'Tomáš Tureček': ['Tury', 'Turym', 'Tureček'],
       'Jiří Šalanda': ['Šali', 'Šalim', 'Šalanda'],
       'Luboš Coufal': ['Coufi', 'Coufim', 'Coufal'],
-      'Oliver Štěpanovský': ['Olča', 'Ondra', 'Štěpanovský'],
+      'Oliver Štěpanovský': ['Olča', 'Ondra'],
       'Dan Kačeňák': ['Dan', 'Dana', 'Kačeňák'],
       'Lukáš Zmeškal': ['Zmeškalem', 'Zmeškal'],
       'Jan Hanuš': ['Honza', 'Honzovi', 'Honzy', 'Hanuš'],
@@ -120,11 +131,8 @@ export const createPlayerLinks = (htmlContent) => {
   
   // Přidat jednotlivé hráče do seznamu nahrazení
   nameMap.forEach((player, searchName) => {
-    // Vytvoříme různé varianty jména pro hledání
-    const variations = [
-      player.name,
-      player.name.split(' ').pop(), // příjmení
-    ];
+    // Mapa už obsahuje celá jména, bezpečná příjmení i starší varianty.
+    const variations = [searchName];
     
     // Přidáme speciální případy
     if (player.name === 'Tomáš Tureček') {
@@ -185,8 +193,10 @@ export const createPlayerLinks = (htmlContent) => {
 };
 
 // Export pro kompatibilitu
-export default {
+const articleUtils = {
   findPlayersInArticle,
   getArticlesForPlayer,
   createPlayerLinks
 };
+
+export default articleUtils;

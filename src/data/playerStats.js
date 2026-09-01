@@ -1,38 +1,46 @@
 import { matchData } from './matchData';
-import { getPlayerById } from './playerData';
+import { getPlayerById, playerData } from './playerData';
+
+export const getPlayerNameVariants = (player) => [
+  player.name,
+  ...(player.aliases || [])
+];
+
+export const isPlayerName = (value, player) => {
+  if (!value || !player) return false;
+  return getPlayerNameVariants(player).includes(value);
+};
+
+export const includesPlayerName = (value, player) => {
+  if (!value || !player) return false;
+  const text = Array.isArray(value) ? value.join(', ') : String(value);
+  return getPlayerNameVariants(player).some((name) => text.includes(name));
+};
+
+export const lineupIncludesPlayer = (lineup, player) => {
+  if (!lineup || !player) return false;
+  if (isPlayerName(lineup.goalie, player)) return true;
+
+  const skaters = [
+    ...(lineup.line1 || []),
+    ...(lineup.line2 || []),
+    ...(lineup.line3 || []),
+    ...(lineup.defenders || []),
+    ...(lineup.forwards || [])
+  ];
+
+  return skaters.some((name) => isPlayerName(name, player));
+};
 
 // Získat všechny zápasy, ve kterých hráč hrál
 export const getPlayerMatches = (playerId, matches = matchData) => {
   const player = getPlayerById(playerId);
   if (!player) return [];
   
-  return matches.filter(match => {
-    // Kontrola brankářů
-    if (match.homeLineup?.goalie === player.name || 
-        match.awayLineup?.goalie === player.name) {
-      return true;
-    }
-    
-    // Kontrola hráčů v sestavách
-    const allHomePlayers = [
-      ...(match.homeLineup?.line1 || []),
-      ...(match.homeLineup?.line2 || []),
-      ...(match.homeLineup?.line3 || []),
-      ...(match.homeLineup?.defenders || []),
-      ...(match.homeLineup?.forwards || [])
-    ];
-    
-    const allAwayPlayers = [
-      ...(match.awayLineup?.line1 || []),
-      ...(match.awayLineup?.line2 || []),
-      ...(match.awayLineup?.line3 || []),
-      ...(match.awayLineup?.defenders || []),
-      ...(match.awayLineup?.forwards || [])
-    ];
-    
-    return allHomePlayers.includes(player.name) || 
-           allAwayPlayers.includes(player.name);
-  });
+  return matches.filter(match =>
+    lineupIncludesPlayer(match.homeLineup, player) ||
+    lineupIncludesPlayer(match.awayLineup, player)
+  );
 };
 
 // Získat statistiky hráče
@@ -59,27 +67,19 @@ export const getPlayerStats = (playerId, matches = matchData) => {
   
   completedStatMatches.forEach(match => {
     // Zjistit, za který tým hráč hrál
-    const isHomeTeam = 
-      match.homeLineup?.goalie === player.name ||
-      [
-        ...(match.homeLineup?.line1 || []),
-        ...(match.homeLineup?.line2 || []),
-        ...(match.homeLineup?.line3 || []),
-        ...(match.homeLineup?.defenders || []),
-        ...(match.homeLineup?.forwards || [])
-      ].includes(player.name);
+    const isHomeTeam = lineupIncludesPlayer(match.homeLineup, player);
     
     const teamSide = isHomeTeam ? 'home' : 'away';
     
     // Počítat góly
     if (match.goals) {
       match.goals.forEach(goal => {
-        if (goal.scorer === player.name) {
+        if (isPlayerName(goal.scorer, player)) {
           stats.goals++;
           stats.points++;
         }
         // Počítat asistence
-        if (goal.assists && goal.assists.includes(player.name)) {
+        if (includesPlayerName(goal.assists, player)) {
           stats.assists++;
           stats.points++;
         }
@@ -89,7 +89,7 @@ export const getPlayerStats = (playerId, matches = matchData) => {
     // Počítat vyloučení
     if (match.penalties) {
       match.penalties.forEach(penalty => {
-        if (penalty.player === player.name) {
+        if (isPlayerName(penalty.player, player)) {
           stats.penalties++;
           const minutes = parseInt(penalty.duration) || 2;
           stats.penaltyMinutes += minutes;
@@ -99,8 +99,8 @@ export const getPlayerStats = (playerId, matches = matchData) => {
     
     // Statistiky pro brankáře
     if (player.category === 'goalies') {
-      if ((teamSide === 'home' && match.homeLineup?.goalie === player.name) ||
-          (teamSide === 'away' && match.awayLineup?.goalie === player.name)) {
+      if ((teamSide === 'home' && isPlayerName(match.homeLineup?.goalie, player)) ||
+          (teamSide === 'away' && isPlayerName(match.awayLineup?.goalie, player))) {
         
         if (match.saves) {
           stats.saves += match.saves[teamSide] || 0;

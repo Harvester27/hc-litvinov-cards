@@ -98,6 +98,18 @@ export const playerData = [
     shoots: 'L',
     description: 'Nejzkušenější obránce týmu. Tvrdý defenzivní specialista. Účastník turnaje ve Straubingu 2025.'
   },
+  {
+    id: 'stepanovsky-oldrich',
+    name: 'Oldřich Štěpanovský',
+    number: null,
+    position: 'Obránce',
+    age: null,
+    height: null,
+    weight: null,
+    nationality: '🇨🇿',
+    category: 'defenders',
+    description: 'Obránce Litvínov Lancers. Nastoupil v přátelském utkání proti Berlín All Stars 28. srpna 2026.'
+  },
   { 
     id: 'coufal-lubos',
     name: 'Luboš Coufal', 
@@ -197,8 +209,10 @@ export const playerData = [
     description: 'Fyzicky silný obránce. Specialista na osobní souboje. Hrdina semifinále turnaje ve Straubingu 2025 - rozhodl nájezdy proti Bayern Rangers.'
   },
   { 
-    id: 'kocourek-ondrej',
-    name: 'Ondřej Kocourek', 
+    id: 'kocurek-ondrej',
+    legacyIds: ['kocourek-ondrej'],
+    name: 'Ondřej Kocurek',
+    aliases: ['Ondřej Kocourek'],
     number: 23, 
     position: 'Obránce', 
     age: 26, 
@@ -210,21 +224,6 @@ export const playerData = [
     shoots: 'L',
     description: 'Nejmladší obránce v týmu. Rychlý bruslař s potenciálem.'
   },
-  { 
-    id: 'matejovic',
-    name: 'Matějovič', 
-    number: 99, 
-    position: 'Obránce', 
-    age: 28, 
-    height: 185, 
-    weight: 88, 
-    nationality: '🇨🇿', 
-    category: 'defenders',
-    joinedTeam: '2024',
-    shoots: 'R',
-    description: 'Ofenzivní obránce s výbornou střelou. Hvězda semifinále ČP (2 góly) a hattrick v přestřelce 7:6 s Netopýři!'
-  },
-  
   // Útočníci
   { 
     id: 'materna-vasek',
@@ -239,6 +238,34 @@ export const playerData = [
     joinedTeam: '2021',
     shoots: 'L',
     description: 'Nejlepší střelec týmu, rychlý a technický útočník. Vstřelil jediný gól ve finále ČP. Zaznamenal 2+3 v přestřelce 7:6 s Netopýři. Asistence na gól Belingera proti Kocourům.'
+  },
+  {
+    id: 'matejovic',
+    name: 'Václav Matějovič',
+    aliases: ['Matějovič'],
+    number: 98,
+    position: 'Útočník',
+    age: 28,
+    height: 185,
+    weight: 88,
+    nationality: '🇨🇿',
+    category: 'forwards',
+    joinedTeam: '2006',
+    shoots: 'R',
+    description: 'Zkušený útočník s výbornou střelou. Hvězda semifinále ČP (2 góly) a autor hattricku v přestřelce 7:6 s Netopýři.'
+  },
+  {
+    id: 'vapenik-jan',
+    name: 'Jan Vápeník',
+    aliases: ['Vápeník'],
+    number: null,
+    position: 'Útočník',
+    age: null,
+    height: null,
+    weight: null,
+    nationality: '🇨🇿',
+    category: 'forwards',
+    description: 'Útočník Litvínov Lancers. Nastoupil v přátelském utkání proti Berlín All Stars 28. srpna 2026.'
   },
   { 
     id: 'svarc-stanislav',
@@ -510,64 +537,17 @@ export const playerData = [
     joinedTeam: '2025 (host)',
     shoots: 'L',
     description: 'Kamarád Jakuba Seidlera, který pomohl týmu na turnaji ve Straubingu 2025. Technický hráč s dobrým zakončením.'
-  },
-  
-  // Hostující hráči (guest players)
-  { 
-    id: 'kacenak-dan',
-    name: 'Dan Kačeňák', 
-    number: 88, 
-    position: 'Útočník', 
-    age: 29, 
-    height: 182, 
-    weight: 85, 
-    nationality: '🇨🇿', 
-    category: 'guests',
-    team: 'Gurmáni',
-    joinedTeam: '2025 (host)',
-    shoots: 'L',
-    description: 'Hostující hráč z týmu Gurmáni. Pomohl Lancers na mezinárodním turnaji ve Straubingu 2025, kde tým obsadil 6. místo. Výborný technický hráč s přehledem.'
-  },
-  { 
-    id: 'zmeskal-lukas',
-    name: 'Lukáš Zmeškal', 
-    number: 19, 
-    position: 'Útočník', 
-    age: 27, 
-    height: 178, 
-    weight: 80, 
-    nationality: '🇨🇿', 
-    category: 'guests',
-    team: 'Gurmáni',
-    joinedTeam: '2025 (host)',
-    shoots: 'R',
-    description: 'Hostující hráč z týmu Gurmáni. Společně s Danem Kačeňákem reprezentoval Lancers na turnaji ve Straubingu 2025. Rychlý bruslař s výbornou střelou.'
-  },
-  { 
-    id: 'josef-kamarad',
-    name: 'Josef "Pepa"', 
-    number: 12, 
-    position: 'Útočník', 
-    age: 26, 
-    height: 180, 
-    weight: 82, 
-    nationality: '🇨🇿', 
-    category: 'guests',
-    team: 'Nezávislý',
-    joinedTeam: '2025 (host)',
-    shoots: 'L',
-    description: 'Kamarád Jakuba Seidlera, který pomohl týmu na turnaji ve Straubingu 2025. Technický hráč s dobrým zakončením.'
   }
 ];
 
 // Funkce pro získání hráče podle ID
 export const getPlayerById = (id) => {
-  return playerData.find(player => player.id === id);
+  return playerData.find(player => player.id === id || player.legacyIds?.includes(id));
 };
 
 // Funkce pro získání hráče podle jména
 export const getPlayerByName = (name) => {
-  return playerData.find(player => player.name === name);
+  return playerData.find(player => player.name === name || player.aliases?.includes(name));
 };
 
 // Funkce pro získání hráčů podle kategorie
@@ -583,14 +563,24 @@ export const getAllPlayers = () => {
 // Funkce pro získání hráčů zmíněných v článku
 export const getPlayersInArticle = (articleContent) => {
   const mentionedPlayers = [];
+  const surnameCounts = playerData.reduce((counts, player) => {
+    const surname = player.name.split(' ').pop().toLowerCase();
+    counts.set(surname, (counts.get(surname) || 0) + 1);
+    return counts;
+  }, new Map());
   
   playerData.forEach(player => {
     // Hledáme různé varianty jména hráče v textu
+    const surname = player.name.split(' ').pop();
     const names = [
       player.name,
-      player.name.split(' ').pop(), // příjmení
-      player.name.replace('Š', 'S').replace('Č', 'C').replace('Ř', 'R'), // bez diakritiky
+      ...(player.aliases || []),
+      player.name.normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
     ];
+
+    if (surnameCounts.get(surname.toLowerCase()) === 1) {
+      names.push(surname);
+    }
     
     for (const name of names) {
       if (articleContent.includes(name)) {

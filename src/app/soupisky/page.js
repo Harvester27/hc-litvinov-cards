@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Navigation from '@/components/Navigation';
-import { Users, Shield, Target, Heart, Star, Award, ArrowLeft, Filter, ChevronRight } from 'lucide-react';
+import { Users, Shield, Target, Heart, Star, Award, ArrowLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { playerData } from '@/data/playerData';
 import { getPlayerStats } from '@/data/playerStats';
@@ -105,7 +105,7 @@ export default function SoupiskyPage() {
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-4">
                     <div className={`w-16 h-16 bg-gradient-to-br ${getPositionColor(player.position)} rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
-                      <span className="text-white text-2xl font-bold">#{player.number}</span>
+                      <span className="text-white text-2xl font-bold">#{player.number ?? '—'}</span>
                     </div>
                     <div>
                       <h3 className="text-xl font-bold text-white group-hover:text-amber-400 transition-colors">
@@ -132,15 +132,15 @@ export default function SoupiskyPage() {
                 <div className="grid grid-cols-3 gap-3 text-center">
                   <div className="bg-black/30 rounded-lg p-2">
                     <div className="text-gray-400 text-xs">Věk</div>
-                    <div className="text-white font-bold">{player.age}</div>
+                    <div className="text-white font-bold">{player.age ?? '—'}</div>
                   </div>
                   <div className="bg-black/30 rounded-lg p-2">
                     <div className="text-gray-400 text-xs">Výška</div>
-                    <div className="text-white font-bold">{player.height}cm</div>
+                    <div className="text-white font-bold">{player.height ? `${player.height} cm` : '—'}</div>
                   </div>
                   <div className="bg-black/30 rounded-lg p-2">
                     <div className="text-gray-400 text-xs">Váha</div>
-                    <div className="text-white font-bold">{player.weight}kg</div>
+                    <div className="text-white font-bold">{player.weight ? `${player.weight} kg` : '—'}</div>
                   </div>
                 </div>
                 
