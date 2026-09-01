@@ -51,7 +51,7 @@ export default function MatchDetail({ match, isOpen, onClose }) {
             <div className="text-5xl font-black text-red-600 mb-1">
               {match.score}
             </div>
-            <div className="text-xl text-gray-600">{match.periods}</div>
+            {match.periods && <div className="text-xl text-gray-600">{match.periods}</div>}
           </div>
 
           {/* Saves */}

@@ -10,6 +10,7 @@ import { getPlayerStats } from '@/data/playerStats';
 import {
   Trophy,
   Calendar,
+  Clock,
   MapPin,
   CheckCircle,
   XCircle,
@@ -37,9 +38,12 @@ const teamLogos = {
   'Ducks Kláštěrec': '/images/loga/Ducks.png',
   'Viper Ústí': '/images/loga/Viper.png',
   'Sharks Ústí': '/images/loga/Sharks.png',
+  'Berlín All Stars': '/images/loga/Berlin.png',
+  'Berlin All Stars': '/images/loga/Berlin.png',
+  'All Stars Berlín': '/images/loga/Berlin.png',
   
   // KHLA Liga týmy (z tabulky)
-  'HC Krokodýl': '/images/loga/HCKrokodyli.png',
+  'HC Krokodýl': '/images/loga/HCKrokodyl.png',
   'HC Kopyta': '/images/loga/HCKopyta.png',
   'HC Žíhadla': '/images/loga/HCZihadla.png',
   'HC Band Of Brothers': '/images/loga/HCBandofBrothers.png',
@@ -56,8 +60,22 @@ const competitionLogos = {
   'ČP': '/images/loga/CeskyPohar.png',
   'KHLA': '/images/loga/KHLA.png',
   'Liga': '/images/loga/KHLA.png',
+  'Přátelské zápasy': '/images/loga/lancers-logo.png',
   'default': '/images/loga/KHLA.png'
 };
+
+const seasons = [
+  { id: '2024/25', label: '24/25', fullLabel: '2024/2025' },
+  { id: '2025/26', label: '25/26', fullLabel: '2025/2026' },
+  { id: '2026/27', label: '26/27', fullLabel: '2026/2027' }
+];
+
+const competitionFilters = [
+  { id: 'all', label: 'Vše' },
+  { id: 'friendly', label: 'Přátelské zápasy' },
+  { id: 'czech-cup', label: 'Český pohár' },
+  { id: 'khla', label: 'KHLA' }
+];
 
 // Helper functions for logos
 const getTeamLogo = (teamName) => {
@@ -86,10 +104,10 @@ const getTeamLogo = (teamName) => {
       return '/images/loga/Netopyri.png';
     }
     if (teamLower.includes('kocouři') || teamLower.includes('kocouri')) {
-      return '/images/loga/Kecouri.png';
+      return '/images/loga/Kocouri.png';
     }
     if (teamLower.includes('gurmán') || teamLower.includes('gurman')) {
-      return '/images/loga/Gurman.png';
+      return '/images/loga/Gurmani.png';
     }
   }
   
@@ -112,8 +130,37 @@ const getCompetitionLogo = (competitionName) => {
   return competitionLogos.default;
 };
 
+const stripScore = (score = '') => String(score).replace(/\s*(sn|pp|SN|PP)\s*/g, '').trim();
+
+const parseScore = (score = '') => {
+  const clean = stripScore(score);
+  const [home, away] = clean.split(':').map((value) => parseInt(value || '0', 10));
+  return { a: home || 0, b: away || 0 };
+};
+
+const isHomeLancers = (match) =>
+  (match.homeTeam || '').includes('Lancers') || (match.homeTeam || '').includes('Litvínov');
+
+const getMatchResult = (match) => {
+  const { a, b } = parseScore(match.score);
+  if (isHomeLancers(match)) return a > b ? 'win' : a < b ? 'loss' : 'tie';
+  return b > a ? 'win' : b < a ? 'loss' : 'tie';
+};
+
+const parseDateTime = (match) => {
+  const [day = 1, month = 1, year = 1900] = (match.date || '01.01.1900')
+    .split('.')
+    .map((value) => parseInt(value, 10));
+  const [hour = 0, minute = 0] = String(match.time || '00:00')
+    .split(':')
+    .map((value) => parseInt(value, 10));
+  return new Date(year, month - 1, day, hour, minute);
+};
+
 export default function VysledkyPage() {
   const [activeTab, setActiveTab] = useState('zapasy'); // 'zapasy' | 'statistiky'
+  const [selectedSeason, setSelectedSeason] = useState('2026/27');
+  const [selectedCompetition, setSelectedCompetition] = useState('all');
   const [selectedMatch, setSelectedMatch] = useState(null);
   const [showMatchDetail, setShowMatchDetail] = useState(false);
   const [positionFilter, setPositionFilter] = useState('all'); // 'all' | 'utocnici' | 'obranci'
@@ -122,47 +169,31 @@ export default function VysledkyPage() {
   const [playerQuery, setPlayerQuery] = useState('');
   const [matchSortOrder, setMatchSortOrder] = useState('desc'); // 'desc' | 'asc'
 
-  // --- Helpers ---
-  const stripScore = (s = '') => String(s).replace(/\s*(sn|pp|SN|PP)\s*/g, '').trim();
-  const parseScore = (s = '') => {
-    const clean = stripScore(s);
-    const [a, b] = clean.split(':').map((n) => parseInt(n || '0', 10));
-    return { a: a || 0, b: b || 0 };
-  };
-  const isHomeLancers = (m) =>
-    (m.homeTeam || '').includes('Lancers') || (m.homeTeam || '').includes('Litvínov');
-  const getMatchResult = (m) => {
-    const { a, b } = parseScore(m.score);
-    if (isHomeLancers(m)) return a > b ? 'win' : a < b ? 'loss' : 'tie';
-    return b > a ? 'win' : b < a ? 'loss' : 'tie';
-  };
-  const parseDateTime = (m) => {
-    const d = (m.date || '01.01.1900').split('.').map((x) => parseInt(x, 10));
-    const [day = 1, month = 1, year = 1900] = d;
-    const [hh = 0, mm = 0] = String(m.time || '00:00')
-      .split(':')
-      .map((x) => parseInt(x, 10));
-    return new Date(year, month - 1, day, hh, mm);
-  };
+  // --- Matches by season and competition ---
+  const seasonMatches = useMemo(
+    () => matchData.filter((match) => match.season === selectedSeason && match.status === 'completed'),
+    [selectedSeason]
+  );
 
-  // --- Matches (Český pohár) ---
-  const czechCupMatches = useMemo(() => {
-    return matchData
-      .filter((m) => (m.category || '').includes('ČP') || (m.category || '').includes('Český pohár'))
-      .sort((a, b) => {
-        const da = parseDateTime(a).getTime();
-        const db = parseDateTime(b).getTime();
-        return matchSortOrder === 'desc' ? db - da : da - db;
-      });
-  }, [matchSortOrder]);
+  const filteredMatches = useMemo(() => {
+    const matches = seasonMatches.filter(
+      (match) => selectedCompetition === 'all' || match.competition === selectedCompetition
+    );
 
-  const cupSummary = useMemo(() => {
+    return [...matches].sort((a, b) => {
+      const da = parseDateTime(a).getTime();
+      const db = parseDateTime(b).getTime();
+      return matchSortOrder === 'desc' ? db - da : da - db;
+    });
+  }, [seasonMatches, selectedCompetition, matchSortOrder]);
+
+  const matchSummary = useMemo(() => {
     let wins = 0,
       losses = 0,
       ties = 0,
       gf = 0,
       ga = 0;
-    for (const m of czechCupMatches) {
+    for (const m of filteredMatches) {
       const { a, b } = parseScore(m.score);
       const home = isHomeLancers(m);
       gf += home ? a : b;
@@ -172,15 +203,15 @@ export default function VysledkyPage() {
       else if (r === 'loss') losses++;
       else ties++;
     }
-    return { wins, losses, ties, gf, ga, games: czechCupMatches.length };
-  }, [czechCupMatches]);
+    return { wins, losses, ties, gf, ga, games: filteredMatches.length };
+  }, [filteredMatches]);
 
   // --- Players with stats ---
   const allPlayersWithStats = useMemo(() => {
     const all = getAllPlayers();
     const rows = [];
     for (const p of all) {
-      const s = getPlayerStats(p.id);
+      const s = getPlayerStats(p.id, seasonMatches);
       if (s && s.gamesPlayed > 0) {
         rows.push({
           id: p.id,
@@ -199,7 +230,7 @@ export default function VysledkyPage() {
       }
     }
     return rows;
-  }, []);
+  }, [seasonMatches]);
 
   const filteredPlayers = useMemo(() => {
     let rows = allPlayersWithStats;
@@ -233,11 +264,72 @@ export default function VysledkyPage() {
   }, [filteredPlayers, sortBy, sortOrder]);
 
   const topPoints = useMemo(() => {
-    if (!allPlayersWithStats.length) return null;
-    return [...allPlayersWithStats]
-      .filter((p) => p.category !== 'goalies')
-      .sort((a, b) => b.stats.points - a.stats.points)[0];
-  }, [allPlayersWithStats]);
+    const players = getAllPlayers()
+      .filter((player) => player.category !== 'goalies')
+      .map((player) => ({
+        ...player,
+        stats: getPlayerStats(player.id, filteredMatches)
+      }))
+      .filter((player) => player.stats?.gamesPlayed > 0);
+
+    return players.sort((a, b) => b.stats.points - a.stats.points)[0] || null;
+  }, [filteredMatches]);
+
+  const selectedSeasonInfo = seasons.find((season) => season.id === selectedSeason) || seasons[0];
+  const selectedCompetitionInfo =
+    competitionFilters.find((competition) => competition.id === selectedCompetition) || competitionFilters[0];
+
+  const visibleMatchSections = [
+    {
+      id: 'friendly',
+      label: 'PŘÁTELSKÉ ZÁPASY',
+      items: filteredMatches.filter((match) => match.competition === 'friendly'),
+      gradient: 'from-red-500 to-red-700',
+      icon: <Activity className="text-white" size={24} />
+    },
+    {
+      id: 'cup-final',
+      label: 'FINÁLE',
+      items: filteredMatches.filter((match) => match.competition === 'czech-cup' && match.stage === 'final'),
+      gradient: 'from-yellow-400 to-yellow-600',
+      emphasis: true,
+      icon: <img src="/images/loga/CeskyPohar.png" alt="Český pohár" className="w-6 h-6" />
+    },
+    {
+      id: 'cup-semifinal',
+      label: 'SEMIFINÁLE',
+      items: filteredMatches.filter((match) => match.competition === 'czech-cup' && match.stage === 'semifinal'),
+      gradient: 'from-gray-300 to-gray-500',
+      icon: <img src="/images/loga/CeskyPohar.png" alt="Český pohár" className="w-6 h-6" />
+    },
+    {
+      id: 'cup-quarterfinal',
+      label: 'ČTVRTFINÁLE',
+      items: filteredMatches.filter((match) => match.competition === 'czech-cup' && match.stage === 'quarterfinal'),
+      gradient: 'from-orange-400 to-orange-600',
+      icon: <img src="/images/loga/CeskyPohar.png" alt="Český pohár" className="w-6 h-6" />
+    },
+    {
+      id: 'cup-group',
+      label: 'ZÁKLADNÍ SKUPINA',
+      items: filteredMatches.filter((match) => match.competition === 'czech-cup' && match.stage === 'group'),
+      gradient: 'from-blue-400 to-blue-600',
+      icon: <img src="/images/loga/CeskyPohar.png" alt="Český pohár" className="w-6 h-6" />
+    },
+    {
+      id: 'khla',
+      label: 'KHLA',
+      items: filteredMatches.filter((match) => match.competition === 'khla'),
+      gradient: 'from-slate-700 to-slate-900',
+      icon: <img src="/images/loga/KHLA.png" alt="KHLA" className="w-6 h-6" />
+    }
+  ]
+    .filter((section) => section.items.length > 0)
+    .sort((a, b) => {
+      const aTime = parseDateTime(a.items[0]).getTime();
+      const bTime = parseDateTime(b.items[0]).getTime();
+      return matchSortOrder === 'desc' ? bTime - aTime : aTime - bTime;
+    });
 
   // --- UI helpers ---
   const Section = ({ title, icon, gradient, children }) => (
@@ -267,18 +359,19 @@ export default function VysledkyPage() {
     const awayTeamLogo = getTeamLogo(match.awayTeam);
 
     return (
-      <motion.div
+      <motion.button
+        type="button"
         layout
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.2, delay: Math.min(idx * 0.03, 0.4) }}
-        className={`bg-gradient-to-r ${bgColor} border rounded-2xl p-5 hover:shadow-xl transition-all cursor-pointer`}
+        className={`w-full text-left bg-gradient-to-r ${bgColor} border rounded-2xl p-5 hover:shadow-xl transition-all cursor-pointer focus:outline-none focus-visible:ring-4 focus-visible:ring-red-300`}
         onClick={() => {
           setSelectedMatch(match);
           setShowMatchDetail(true);
         }}
       >
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-4 min-w-0">
             <div className={iconColor}>
               {result === 'win' ? (
@@ -290,7 +383,7 @@ export default function VysledkyPage() {
               )}
             </div>
             <div className="min-w-0">
-              <div className={`flex items-center gap-3 ${emphasis ? 'text-2xl' : 'text-lg'}`}>
+              <div className={`flex flex-wrap items-center gap-2 sm:gap-3 ${emphasis ? 'text-xl sm:text-2xl' : 'text-base sm:text-lg'}`}>
                 <div className="flex items-center gap-2">
                   <img 
                     src={homeTeamLogo} 
@@ -311,40 +404,41 @@ export default function VysledkyPage() {
                   />
                 </div>
               </div>
-              <div className="text-gray-600 flex items-center gap-3 mt-1 text-sm">
-                <Calendar size={16} />
-                {match.date}
-                <MapPin size={16} />
-                {match.location}
+              <div className="text-gray-600 flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-sm">
+                <span className="inline-flex items-center gap-1">
+                  <Calendar size={16} />
+                  {match.date}
+                </span>
+                <span className="inline-flex items-center gap-1">
+                  <Clock size={16} />
+                  {match.time}
+                </span>
+                <span className="inline-flex items-center gap-1">
+                  <MapPin size={16} />
+                  {match.location}
+                </span>
               </div>
             </div>
           </div>
-          <div className="text-right shrink-0">
+          <div className="text-left sm:text-right shrink-0 pl-12 sm:pl-0">
             <div className={`text-black ${emphasis ? 'text-4xl font-black' : 'text-2xl font-black'}`}>
               {match.score}
             </div>
             <div className="text-gray-600 text-sm">{match.periods}</div>
           </div>
         </div>
-      </motion.div>
+      </motion.button>
     );
   };
 
-  const CategorySection = ({ label, keyText, gradient, emphasis = false }) => {
-    const items = czechCupMatches.filter((m) => (m.category || '').includes(keyText));
+  const MatchSection = ({ label, items, gradient, emphasis = false, icon }) => {
     if (!items.length) return null;
-    
-    // Use Czech Cup logo for Czech Cup sections
-    const sectionIcon = keyText.includes('Finále') || keyText.includes('Semifinále') || 
-                       keyText.includes('Čtvrtfinále') || keyText.includes('Skupina') ?
-      <img src="/images/loga/CeskyPohar.png" alt="Český pohár" className="w-6 h-6" /> :
-      <Trophy className={label === 'FINÁLE' ? 'text-black' : 'text-white'} size={24} />;
-    
+
     return (
       <Section
         title={label}
         gradient={gradient}
-        icon={sectionIcon}
+        icon={icon || <Trophy className={label === 'FINÁLE' ? 'text-black' : 'text-white'} size={24} />}
       >
         <div className="grid gap-3">
           <AnimatePresence initial={false}>
@@ -379,43 +473,75 @@ export default function VysledkyPage() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.25 }}
-            className="flex flex-col md:flex-row md:items-center md:justify-between gap-6"
+            className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6"
           >
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-2xl flex items-center justify-center shadow-2xl">
                 <Trophy className="text-black" size={36} />
               </div>
               <div>
-                <h1 className="text-4xl font-black text-white">VÝSLEDKY & STATISTIKY</h1>
+                <h1 className="text-3xl sm:text-4xl font-black text-white">VÝSLEDKY & STATISTIKY</h1>
                 <p className="text-gray-300 mt-1 flex items-center gap-2">
-                  <img src="/images/loga/CeskyPohar.png" alt="ČP" className="w-5 h-5" />
-                  Český pohár 2024/2025 • Kompletní statistiky sezóny
+                  <Calendar size={18} />
+                  Sezóna {selectedSeasonInfo.fullLabel} •{' '}
+                  {activeTab === 'zapasy'
+                    ? selectedCompetition === 'all'
+                      ? 'Všechny zápasy'
+                      : selectedCompetitionInfo.label
+                    : 'Hráčské statistiky'}
                 </p>
               </div>
             </div>
 
             {/* Quick summary */}
-            <div className="grid grid-cols-3 md:grid-cols-5 gap-3">
-              <Tile label="Zápasy" value={cupSummary.games} />
-              <Tile label="Bilance" value={`${cupSummary.wins}-${cupSummary.losses}-${cupSummary.ties}`} />
-              <Tile label="Skóre" value={`${cupSummary.gf}:${cupSummary.ga}`} />
-              <Tile label="+/-" value={cupSummary.gf - cupSummary.ga} />
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+              <Tile label="Zápasy" value={matchSummary.games} />
+              <Tile label="Bilance" value={`${matchSummary.wins}-${matchSummary.losses}-${matchSummary.ties}`} />
+              <Tile label="Skóre" value={`${matchSummary.gf}:${matchSummary.ga}`} />
+              <Tile label="+/-" value={matchSummary.gf - matchSummary.ga} />
               <Tile label="Nejvíc bodů" value={topPoints ? `${topPoints.name} (${topPoints.stats.points})` : '—'} />
             </div>
           </motion.div>
 
-          {/* Tabs */}
-          <div className="mt-6">
-            <div className="bg-white/10 backdrop-blur rounded-2xl p-1 inline-flex">
+          {/* Season and view tabs */}
+          <div className="mt-7 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
+            <div>
+              <div className="text-xs uppercase tracking-wider text-gray-400 font-bold mb-2">Sezóna</div>
+              <div className="bg-white/10 backdrop-blur rounded-2xl p-1 inline-flex flex-wrap gap-1">
+                {seasons.map((season) => (
+                  <TabButton
+                    key={season.id}
+                    active={selectedSeason === season.id}
+                    onClick={() => {
+                      setSelectedSeason(season.id);
+                      setSelectedCompetition('all');
+                    }}
+                  >
+                    {season.label}
+                  </TabButton>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <div className="text-xs uppercase tracking-wider text-gray-400 font-bold mb-2">Pohled</div>
+              <div className="bg-white/10 backdrop-blur rounded-2xl p-1 inline-flex flex-wrap gap-1">
               <TabButton active={activeTab === 'zapasy'} onClick={() => setActiveTab('zapasy')}>
                 <span className="flex items-center gap-2">
-                  <img src="/images/loga/CeskyPohar.png" alt="ČP" className="w-4 h-4" />
-                  Český pohár
+                  <Activity size={16} />
+                  Zápasy
                 </span>
               </TabButton>
-              <TabButton active={activeTab === 'statistiky'} onClick={() => setActiveTab('statistiky')}>
+              <TabButton
+                active={activeTab === 'statistiky'}
+                onClick={() => {
+                  setActiveTab('statistiky');
+                  setSelectedCompetition('all');
+                }}
+              >
                 Statistiky sezóny
               </TabButton>
+              </div>
             </div>
           </div>
         </div>
@@ -425,28 +551,75 @@ export default function VysledkyPage() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         {activeTab === 'zapasy' ? (
           <div className="grid gap-8">
-            {/* Toolbar */}
-            <div className="bg-white rounded-2xl shadow-xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-              <div className="text-sm text-gray-600 flex items-center gap-2">
-                <img src="/images/loga/CeskyPohar.png" alt="ČP" className="w-5 h-5" />
-                Zobrazeno <span className="font-semibold text-gray-900">{czechCupMatches.length}</span> zápasů Českého poháru
+            {/* Competition filters and toolbar */}
+            <div className="bg-white rounded-2xl shadow-xl p-5">
+              <div className="text-sm font-bold text-gray-600 mb-3">Filtrovat podle soutěže</div>
+              <div className="flex flex-wrap gap-2">
+                {competitionFilters.map((competition) => (
+                  <Pill
+                    key={competition.id}
+                    active={selectedCompetition === competition.id}
+                    onClick={() => setSelectedCompetition(competition.id)}
+                  >
+                    {competition.label}
+                  </Pill>
+                ))}
               </div>
-              <button
-                className="inline-flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-2 rounded-lg font-semibold"
-                onClick={() => setMatchSortOrder((s) => (s === 'desc' ? 'asc' : 'desc'))}
-              >
-                {matchSortOrder === 'desc' ? <SortDesc size={16} /> : <SortAsc size={16} />}
-                Řadit podle data: {matchSortOrder === 'desc' ? 'nejnovější → nejstarší' : 'nejstarší → nejnovější'}
-              </button>
+
+              <div className="border-t border-gray-100 mt-4 pt-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <div className="text-sm text-gray-600 flex items-center gap-2">
+                  <img
+                    src={selectedCompetition === 'all' ? '/images/loga/lancers-logo.png' : getCompetitionLogo(selectedCompetitionInfo.label)}
+                    alt={selectedCompetitionInfo.label}
+                    className="w-5 h-5 object-contain"
+                  />
+                  Zobrazeno <span className="font-semibold text-gray-900">{filteredMatches.length}</span>{' '}
+                  {filteredMatches.length === 1 ? 'zápas' : filteredMatches.length >= 2 && filteredMatches.length <= 4 ? 'zápasy' : 'zápasů'}
+                </div>
+                {filteredMatches.length > 1 && (
+                  <button
+                    type="button"
+                    className="inline-flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-2 rounded-lg font-semibold"
+                    onClick={() => setMatchSortOrder((s) => (s === 'desc' ? 'asc' : 'desc'))}
+                  >
+                    {matchSortOrder === 'desc' ? <SortDesc size={16} /> : <SortAsc size={16} />}
+                    {matchSortOrder === 'desc' ? 'Nejnovější → nejstarší' : 'Nejstarší → nejnovější'}
+                  </button>
+                )}
+              </div>
             </div>
 
-            <CategorySection label="FINÁLE" keyText="Finále" gradient="from-yellow-400 to-yellow-600" emphasis />
-            <CategorySection label="SEMIFINÁLE" keyText="Semifinále" gradient="from-gray-300 to-gray-500" />
-            <CategorySection label="ČTVRTFINÁLE" keyText="Čtvrtfinále" gradient="from-orange-400 to-orange-600" />
-            <CategorySection label="ZÁKLADNÍ SKUPINA" keyText="Skupina" gradient="from-blue-400 to-blue-600" />
+            {filteredMatches.length === 0 ? (
+              <EmptyState
+                title={seasonMatches.length === 0 ? 'V této sezóně zatím nejsou žádné zápasy' : 'V této kategorii zatím nejsou žádné zápasy'}
+                description={
+                  seasonMatches.length === 0
+                    ? `Sezóna ${selectedSeasonInfo.fullLabel} je zatím prázdná.`
+                    : `Pro filtr „${selectedCompetitionInfo.label}“ nemáme v sezóně ${selectedSeasonInfo.fullLabel} žádný výsledek.`
+                }
+              />
+            ) : (
+              visibleMatchSections.map((section) => (
+                <MatchSection
+                  key={section.id}
+                  label={section.label}
+                  items={section.items}
+                  gradient={section.gradient}
+                  emphasis={section.emphasis}
+                  icon={section.icon}
+                />
+              ))
+            )}
           </div>
         ) : (
           <div className="space-y-8">
+            {allPlayersWithStats.length === 0 ? (
+              <EmptyState
+                title="Pro tuto sezónu zatím nejsou hráčské statistiky"
+                description={`Jakmile doplníme sestavy, góly a asistence ze sezóny ${selectedSeasonInfo.fullLabel}, zobrazí se zde automaticky.`}
+              />
+            ) : (
+              <>
             {/* Filters */}
             <div className="bg-white rounded-2xl shadow-xl p-6">
               <div className="flex flex-col lg:flex-row lg:items-end gap-4">
@@ -487,7 +660,7 @@ export default function VysledkyPage() {
               <div className="bg-gradient-to-r from-black to-gray-900 p-6">
                 <h2 className="text-2xl font-black text-white flex items-center gap-3">
                   <Star className="text-yellow-400" size={28} />
-                  Statistiky hráčů sezóny 2024/2025
+                  Statistiky hráčů sezóny {selectedSeasonInfo.fullLabel}
                 </h2>
                 <p className="text-gray-400 text-sm mt-2">Celkové statistiky ze všech soutěží</p>
               </div>
@@ -588,6 +761,8 @@ export default function VysledkyPage() {
                 </table>
               </div>
             </div>
+              </>
+            )}
           </div>
         )}
       </div>
@@ -596,7 +771,7 @@ export default function VysledkyPage() {
       <footer className="bg-black text-white mt-20">
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="text-center text-gray-400">
-            <p>© 2025 HC Litvínov Lancers • Oficiální stránky KHLA Sportega Liga</p>
+            <p>© {new Date().getFullYear()} HC Litvínov Lancers • Oficiální stránky KHLA Sportega Liga</p>
           </div>
         </div>
       </footer>
@@ -607,6 +782,8 @@ export default function VysledkyPage() {
   function TabButton({ active, children, onClick }) {
     return (
       <button
+        type="button"
+        aria-pressed={active}
         onClick={onClick}
         className={`px-6 py-3 rounded-xl font-bold transition-all ${
           active ? 'bg-gradient-to-r from-red-600 to-red-700 text-white' : 'text-gray-200 hover:text-white'
@@ -626,9 +803,23 @@ export default function VysledkyPage() {
     );
   }
 
+  function EmptyState({ title, description }) {
+    return (
+      <div className="bg-white rounded-2xl shadow-xl border border-gray-100 px-6 py-14 text-center">
+        <div className="w-14 h-14 mx-auto rounded-2xl bg-red-50 text-red-600 flex items-center justify-center mb-4">
+          <Calendar size={28} />
+        </div>
+        <h2 className="text-2xl font-black text-gray-900">{title}</h2>
+        <p className="text-gray-500 mt-2 max-w-xl mx-auto">{description}</p>
+      </div>
+    );
+  }
+
   function Pill({ active, children, onClick }) {
     return (
       <button
+        type="button"
+        aria-pressed={active}
         onClick={onClick}
         className={`px-3 py-2 rounded-lg font-semibold transition-all ${
           active ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'

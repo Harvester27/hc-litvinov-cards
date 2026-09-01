@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Navigation from '@/components/Navigation';
 import MatchDetail from '@/components/MatchDetail';
-import { matchData, getRecentMatches } from '@/data/matchData';
+import { getRecentMatches } from '@/data/matchData';
 import { getAllArticles } from '@/data/articleData';
 import { 
   Trophy, Users, Calendar, Flame, Shield, Star, 
@@ -237,16 +237,16 @@ export default function HomePage() {
         {/* Novinky */}
         <div className="lg:col-span-2 space-y-8">
 
-          {/* Poslední soutěžní zápasy */}
+          {/* Poslední zápasy */}
           <div>
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-3xl font-black text-black flex items-center gap-3">
                 <div className="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center">
                   <Swords className="text-white" size={20} />
                 </div>
-                Poslední soutěžní zápasy
+                Poslední zápasy
               </h2>
-              <Link href="/zapasy" className="text-red-600 hover:text-red-700 font-bold flex items-center gap-2">
+              <Link href="/vysledky" className="text-red-600 hover:text-red-700 font-bold flex items-center gap-2">
                 Všechny zápasy
                 <ArrowRight size={20} />
               </Link>
@@ -265,8 +265,8 @@ export default function HomePage() {
                   <div className="flex gap-4">
                     <div className="w-16 h-16 relative flex-shrink-0 group-hover:scale-110 transition-transform">
                       <Image 
-                        src="/images/loga/CeskyPohar.png" 
-                        alt="Český pohár"
+                        src={match.competition === 'czech-cup' ? '/images/loga/CeskyPohar.png' : '/images/loga/lancers-logo.png'}
+                        alt={match.competition === 'czech-cup' ? 'Český pohár' : 'Litvínov Lancers'}
                         width={64}
                         height={64}
                         className="object-contain"
