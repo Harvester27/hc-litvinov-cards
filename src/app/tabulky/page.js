@@ -3,11 +3,12 @@
 import React, { useState } from 'react';
 import Navigation from '@/components/Navigation';
 import { 
-  Trophy, TrendingUp, TrendingDown, ArrowLeft, Minus, Award, 
+  Trophy, TrendingUp, TrendingDown, ArrowLeft, Minus,
   Shield, Crosshair, Zap, Star, ChevronRight, BarChart3,
-  Medal, Crown, Flame, Info, CheckCircle, XCircle, Calendar
+  Crown, Info, Calendar
 } from 'lucide-react';
 import Link from 'next/link';
+import { khlaSeasonOptions, khlaStandingsBySeason } from '@/data/khlaStandings';
 
 // Team logos mapping - zkopírováno z vysledky/page.js
 const teamLogos = {
@@ -29,13 +30,15 @@ const teamLogos = {
   'Sharks Ústí': '/images/loga/Sharks.png',
   
   // KHLA Liga týmy
-  'HC Krokodýl': '/images/loga/HCKrokodyli.png',
+  'HC Krokodýl': '/images/loga/HCKrokodyl.png',
   'HC Kopyta': '/images/loga/HCKopyta.png',
   'HC Žíhadla': '/images/loga/HCZihadla.png',
+  'HC Žihadla': '/images/loga/HCZihadla.png',
   'HC Band Of Brothers': '/images/loga/HCBandofBrothers.png',
   'HC North Blades': '/images/loga/HCNorthBlades.png',
   'HC F.R.I.E.N.D.S.': '/images/loga/HCFriends.png',
   'HC Warriors': '/images/loga/HCWarriors.png',
+  'HC Wariors': '/images/loga/HCWarriors.png',
   
   'default': '/images/loga/KHLA.png'
 };
@@ -91,131 +94,7 @@ const getTeamLogo = (teamName) => {
 
 export default function TabulkyPage() {
   const [selectedLeague, setSelectedLeague] = useState('khla'); // khla | cup
-
-  // KHLA Sportega Liga 24/25 - S reálnou formou podle posledních zápasů
-  const khlaTeams = [
-    { 
-      position: 1, 
-      team: 'HC Krokodýl', 
-      code: 'KRO', 
-      games: 14, 
-      wins: 10, 
-      draws: 0, 
-      losses: 4, 
-      goalsFor: 81, 
-      goalsAgainst: 46, 
-      points: 30, 
-      form: ['W', 'L', 'W', 'W', 'W'], // Posledních 5 zápasů
-      trend: 'up',
-      lastGames: ['4:2 Warriors', '2:3 Kopyta', '5:3 Žíhadla', '6:2 NBL', '3:1 Lancers']
-    },
-    { 
-      position: 2, 
-      team: 'HC Kopyta', 
-      code: 'KPT', 
-      games: 14, 
-      wins: 9, 
-      draws: 2, 
-      losses: 3, 
-      goalsFor: 85, 
-      goalsAgainst: 55, 
-      points: 29, 
-      form: ['W', 'W', 'D', 'W', 'L'], 
-      trend: 'stable',
-      lastGames: ['3:2 Krokodýl', '4:1 Warriors', '2:2 BOB', '5:2 Friends', '1:3 Žíhadla']
-    },
-    { 
-      position: 3, 
-      team: 'HC Žíhadla', 
-      code: 'ŽHD', 
-      games: 14, 
-      wins: 9, 
-      draws: 1, 
-      losses: 4, 
-      goalsFor: 63, 
-      goalsAgainst: 47, 
-      points: 28, 
-      form: ['L', 'W', 'W', 'W', 'W'], 
-      trend: 'up',
-      lastGames: ['3:5 Krokodýl', '4:2 NBL', '3:1 Friends', '2:0 Warriors', '3:1 Kopyta']
-    },
-    { 
-      position: 4, 
-      team: 'HC Band Of Brothers', 
-      code: 'BOB', 
-      games: 14, 
-      wins: 8, 
-      draws: 1, 
-      losses: 5, 
-      goalsFor: 85, 
-      goalsAgainst: 78, 
-      points: 25, 
-      form: ['W', 'D', 'L', 'W', 'W'], 
-      trend: 'stable',
-      lastGames: ['5:3 Friends', '2:2 Kopyta', '3:4 Krokodýl', '6:4 Warriors', '4:2 Lancers']
-    },
-    { 
-      position: 5, 
-      team: 'HC North Blades', 
-      code: 'NBL', 
-      games: 14, 
-      wins: 5, 
-      draws: 0, 
-      losses: 9, 
-      goalsFor: 61, 
-      goalsAgainst: 82, 
-      points: 15, 
-      form: ['L', 'L', 'W', 'L', 'L'], 
-      trend: 'down',
-      lastGames: ['2:6 Krokodýl', '2:4 Žíhadla', '3:2 Warriors', '1:5 BOB', '2:4 Lancers']
-    },
-    { 
-      position: 6, 
-      team: 'HC F.R.I.E.N.D.S.', 
-      code: 'FRD', 
-      games: 14, 
-      wins: 4, 
-      draws: 2, 
-      losses: 8, 
-      goalsFor: 80, 
-      goalsAgainst: 85, 
-      points: 14, 
-      form: ['L', 'L', 'D', 'W', 'L'], 
-      trend: 'down',
-      lastGames: ['3:5 BOB', '2:5 Kopyta', '3:3 Warriors', '4:3 Lancers', '2:4 Žíhadla']
-    },
-    { 
-      position: 7, 
-      team: 'HC Lancers', 
-      code: 'LNR', 
-      games: 14, 
-      wins: 4, 
-      draws: 2, 
-      losses: 8, 
-      goalsFor: 58, 
-      goalsAgainst: 88, 
-      points: 14, 
-      form: ['L', 'W', 'L', 'W', 'L'], 
-      trend: 'down', 
-      isOurTeam: true,
-      lastGames: ['1:3 Krokodýl', '4:2 NBL', '3:4 Friends', '3:1 Warriors', '2:4 BOB']
-    },
-    { 
-      position: 8, 
-      team: 'HC Warriors', 
-      code: 'WAR', 
-      games: 14, 
-      wins: 2, 
-      draws: 2, 
-      losses: 10, 
-      goalsFor: 60, 
-      goalsAgainst: 93, 
-      points: 8, 
-      form: ['L', 'L', 'D', 'L', 'L'], 
-      trend: 'down',
-      lastGames: ['2:4 Krokodýl', '1:4 Kopyta', '3:3 Friends', '1:3 Lancers', '0:2 Žíhadla']
-    }
-  ];
+  const [selectedKhlaSeason, setSelectedKhlaSeason] = useState('25/26');
 
   // Český pohár 24/25 - Skutečná data ze zápasů
   const cupTeams = [
@@ -320,7 +199,8 @@ export default function TabulkyPage() {
     }
   ];
 
-  const currentTeams = selectedLeague === 'khla' ? khlaTeams : cupTeams;
+  const currentKhlaSeason = khlaStandingsBySeason[selectedKhlaSeason];
+  const currentTeams = selectedLeague === 'khla' ? currentKhlaSeason.teams : cupTeams;
 
   const getFormColor = (result) => {
     switch(result) {
@@ -337,7 +217,7 @@ export default function TabulkyPage() {
     return <Minus className="text-gray-400" size={20} />;
   };
 
-  const getPositionBadge = (position, totalTeams, isPlayoff = false) => {
+  const getPositionBadge = (position) => {
     if (selectedLeague === 'cup') {
       // Český pohár - všichni postupují
       if (position === 1) {
@@ -381,15 +261,7 @@ export default function TabulkyPage() {
     { rank: 10, name: 'Jan Hanuš', team: 'Litvínov Lancers', goals: 7, assists: 8, points: 18 }
   ] : null;
 
-  // Poslední zápasy Lancers - různé pro každou ligu
-  const lancersMatches = selectedLeague === 'khla' ? [
-    { date: '11.1.', home: 'Lancers', away: 'HC Krokodýl', score: '1:3', result: 'L' },
-    { date: '8.1.', home: 'HC North Blades', away: 'Lancers', score: '2:4', result: 'W' },
-    { date: '5.1.', home: 'Lancers', away: 'HC F.R.I.E.N.D.S.', score: '3:4', result: 'L' },
-    { date: '2.1.', home: 'HC Warriors', away: 'Lancers', score: '1:3', result: 'W' },
-    { date: '28.12.', home: 'HC Band Of Brothers', away: 'Lancers', score: '4:2', result: 'L' },
-    { date: '22.12.', home: 'Lancers', away: 'HC Žíhadla', score: '2:5', result: 'L' }
-  ] : [
+  const cupLancersMatches = [
     { date: '29.3.', home: 'Viper Ústí', away: 'Litvínov Lancers', score: '2:6', result: 'W' },
     { date: '22.3.', home: 'Netopýři', away: 'Litvínov Lancers', score: '4:5', result: 'W' },
     { date: '11.1.', home: 'Litvínov Lancers', away: 'Kocouři Beroun', score: '4:3sn', result: 'W' },
@@ -397,6 +269,11 @@ export default function TabulkyPage() {
     { date: '18.1.', home: 'Ducks Kláštěrec', away: 'Litvínov Lancers', score: '7:5', result: 'L' },
     { date: '19.1.', home: 'Litvínov Lancers', away: 'Sharks Ústí', score: '13:4', result: 'W' }
   ];
+
+  // Poslední zápasy Lancers - různé pro každou soutěž a sezónu
+  const lancersMatches = selectedLeague === 'khla'
+    ? currentKhlaSeason.lancersMatches
+    : cupLancersMatches;
 
   return (
     <div className="min-h-screen bg-white">
@@ -417,7 +294,9 @@ export default function TabulkyPage() {
             </div>
             <div>
               <h1 className="text-4xl font-bold text-black">Tabulky soutěží</h1>
-              <p className="text-gray-600 mt-1">Sezóna 2024/2025</p>
+              <p className="text-gray-600 mt-1">
+                Sezóna {selectedLeague === 'khla' ? currentKhlaSeason.fullSeason : '2024/2025'}
+              </p>
             </div>
           </div>
 
@@ -446,6 +325,27 @@ export default function TabulkyPage() {
               Český pohár
             </button>
           </div>
+
+          {selectedLeague === 'khla' && (
+            <div className="mt-5 flex flex-wrap items-center gap-3">
+              <span className="text-sm font-bold uppercase tracking-wide text-gray-500">Sezóna KHLA</span>
+              {khlaSeasonOptions.map((season) => (
+                <button
+                  key={season.id}
+                  type="button"
+                  aria-pressed={selectedKhlaSeason === season.id}
+                  onClick={() => setSelectedKhlaSeason(season.id)}
+                  className={`px-5 py-2.5 rounded-full font-bold transition-all transform hover:scale-105 ${
+                    selectedKhlaSeason === season.id
+                      ? 'bg-gradient-to-r from-red-600 to-red-700 text-white shadow-lg'
+                      : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-red-500'
+                  }`}
+                >
+                  {season.label}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
@@ -460,7 +360,7 @@ export default function TabulkyPage() {
                   {selectedLeague === 'khla' ? (
                     <>
                       <img src="/images/loga/KHLA.png" alt="KHLA" className="w-7 h-7" />
-                      KHLA Sportega Liga 24/25
+                      {currentKhlaSeason.title}
                     </>
                   ) : (
                     <>
@@ -513,6 +413,16 @@ export default function TabulkyPage() {
                           <span><strong>5.-8. místo</strong> hraje play-out o konečné umístění</span>
                         </li>
                       </ul>
+                      {currentKhlaSeason.sourceUrl && (
+                        <a
+                          href={currentKhlaSeason.sourceUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex mt-2 text-xs font-bold text-blue-700 hover:text-blue-900 underline underline-offset-2"
+                        >
+                          {currentKhlaSeason.sourceLabel}
+                        </a>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -537,7 +447,7 @@ export default function TabulkyPage() {
                   </thead>
                   <tbody>
                     {currentTeams.map((team) => {
-                      const badge = getPositionBadge(team.position, currentTeams.length);
+                      const badge = getPositionBadge(team.position);
                       const teamLogo = getTeamLogo(team.team);
                       return (
                         <tr 
@@ -602,20 +512,22 @@ export default function TabulkyPage() {
                           </td>
                           <td className="text-center p-3 hidden md:table-cell">
                             <div className="flex gap-1 justify-center">
-                              {team.form.map((result, i) => (
-                                <div
-                                  key={i}
-                                  className={`w-7 h-7 rounded ${getFormColor(result)} flex items-center justify-center text-xs font-bold shadow-sm relative group`}
-                                  title={team.lastGames ? team.lastGames[i] : ''}
-                                >
-                                  {result}
-                                  {team.lastGames && (
-                                    <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
-                                      {team.lastGames[i]}
-                                    </div>
-                                  )}
-                                </div>
-                              ))}
+                              {team.form?.length ? team.form.map((result, i) => (
+                                  <div
+                                    key={i}
+                                    className={`w-7 h-7 rounded ${getFormColor(result)} flex items-center justify-center text-xs font-bold shadow-sm relative group`}
+                                    title={team.lastGames ? team.lastGames[i] : ''}
+                                  >
+                                    {result}
+                                    {team.lastGames && (
+                                      <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
+                                        {team.lastGames[i]}
+                                      </div>
+                                    )}
+                                  </div>
+                                )) : (
+                                  <span className="text-gray-400 font-bold">—</span>
+                                )}
                             </div>
                           </td>
                           <td className="text-center p-3">
@@ -668,9 +580,9 @@ export default function TabulkyPage() {
                 <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-4">
                   <h2 className="text-xl font-bold text-white flex items-center gap-3">
                     <Shield className="text-white" size={24} />
-                    Play-out KHLA Sportega Liga 24/25
+                    {currentKhlaSeason.placementTitle}
                   </h2>
-                  <p className="text-blue-100 text-sm mt-1">O konečné 5.-8. místo</p>
+                  <p className="text-blue-100 text-sm mt-1">{currentKhlaSeason.placementSubtitle}</p>
                 </div>
                 
                 <div className="overflow-x-auto">
@@ -689,107 +601,58 @@ export default function TabulkyPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr className="border-b hover:bg-gray-50 transition-all bg-green-50">
-                        <td className="p-3">
-                          <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold text-lg shadow-sm">
-                            5
-                          </div>
-                        </td>
-                        <td className="p-3">
-                          <div className="flex items-center gap-3">
-                            <img src="/images/loga/lancers-logo.png" alt="HC Lancers" className="w-9 h-9 object-contain" />
-                            <span className="text-xs font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded">LNR</span>
-                            <span className="text-red-600 font-bold">HC Lancers</span>
-                            <Star className="text-yellow-500" size={16} fill="currentColor" />
-                          </div>
-                        </td>
-                        <td className="text-center p-3 text-gray-700">3</td>
-                        <td className="text-center p-3 text-green-600 font-semibold">3</td>
-                        <td className="text-center p-3 text-yellow-600 font-semibold">0</td>
-                        <td className="text-center p-3 text-red-600 font-semibold">0</td>
-                        <td className="text-center p-3 text-gray-700 text-sm">12:5</td>
-                        <td className="text-center p-3">
-                          <span className="font-bold text-green-600">+7</span>
-                        </td>
-                        <td className="text-center p-3">
-                          <span className="text-xl font-bold text-red-600">9</span>
-                        </td>
-                      </tr>
-                      <tr className="border-b hover:bg-gray-50 transition-all">
-                        <td className="p-3">
-                          <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-gradient-to-r from-gray-400 to-gray-500 text-white font-bold text-lg shadow-sm">
-                            6
-                          </div>
-                        </td>
-                        <td className="p-3">
-                          <div className="flex items-center gap-3">
-                            <img src="/images/loga/HCFriends.png" alt="HC F.R.I.E.N.D.S." className="w-9 h-9 object-contain" />
-                            <span className="text-xs font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded">FRD</span>
-                            <span className="text-gray-900">HC F.R.I.E.N.D.S.</span>
-                          </div>
-                        </td>
-                        <td className="text-center p-3 text-gray-700">3</td>
-                        <td className="text-center p-3 text-green-600 font-semibold">2</td>
-                        <td className="text-center p-3 text-yellow-600 font-semibold">0</td>
-                        <td className="text-center p-3 text-red-600 font-semibold">1</td>
-                        <td className="text-center p-3 text-gray-700 text-sm">12:9</td>
-                        <td className="text-center p-3">
-                          <span className="font-bold text-green-600">+3</span>
-                        </td>
-                        <td className="text-center p-3">
-                          <span className="text-xl font-bold text-gray-900">6</span>
-                        </td>
-                      </tr>
-                      <tr className="border-b hover:bg-gray-50 transition-all">
-                        <td className="p-3">
-                          <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-gradient-to-r from-gray-400 to-gray-500 text-white font-bold text-lg shadow-sm">
-                            7
-                          </div>
-                        </td>
-                        <td className="p-3">
-                          <div className="flex items-center gap-3">
-                            <img src="/images/loga/HCWarriors.png" alt="HC Warriors" className="w-9 h-9 object-contain" />
-                            <span className="text-xs font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded">WAR</span>
-                            <span className="text-gray-900">HC Warriors</span>
-                          </div>
-                        </td>
-                        <td className="text-center p-3 text-gray-700">3</td>
-                        <td className="text-center p-3 text-green-600 font-semibold">1</td>
-                        <td className="text-center p-3 text-yellow-600 font-semibold">0</td>
-                        <td className="text-center p-3 text-red-600 font-semibold">2</td>
-                        <td className="text-center p-3 text-gray-700 text-sm">10:14</td>
-                        <td className="text-center p-3">
-                          <span className="font-bold text-red-600">-4</span>
-                        </td>
-                        <td className="text-center p-3">
-                          <span className="text-xl font-bold text-gray-900">3</span>
-                        </td>
-                      </tr>
-                      <tr className="border-b hover:bg-gray-50 transition-all">
-                        <td className="p-3">
-                          <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-gradient-to-r from-gray-400 to-gray-500 text-white font-bold text-lg shadow-sm">
-                            8
-                          </div>
-                        </td>
-                        <td className="p-3">
-                          <div className="flex items-center gap-3">
-                            <img src="/images/loga/HCNorthBlades.png" alt="HC North Blades" className="w-9 h-9 object-contain" />
-                            <span className="text-xs font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded">NBL</span>
-                            <span className="text-gray-900">HC North Blades</span>
-                          </div>
-                        </td>
-                        <td className="text-center p-3 text-gray-700">3</td>
-                        <td className="text-center p-3 text-green-600 font-semibold">0</td>
-                        <td className="text-center p-3 text-yellow-600 font-semibold">0</td>
-                        <td className="text-center p-3 text-red-600 font-semibold">3</td>
-                        <td className="text-center p-3 text-gray-700 text-sm">5:13</td>
-                        <td className="text-center p-3">
-                          <span className="font-bold text-red-600">-8</span>
-                        </td>
-                        <td className="text-center p-3">
-                          <span className="text-xl font-bold text-gray-900">0</span>
-                        </td>
-                      </tr>
+                      {currentKhlaSeason.placementTeams.map((team) => {
+                        const goalDifference = team.goalsFor - team.goalsAgainst;
+                        const teamLogo = getTeamLogo(team.team);
+
+                        return (
+                          <tr
+                            key={team.code}
+                            className={`border-b hover:bg-gray-50 transition-all ${team.isOurTeam ? 'bg-green-50' : ''}`}
+                          >
+                            <td className="p-3">
+                              <div className={`w-9 h-9 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm ${
+                                team.isOurTeam
+                                  ? 'bg-gradient-to-r from-green-500 to-emerald-500'
+                                  : 'bg-gradient-to-r from-gray-400 to-gray-500'
+                              }`}>
+                                {team.position}
+                              </div>
+                            </td>
+                            <td className="p-3">
+                              <div className="flex items-center gap-3">
+                                <img
+                                  src={teamLogo}
+                                  alt={team.team}
+                                  className="w-9 h-9 object-contain"
+                                  onError={(e) => { e.target.src = '/images/loga/KHLA.png'; }}
+                                />
+                                <span className="text-xs font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded">{team.code}</span>
+                                <span className={team.isOurTeam ? 'text-red-600 font-bold' : 'text-gray-900'}>{team.team}</span>
+                                {team.isOurTeam && <Star className="text-yellow-500" size={16} fill="currentColor" />}
+                              </div>
+                            </td>
+                            <td className="text-center p-3 text-gray-700">{team.games}</td>
+                            <td className="text-center p-3 text-green-600 font-semibold">{team.wins}</td>
+                            <td className="text-center p-3 text-yellow-600 font-semibold">{team.draws}</td>
+                            <td className="text-center p-3 text-red-600 font-semibold">{team.losses}</td>
+                            <td className="text-center p-3 text-gray-700 text-sm">{team.goalsFor}:{team.goalsAgainst}</td>
+                            <td className="text-center p-3">
+                              <span className={`font-bold ${
+                                goalDifference > 0 ? 'text-green-600' :
+                                goalDifference < 0 ? 'text-red-600' : 'text-gray-600'
+                              }`}>
+                                {goalDifference > 0 ? '+' : ''}{goalDifference}
+                              </span>
+                            </td>
+                            <td className="text-center p-3">
+                              <span className={`text-xl font-bold ${team.isOurTeam ? 'text-red-600' : 'text-gray-900'}`}>
+                                {team.points}
+                              </span>
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
@@ -799,8 +662,8 @@ export default function TabulkyPage() {
                   <div className="flex items-center gap-3">
                     <Trophy className="text-green-600" size={22} />
                     <div>
-                      <p className="text-sm font-bold text-gray-900">Lancers úspěšně zvládli play-out!</p>
-                      <p className="text-xs text-gray-600 mt-1">Konečné 5. místo je velkým úspěchem v kvalitní KHLA lize 🎉</p>
+                      <p className="text-sm font-bold text-gray-900">{currentKhlaSeason.placementNoteTitle}</p>
+                      <p className="text-xs text-gray-600 mt-1">{currentKhlaSeason.placementNoteText}</p>
                     </div>
                   </div>
                 </div>
@@ -984,23 +847,23 @@ export default function TabulkyPage() {
                   <>
                     <div className="flex justify-between items-center">
                       <span className="text-red-100">Nejvíce gólů:</span>
-                      <span className="font-bold">{currentTeams[0].team}</span>
+                      <span className="font-bold">{currentKhlaSeason.quickStats.mostGoals}</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-red-100">Nejlepší obrana:</span>
-                      <span className="font-bold">{[...currentTeams].sort((a, b) => a.goalsAgainst - b.goalsAgainst)[0].team}</span>
+                      <span className="font-bold">{currentKhlaSeason.quickStats.bestDefense}</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-red-100">Lancers pozice:</span>
-                      <span className="font-bold text-yellow-400">7. místo</span>
+                      <span className="font-bold text-yellow-400">{currentKhlaSeason.quickStats.lancersPosition}</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-red-100">Bilance:</span>
-                      <span className="font-bold">4V-2R-8P</span>
+                      <span className="font-bold">{currentKhlaSeason.quickStats.record}</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-red-100">Skóre:</span>
-                      <span className="font-bold">58:88</span>
+                      <span className="font-bold">{currentKhlaSeason.quickStats.score}</span>
                     </div>
                   </>
                 )}
@@ -1009,21 +872,25 @@ export default function TabulkyPage() {
 
             {/* CTA */}
             <div className="bg-gradient-to-br from-gray-900 to-black rounded-2xl p-6 text-white shadow-xl">
-              <h3 className="text-lg font-bold mb-3">Další zápas Lancers</h3>
+              <h3 className="text-lg font-bold mb-3">
+                {selectedLeague === 'khla' ? 'Výsledek sezóny' : 'Další zápas Lancers'}
+              </h3>
               <div className="space-y-2 mb-4">
                 <div className="text-2xl font-bold text-red-500">
-                  {selectedLeague === 'khla' ? 'Lancers vs. HC Krokodýl' : 'Play-off čtvrtfinále'}
+                  {selectedLeague === 'khla' ? currentKhlaSeason.summaryCard.headline : 'Play-off čtvrtfinále'}
                 </div>
                 <div className="text-gray-300">
-                  {selectedLeague === 'cup' ? 'Termín bude upřesněn' : 'Sobota 15.1. • 18:00'}
+                  {selectedLeague === 'khla' ? currentKhlaSeason.summaryCard.detail : 'Termín bude upřesněn'}
                 </div>
-                <div className="text-gray-400 text-sm">Lancers Arena</div>
+                <div className="text-gray-400 text-sm">
+                  {selectedLeague === 'khla' ? currentKhlaSeason.summaryCard.note : 'Lancers Arena'}
+                </div>
               </div>
               <Link 
-                href="/vstupenky"
+                href={selectedLeague === 'khla' ? '/vysledky' : '/vstupenky'}
                 className="block w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg text-center transition-all transform hover:scale-105"
               >
-                Koupit vstupenky
+                {selectedLeague === 'khla' ? 'Zobrazit výsledky' : 'Koupit vstupenky'}
                 <ChevronRight className="inline ml-2" size={16} />
               </Link>
             </div>
