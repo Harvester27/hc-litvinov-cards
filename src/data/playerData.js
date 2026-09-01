@@ -28,6 +28,7 @@ export const playerData = [
     weight: 87, 
     nationality: '🇨🇿', 
     category: 'goalies',
+    photo: '/images/players/roster/nistor-vlastimil.webp',
     joinedTeam: '2020',
     birthDate: '8.11.1993',
     birthPlace: 'Litvínov',
@@ -120,6 +121,7 @@ export const playerData = [
     weight: 89, 
     nationality: '🇨🇿', 
     category: 'defenders',
+    photo: '/images/players/roster/coufal-lubos.webp',
     joinedTeam: '2020',
     shoots: 'R',
     description: 'Zkušený obránce s výbornou přihrávkou. Zaznamenal 2 asistence ve výhře 10:3 nad Gurmány. Výjimečně hrál v útoku proti Viper Ústí. Účastník turnaje ve Straubingu 2025.'
@@ -134,6 +136,7 @@ export const playerData = [
     weight: 84, 
     nationality: '🇨🇿', 
     category: 'defenders',
+    photo: '/images/players/roster/turecek-tomas.webp',
     joinedTeam: '2021',
     shoots: 'L',
     description: 'Univerzální obránce, který dokáže v nouzi zaskočit i v brance. Chytal ve dvou zápasech základní skupiny ČP - proti Gurmánům (výhra 10:3) a Ducks Klášterec (prohra 3:6). Účastník turnaje ve Straubingu 2025.'
@@ -148,6 +151,7 @@ export const playerData = [
     weight: 95, 
     nationality: '🇨🇿', 
     category: 'defenders',
+    photo: '/images/players/roster/belinger-jindrich.webp',
     joinedTeam: '2019',
     shoots: 'R',
     description: 'Starší z bratrů Belingerů, defenzivní specialista. Zaznamenal 2 asistence proti Sharks (10:3), gól + asistence proti Kocourům (4:7) a asistenci proti Viper (4:2).'
@@ -176,6 +180,7 @@ export const playerData = [
     weight: 87, 
     nationality: '🇨🇿', 
     category: 'defenders',
+    photo: '/images/players/roster/hanus-jan.webp',
     joinedTeam: '2022',
     shoots: 'R',
     description: 'Ofenzivní obránce s výbornou střelou. Ve výhře 10:3 nad Gurmány měl 1+2, proti Sharks fantastické 2+2! Někdy až moc emotivní - nesportovní chování proti Kocourům. Žije v Německu a účastnil se turnaje ve Straubingu 2025.'
@@ -235,6 +240,7 @@ export const playerData = [
     weight: 82, 
     nationality: '🇨🇿', 
     category: 'forwards',
+    photo: '/images/players/roster/materna-vasek.webp',
     joinedTeam: '2021',
     shoots: 'L',
     description: 'Nejlepší střelec týmu, rychlý a technický útočník. Vstřelil jediný gól ve finále ČP. Zaznamenal 2+3 v přestřelce 7:6 s Netopýři. Asistence na gól Belingera proti Kocourům.'
@@ -291,6 +297,7 @@ export const playerData = [
     weight: 78, 
     nationality: '🇨🇿', 
     category: 'forwards',
+    photo: '/images/players/roster/schubada-jan.webp',
     joinedTeam: '2019',
     shoots: 'L',
     description: 'Nejstarší ze synů Pavla Schubady St. Součást historického zápasu, kdy celá rodina skórovala proti Gurmánům. Vstřelil 2 góly proti Sharks Ústí. Pravidelně hraje s otcem a bratrem.'
@@ -375,6 +382,7 @@ export const playerData = [
     weight: 79, 
     nationality: '🇨🇿', 
     category: 'forwards',
+    photo: '/images/players/roster/salanda-jiri.webp',
     joinedTeam: '2018',
     shoots: 'L',
     description: 'Rychlý a technický útočník. Vstřelil 2 góly ve výhře 10:3 nad Gurmány, gól proti Ducks. Asistence na první gól proti Viper Ústí. Účastník turnaje ve Straubingu 2025.'
@@ -445,6 +453,7 @@ export const playerData = [
     weight: 88, 
     nationality: '🇸🇰', 
     category: 'forwards',
+    photo: '/images/players/roster/dlugopolsky-marian.webp',
     joinedTeam: '2021',
     shoots: 'R',
     description: 'Slovenský útočník s výbornou střelou. Vstřelil důležitý gól na 9:3 proti Sharks Ústí. Univerzální hráč schopný hrát ve všech formacích.'

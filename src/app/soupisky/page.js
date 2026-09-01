@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import Navigation from '@/components/Navigation';
 import { Users, Shield, Target, Heart, Star, Award, ArrowLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
@@ -96,56 +97,96 @@ export default function SoupiskyPage() {
           {filteredPlayers.map((player) => {
             const stats = getPlayerStats(player.id);
             const rating = getPlayerRating(player);
+            const [firstName, ...surnameParts] = player.name.split(' ');
+            const surname = surnameParts.join(' ') || firstName;
+            const nationalityCode = player.nationality === '🇸🇰' ? 'SK' : 'CZ';
+            const statsLabel = stats && stats.gamesPlayed > 0
+              ? player.category === 'goalies'
+                ? stats.savePercentage
+                  ? `${stats.gamesPlayed} zápasů • ${stats.savePercentage} úspěšnost`
+                  : `${stats.gamesPlayed} zápasů`
+                : `${stats.goals}G ${stats.assists}A • ${stats.points} bodů`
+              : 'Statistiky zatím nejsou k dispozici';
             
             return (
-              <div 
+              <article
                 key={player.id}
-                className="bg-white/5 backdrop-blur rounded-2xl p-6 border border-white/10 hover:bg-white/10 transition-all group"
+                className="group relative flex h-full flex-col overflow-hidden rounded-[28px] border border-white/10 bg-gradient-to-br from-slate-800 via-slate-900 to-black shadow-2xl transition-all duration-300 hover:-translate-y-1 hover:border-amber-400/30 hover:shadow-amber-950/30"
               >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-4">
-                    <div className={`w-16 h-16 bg-gradient-to-br ${getPositionColor(player.position)} rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
-                      <span className="text-white text-2xl font-bold">#{player.number ?? '—'}</span>
+                <div className="relative h-[330px] overflow-hidden bg-[radial-gradient(circle_at_78%_48%,rgba(225,29,72,0.28),transparent_58%),linear-gradient(145deg,#1b2432_0%,#111827_55%,#3b0710_100%)]">
+                  <div className="absolute -right-16 top-24 h-56 w-80 rotate-[-10deg] rounded-[50%] bg-red-600/10 blur-2xl" />
+                  <div className="absolute inset-x-0 bottom-24 h-px -rotate-6 bg-gradient-to-r from-transparent via-amber-400/30 to-transparent" />
+
+                  {player.photo ? (
+                    <Image
+                      src={player.photo}
+                      alt={`Portrét hráče ${player.name}`}
+                      width={800}
+                      height={800}
+                      sizes="(min-width: 1024px) 390px, (min-width: 768px) 48vw, 100vw"
+                      className="absolute bottom-0 left-1/2 h-[96%] w-[96%] -translate-x-1/2 object-contain object-bottom drop-shadow-[0_14px_16px_rgba(0,0,0,0.55)] transition-transform duration-500 group-hover:scale-[1.025]"
+                    />
+                  ) : (
+                    <div
+                      className="absolute inset-x-0 bottom-0 flex h-[88%] items-end justify-center text-black/60 drop-shadow-[0_14px_18px_rgba(0,0,0,0.55)]"
+                      aria-label={`Fotografie hráče ${player.name} bude doplněna`}
+                    >
+                      <svg viewBox="0 0 320 320" className="h-full w-auto" aria-hidden="true">
+                        <circle cx="160" cy="92" r="66" fill="currentColor" opacity="0.78" />
+                        <path d="M38 320c4-78 49-126 122-126s118 48 122 126H38Z" fill="currentColor" opacity="0.88" />
+                        <path d="M104 185c16 20 34 30 56 30s40-10 56-30l20 17c-20 31-45 47-76 47s-56-16-76-47l20-17Z" fill="#111827" opacity="0.8" />
+                      </svg>
                     </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-white group-hover:text-amber-400 transition-colors">
-                        {player.name}
-                      </h3>
-                      <p className="text-gray-400">{player.position}</p>
-                    </div>
+                  )}
+
+                  <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-slate-950 via-slate-950/55 to-transparent" />
+
+                  <div className={`absolute left-6 top-6 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br ${getPositionColor(player.position)} border border-white/20 shadow-xl transition-transform duration-300 group-hover:scale-105`}>
+                    <span className="text-xl font-black text-white">#{player.number ?? '—'}</span>
                   </div>
-                  <span className="text-2xl">{player.nationality}</span>
+                  <div className="absolute right-6 top-6 rounded-full border border-white/15 bg-black/55 px-4 py-2 text-sm font-black text-white backdrop-blur">
+                    {nationalityCode}
+                  </div>
+
+                  <div className="absolute inset-x-0 bottom-5 px-6">
+                    <p className="text-sm font-bold uppercase tracking-[0.22em] text-gray-300">
+                      {surnameParts.length ? firstName : ''}
+                    </p>
+                    <h3 className="mt-1 break-words text-[1.7rem] font-black uppercase leading-none tracking-tight text-white transition-colors group-hover:text-amber-400 sm:text-3xl">
+                      {surname}
+                    </h3>
+                  </div>
                 </div>
-                
-                {/* Quick Stats */}
-                {stats && stats.gamesPlayed > 0 && (
-                  <div className="mb-3 p-2 bg-amber-600/10 rounded-lg">
-                    <div className="text-xs text-amber-400 font-semibold">
-                      {player.category === 'goalies' 
-                        ? `${stats.gamesPlayed} zápasů • ${stats.savePercentage} úspěšnost`
-                        : `${stats.goals}G ${stats.assists}A • ${stats.points} bodů`
-                      }
+
+                <div className="flex flex-1 flex-col p-5">
+                  <div className="mb-4 flex items-center gap-2 text-sm font-bold uppercase tracking-[0.14em] text-emerald-300">
+                    <span className={`h-2.5 w-2.5 rounded-full bg-gradient-to-br ${getPositionColor(player.position)}`} />
+                    {player.position}
+                  </div>
+
+                  <div className="mb-4 flex min-h-12 items-center rounded-xl border border-amber-400/10 bg-amber-500/10 px-4 py-3">
+                    <p className={`text-sm font-bold ${stats && stats.gamesPlayed > 0 ? 'text-amber-400' : 'text-gray-400'}`}>
+                      {statsLabel}
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-3 text-center">
+                    <div className="rounded-xl border border-white/5 bg-black/30 p-3">
+                      <div className="text-xs text-gray-400">Věk</div>
+                      <div className="mt-1 text-lg font-black text-white">{player.age ?? '—'}</div>
+                    </div>
+                    <div className="rounded-xl border border-white/5 bg-black/30 p-3">
+                      <div className="text-xs text-gray-400">Výška</div>
+                      <div className="mt-1 text-lg font-black text-white">{player.height ? `${player.height} cm` : '—'}</div>
+                    </div>
+                    <div className="rounded-xl border border-white/5 bg-black/30 p-3">
+                      <div className="text-xs text-gray-400">Váha</div>
+                      <div className="mt-1 text-lg font-black text-white">{player.weight ? `${player.weight} kg` : '—'}</div>
                     </div>
                   </div>
-                )}
-                
-                <div className="grid grid-cols-3 gap-3 text-center">
-                  <div className="bg-black/30 rounded-lg p-2">
-                    <div className="text-gray-400 text-xs">Věk</div>
-                    <div className="text-white font-bold">{player.age ?? '—'}</div>
-                  </div>
-                  <div className="bg-black/30 rounded-lg p-2">
-                    <div className="text-gray-400 text-xs">Výška</div>
-                    <div className="text-white font-bold">{player.height ? `${player.height} cm` : '—'}</div>
-                  </div>
-                  <div className="bg-black/30 rounded-lg p-2">
-                    <div className="text-gray-400 text-xs">Váha</div>
-                    <div className="text-white font-bold">{player.weight ? `${player.weight} kg` : '—'}</div>
-                  </div>
-                </div>
-                
-                <div className="mt-4 flex items-center justify-between">
-                  <div className="flex gap-1">
+
+                  <div className="mt-5 flex items-center justify-between border-t border-white/10 pt-4">
+                    <div className="flex gap-1">
                     {[...Array(5)].map((_, i) => (
                       <Star 
                         key={i} 
@@ -154,16 +195,17 @@ export default function SoupiskyPage() {
                         fill={i < rating ? 'currentColor' : 'none'} 
                       />
                     ))}
+                    </div>
+                    <Link
+                      href={`/profil/${player.id}`}
+                      className="flex items-center gap-1 text-sm font-bold text-amber-400 transition-all hover:gap-2 hover:text-amber-300"
+                    >
+                      Zobrazit profil
+                      <ChevronRight size={16} />
+                    </Link>
                   </div>
-                  <Link 
-                    href={`/profil/${player.id}`}
-                    className="text-amber-400 hover:text-amber-300 text-sm font-semibold flex items-center gap-1 hover:gap-2 transition-all"
-                  >
-                    Zobrazit profil
-                    <ChevronRight size={16} />
-                  </Link>
                 </div>
-              </div>
+              </article>
             );
           })}
         </div>
