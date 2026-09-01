@@ -95,50 +95,52 @@ export default function HeroTeamCarousel() {
     <div className="hero-team-carousel" aria-hidden="true">
       <div className="hero-ambient" />
 
-      {SLIDES.map((slide, index) => (
-        <div
-          key={slide.src}
-          className={`hero-slide hero-art--${slide.kind} ${
-            index === currentIndex ? 'is-active' : ''
-          } ${
-            incomingIndex !== null && incomingIndex !== currentIndex && index === currentIndex
-              ? 'is-leaving'
-              : ''
-          }`}
-          style={{ '--hero-image': `url("${slide.src}")` }}
-        />
-      ))}
+      <div className="hero-photo-stage">
+        {SLIDES.map((slide, index) => (
+          <div
+            key={slide.src}
+            className={`hero-slide hero-art--${slide.kind} ${
+              index === currentIndex ? 'is-active' : ''
+            } ${
+              incomingIndex !== null && incomingIndex !== currentIndex && index === currentIndex
+                ? 'is-leaving'
+                : ''
+            }`}
+            style={{ '--hero-image': `url("${slide.src}")` }}
+          />
+        ))}
 
-      {incomingSlide && !reduceMotion && (
-        <div
-          key={`${incomingSlide.src}-${transitionCount}`}
-          className="tile-grid"
-        >
-          {TILES.map(({ index, column, row }) => {
-            const revealOrder = (index * 7 + transitionCount * 5) % TILES.length;
-            const rotateOnXAxis = (index + transitionCount) % 2 === 0;
+        {incomingSlide && !reduceMotion && (
+          <div
+            key={`${incomingSlide.src}-${transitionCount}`}
+            className="tile-grid"
+          >
+            {TILES.map(({ index, column, row }) => {
+              const revealOrder = (index * 7 + transitionCount * 5) % TILES.length;
+              const rotateOnXAxis = (index + transitionCount) % 2 === 0;
 
-            return (
-              <span
-                key={index}
-                className="tile"
-                style={{
-                  '--tile-left': `${column * -100}%`,
-                  '--tile-top': `${row * -100}%`,
-                  '--tile-delay': `${revealOrder * 24}ms`,
-                  '--rotate-x': rotateOnXAxis ? '90deg' : '0deg',
-                  '--rotate-y': rotateOnXAxis ? '0deg' : '90deg',
-                }}
-              >
+              return (
                 <span
-                  className={`tile-art hero-art--${incomingSlide.kind}`}
-                  style={{ '--hero-image': `url("${incomingSlide.src}")` }}
-                />
-              </span>
-            );
-          })}
-        </div>
-      )}
+                  key={index}
+                  className="tile"
+                  style={{
+                    '--tile-left': `${column * -100}%`,
+                    '--tile-top': `${row * -100}%`,
+                    '--tile-delay': `${revealOrder * 24}ms`,
+                    '--rotate-x': rotateOnXAxis ? '90deg' : '0deg',
+                    '--rotate-y': rotateOnXAxis ? '0deg' : '90deg',
+                  }}
+                >
+                  <span
+                    className={`tile-art hero-art--${incomingSlide.kind}`}
+                    style={{ '--hero-image': `url("${incomingSlide.src}")` }}
+                  />
+                </span>
+              );
+            })}
+          </div>
+        )}
+      </div>
 
       <div className="hero-vignette" />
 
@@ -160,6 +162,13 @@ export default function HeroTeamCarousel() {
             radial-gradient(circle at 72% 48%, rgba(220, 38, 38, 0.32), transparent 45%),
             radial-gradient(circle at 28% 32%, rgba(71, 85, 105, 0.32), transparent 40%),
             linear-gradient(135deg, #020617 0%, #111827 54%, #25040a 100%);
+        }
+
+        .hero-photo-stage {
+          position: absolute;
+          inset: 0;
+          z-index: 1;
+          overflow: hidden;
         }
 
         .hero-slide {
@@ -190,8 +199,8 @@ export default function HeroTeamCarousel() {
         }
 
         .hero-art--trophy {
-          background-position: center 62%;
-          background-size: cover;
+          background-position: center;
+          background-size: contain;
         }
 
         .hero-art--lineup {
@@ -199,8 +208,8 @@ export default function HeroTeamCarousel() {
             var(--hero-image),
             radial-gradient(circle at 54% 52%, rgba(153, 27, 27, 0.54), transparent 48%),
             linear-gradient(135deg, #020617 0%, #111827 56%, #25040a 100%);
-          background-position: center 57%, center, center;
-          background-size: min(94vw, 1500px) auto, cover, cover;
+          background-position: center calc(100% - 70px), center, center;
+          background-size: min(96%, 1420px) auto, cover, cover;
         }
 
         .tile-grid {
@@ -276,6 +285,12 @@ export default function HeroTeamCarousel() {
             background:
               linear-gradient(180deg, rgba(0, 0, 0, 0.58) 0%, rgba(0, 0, 0, 0.32) 44%, rgba(0, 0, 0, 0.82) 100%),
               linear-gradient(90deg, rgba(0, 0, 0, 0.78) 0%, rgba(0, 0, 0, 0.28) 70%, rgba(0, 0, 0, 0.58) 100%);
+          }
+        }
+
+        @media (min-width: 1024px) {
+          .hero-photo-stage {
+            right: 368px;
           }
         }
 

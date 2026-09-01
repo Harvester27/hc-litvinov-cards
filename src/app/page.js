@@ -87,38 +87,37 @@ export default function HomePage() {
         {/* Animated red accent */}
         <div className="absolute inset-0 z-[4] bg-gradient-to-r from-red-600/10 via-transparent to-red-600/10 pointer-events-none"></div>
         
-        <div className="relative z-10 h-full flex items-center">
-          <div className="max-w-7xl mx-auto px-4 w-full">
-            <div className="max-w-3xl">
-              <div className="flex items-center gap-6 mb-8">
-                <div className="w-56 h-56 relative">
-                  <Image 
-                    src="/images/loga/lancers-logo.png" 
-                    alt="HC Litvínov Lancers"
-                    width={224}
-                    height={224}
-                    className="object-contain filter drop-shadow-2xl transform rotate-3 hover:rotate-0 transition-transform"
-                  />
-                </div>
-                <div>
-                  <h1 className="text-6xl md:text-8xl font-black text-white leading-none">
-                    LITVÍNOV
-                  </h1>
-                  <div className="text-5xl md:text-7xl font-black text-red-600 -mt-2">
-                    LANCERS
-                  </div>
+        <div className="absolute inset-y-0 left-0 right-0 lg:right-[368px] z-10 pointer-events-none">
+          <div className="relative h-full w-full">
+            <div className="absolute top-3 left-1/2 -translate-x-1/2 flex items-center gap-3 md:gap-5">
+              <div className="w-24 h-24 md:w-28 md:h-28 relative shrink-0">
+                <Image
+                  src="/images/loga/lancers-logo.png"
+                  alt="HC Litvínov Lancers"
+                  width={112}
+                  height={112}
+                  className="w-full h-full object-contain filter drop-shadow-2xl transform rotate-3"
+                  priority
+                />
+              </div>
+              <div>
+                <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-white leading-none drop-shadow-2xl">
+                  LITVÍNOV
+                </h1>
+                <div className="text-3xl sm:text-4xl md:text-5xl font-black text-red-600 leading-none -mt-1 drop-shadow-2xl">
+                  LANCERS
                 </div>
               </div>
-              
-              <p className="text-xl text-gray-300 mb-10 font-light">
-                Oficiální stránky hokejového klubu • KHLA Sportega Liga
-              </p>
             </div>
+
+            <p className="hidden lg:block absolute bottom-7 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] text-center text-xl text-gray-200 font-light drop-shadow-2xl">
+              Oficiální stránky hokejového klubu Lancers
+            </p>
           </div>
         </div>
         
         {/* Zápasy widget - poslední + nadcházející */}
-        <div className="absolute bottom-8 right-8 z-20 bg-white rounded-2xl p-6 text-black max-w-md shadow-2xl">
+        <div className="absolute bottom-8 right-8 z-20 w-[320px] max-w-[calc(100vw-4rem)] bg-white rounded-2xl p-6 text-black shadow-2xl">
           {/* Poslední zápas */}
           <div className="pb-4 border-b border-gray-200 rounded-lg p-2">
             <div className="flex items-center gap-2 mb-3">
