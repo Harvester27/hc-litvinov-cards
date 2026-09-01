@@ -18,7 +18,12 @@ const friendlyMatches = [
     awayTeam: 'Berlín All Stars',
     score: '11:8',
     periods: '',
-    summary: 'Litvínov Lancers porazili v domácím přátelském utkání Berlín All Stars 11:8.'
+    homeLineup: {
+      goalie: 'Jiří Morávek',
+      defenders: ['?', '?', '?', '?'],
+      forwards: ['Václav Materna', 'Ladislav Černý', 'Pavel Novák', '?', '?', '?']
+    },
+    summary: 'Tato sobota pro nás byla tak trochu zakletá, protože jsme se jako tým nedokázali sejít. Sestavu jsme nakonec dali dohromady díky pomoci týmu North Blades a také hráčům Lancers, kteří si našli parťáky odjinud. Důležité je, že jsme zápas nemuseli rušit a odehráli jsme ho jako tým Litvínov Lancers. Utkání bylo opět velmi vyrovnané.'
   },
   {
     id: 'friendly-berlin-2026-08-28',
