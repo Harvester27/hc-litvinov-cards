@@ -11,6 +11,7 @@ const friendlyMatches = [
     competition: 'friendly',
     stage: 'friendly',
     status: 'completed',
+    statsComplete: false,
     image: '🤝',
     excerpt: 'Lancers zvítězili v domácím přátelském utkání 11:8.',
     homeTeam: 'Litvínov Lancers',
@@ -30,13 +31,20 @@ const friendlyMatches = [
     competition: 'friendly',
     stage: 'friendly',
     status: 'completed',
+    statsComplete: false,
     image: '🤝',
-    excerpt: 'Lancers zvládli domácí přátelské utkání a zvítězili 9:8.',
+    excerpt: 'Osm sekund před koncem rozhodl Vašek Materna v oslabení o výhře 9:8.',
     homeTeam: 'Litvínov Lancers',
     awayTeam: 'Berlín All Stars',
     score: '9:8',
     periods: '',
-    summary: 'Litvínov Lancers zvítězili v domácím přátelském utkání nad Berlín All Stars 9:8.'
+    format: '3× 20 minut čistého času • úprava ledu mezi třetinami',
+    homeLineup: {
+      goalie: 'Jiří Morávek',
+      defenders: ['Oldřich Štěpanovský', 'Michal Koreš', 'Jindřich Belinger', 'Ondřej Kocurek'],
+      forwards: ['Vašek Materna', 'Václav Matějovič', 'Jiří Belinger', 'Jan Vápeník', 'Luboš Coufal', 'Marian Dlugopolský']
+    },
+    summary: 'Do zápasu jsme vstoupili dobře a rychle jsme se dostali do vedení 5:2. Za tohoto stavu však soupeř začal kousat. Začal hrát tvrději a důrazněji a taková hra nám začala dělat problémy. Berlín vyrovnal na 5:5 a od té chvíle bylo skóre vyrovnané až do samého závěru. Dvě minuty před koncem, za stavu 8:8, dostal Václav Matějovič trest 2+2 minuty a šli jsme do oslabení. Na závěrečné minuty jsme na led poslali první lajnu ve složení Vašek Materna, Jiří Belinger, Ondřej Kocurek a Jindřich Belinger. Osm sekund před koncem, stále v oslabení, přihrál Jiří Belinger zpoza branky před branku na hůl Vaška Materny. Ten přesnou střelou do růžku rozhodl o našem vítězství 9:8.'
   }
 ];
 
