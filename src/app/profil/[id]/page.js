@@ -5,11 +5,16 @@ import { useParams, useRouter } from 'next/navigation';
 import Navigation from '@/components/Navigation';
 import MatchDetail from '@/components/MatchDetail';
 import { getPlayerById } from '@/data/playerData';
-import { getPlayerStats, getPlayerMatches } from '@/data/playerStats';
+import {
+  getPlayerStats,
+  getPlayerMatches,
+  includesPlayerName,
+  isPlayerName,
+  lineupIncludesPlayer
+} from '@/data/playerStats';
 import { 
-  ArrowLeft, User, Trophy, Target, Shield, Calendar, 
-  MapPin, Award, TrendingUp, Clock, ChevronRight,
-  Star, Zap, Activity, Hash, CheckCircle, XCircle
+  ArrowLeft, Trophy, Target, Shield, Calendar,
+  MapPin, Activity, CheckCircle, XCircle
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -65,15 +70,12 @@ export default function PlayerProfilePage() {
     // Počítat góly a asistence
     if (match.goals) {
       match.goals.forEach(goal => {
-        if (goal.scorer === player.name) {
+        if (isPlayerName(goal.scorer, player)) {
           goals++;
         }
         // Kontrola asistencí (může být v různých formátech)
-        if (goal.assists) {
-          const assistText = goal.assists.toString();
-          if (assistText.includes(player.name)) {
-            assists++;
-          }
+        if (includesPlayerName(goal.assists, player)) {
+          assists++;
         }
       });
     }
@@ -81,7 +83,7 @@ export default function PlayerProfilePage() {
     // Počítat trestné minuty
     if (match.penalties) {
       match.penalties.forEach(penalty => {
-        if (penalty.player === player.name) {
+        if (isPlayerName(penalty.player, player)) {
           const minutes = parseInt(penalty.duration) || 2;
           penaltyMinutes += minutes;
         }
@@ -99,13 +101,7 @@ export default function PlayerProfilePage() {
   // Funkce pro určení výsledku zápasu pro tým hráče
   const getMatchResult = (match) => {
     // Zjistit, za který tým hráč hrál
-    const isHomeTeam = 
-      match.homeLineup?.goalie === player.name ||
-      [
-        ...(match.homeLineup?.line1 || []),
-        ...(match.homeLineup?.line2 || []),
-        ...(match.homeLineup?.line3 || [])
-      ].includes(player.name);
+    const isHomeTeam = lineupIncludesPlayer(match.homeLineup, player);
     
     // Rozdělit skóre
     const scoreParts = match.score.replace(' sn', '').replace(' pp', '').split(':');
@@ -158,7 +154,7 @@ export default function PlayerProfilePage() {
               <div className="md:col-span-1">
                 <div className="flex flex-col items-center text-center">
                   <div className={`w-32 h-32 bg-gradient-to-br ${getPositionColor(player.position)} rounded-full flex items-center justify-center shadow-2xl mb-4`}>
-                    <span className="text-white text-5xl font-black">#{player.number}</span>
+                    <span className="text-white text-5xl font-black">#{player.number ?? '—'}</span>
                   </div>
                   <h1 className="text-3xl font-black text-black mb-2">{player.name}</h1>
                   <div className="flex items-center gap-2 text-red-600 mb-4">
@@ -186,15 +182,15 @@ export default function PlayerProfilePage() {
                   <div className="w-full space-y-2 text-left bg-gray-50 rounded-xl p-4 border border-gray-200">
                     <div className="flex justify-between">
                       <span className="text-gray-600">Věk:</span>
-                      <span className="text-black font-bold">{player.age} let</span>
+                      <span className="text-black font-bold">{player.age ? `${player.age} let` : '—'}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Výška:</span>
-                      <span className="text-black font-bold">{player.height} cm</span>
+                      <span className="text-black font-bold">{player.height ? `${player.height} cm` : '—'}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Váha:</span>
-                      <span className="text-black font-bold">{player.weight} kg</span>
+                      <span className="text-black font-bold">{player.weight ? `${player.weight} kg` : '—'}</span>
                     </div>
                     {player.birthDate && (
                       <div className="flex justify-between">
@@ -208,10 +204,12 @@ export default function PlayerProfilePage() {
                         <span className="text-black font-bold">{player.birthPlace}</span>
                       </div>
                     )}
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">V týmu od:</span>
-                      <span className="text-black font-bold">{player.joinedTeam}</span>
-                    </div>
+                    {player.joinedTeam && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">V týmu od:</span>
+                        <span className="text-black font-bold">{player.joinedTeam}</span>
+                      </div>
+                    )}
                     {player.shoots && (
                       <div className="flex justify-between">
                         <span className="text-gray-600">Střílí:</span>
