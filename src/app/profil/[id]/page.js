@@ -5,7 +5,13 @@ import { useParams, useRouter } from 'next/navigation';
 import Navigation from '@/components/Navigation';
 import MatchDetail from '@/components/MatchDetail';
 import PlayerProfileMedia from '@/components/PlayerProfileMedia';
+import SeasonCompetitionFilters from '@/components/SeasonCompetitionFilters';
 import { getPlayerById } from '@/data/playerData';
+import {
+  getLatestSeasonWithMatches,
+  matchCompetitionFilters,
+  matchSeasons
+} from '@/data/matchFilters';
 import {
   getPlayerStats,
   getPlayerMatches,
@@ -15,16 +21,28 @@ import {
 } from '@/data/playerStats';
 import { 
   ArrowLeft, Trophy, Target, Shield, Calendar,
-  MapPin, Activity, CheckCircle, XCircle
+  MapPin, Activity, CheckCircle, XCircle, AlertTriangle
 } from 'lucide-react';
 import Link from 'next/link';
+
+const getMatchTimestamp = (match) => {
+  const [day = 1, month = 1, year = 1900] = String(match.date || '')
+    .split('.')
+    .map((value) => parseInt(value, 10));
+  const [hour = 0, minute = 0] = String(match.time || '00:00')
+    .split(':')
+    .map((value) => parseInt(value, 10));
+
+  return new Date(year, month - 1, day, hour, minute).getTime();
+};
 
 export default function PlayerProfilePage() {
   const params = useParams();
   const router = useRouter();
   const [player, setPlayer] = useState(null);
-  const [stats, setStats] = useState(null);
   const [allMatches, setAllMatches] = useState([]);
+  const [selectedSeason, setSelectedSeason] = useState(matchSeasons[0].id);
+  const [selectedCompetition, setSelectedCompetition] = useState('all');
   const [selectedMatch, setSelectedMatch] = useState(null);
   const [showMatchDetail, setShowMatchDetail] = useState(false);
 
@@ -32,9 +50,11 @@ export default function PlayerProfilePage() {
     if (params.id) {
       const playerData = getPlayerById(params.id);
       if (playerData) {
+        const playerMatches = getPlayerMatches(params.id);
         setPlayer(playerData);
-        setStats(getPlayerStats(params.id));
-        setAllMatches(getPlayerMatches(params.id)); // Získat všechny zápasy
+        setAllMatches(playerMatches);
+        setSelectedSeason(getLatestSeasonWithMatches(playerMatches));
+        setSelectedCompetition('all');
       } else {
         // Hráč nenalezen
         router.push('/soupisky');
@@ -49,6 +69,44 @@ export default function PlayerProfilePage() {
       </div>
     );
   }
+
+  const selectedSeasonInfo =
+    matchSeasons.find((season) => season.id === selectedSeason) || matchSeasons[0];
+  const selectedCompetitionInfo =
+    matchCompetitionFilters.find((competition) => competition.id === selectedCompetition) ||
+    matchCompetitionFilters[0];
+  const seasonMatches = allMatches.filter(
+    (match) => match.status === 'completed' && match.season === selectedSeason
+  );
+  const competitionCounts = Object.fromEntries(
+    matchCompetitionFilters.map((competition) => [
+      competition.id,
+      competition.id === 'all'
+        ? seasonMatches.length
+        : seasonMatches.filter((match) => match.competition === competition.id).length
+    ])
+  );
+  const filteredMatches = seasonMatches
+    .filter(
+      (match) => selectedCompetition === 'all' || match.competition === selectedCompetition
+    )
+    .sort((a, b) => getMatchTimestamp(b) - getMatchTimestamp(a));
+  const stats = getPlayerStats(player.id, filteredMatches);
+  const incompleteStatsCount = filteredMatches.filter(
+    (match) => match.statsComplete === false
+  ).length;
+  const missingGoalieStatsCount =
+    player.category === 'goalies'
+      ? filteredMatches.filter((match) => {
+          const playedInGoal =
+            isPlayerName(match.homeLineup?.goalie, player) ||
+            isPlayerName(match.awayLineup?.goalie, player);
+          return playedInGoal && match.statsComplete !== false && !match.saves;
+        }).length
+      : 0;
+  const goalieDetailStatsIncomplete =
+    player.category === 'goalies' &&
+    (incompleteStatsCount > 0 || missingGoalieStatsCount > 0);
 
   const getPositionColor = (position) => {
     if (position === 'Brankář') return 'from-blue-600 to-blue-800';
@@ -118,7 +176,7 @@ export default function PlayerProfilePage() {
   };
 
   // Počítadla výher a proher
-  const winLossRecord = allMatches.reduce((acc, match) => {
+  const winLossRecord = filteredMatches.reduce((acc, match) => {
     const result = getMatchResult(match);
     if (result === 'win') acc.wins++;
     else if (result === 'loss') acc.losses++;
@@ -173,8 +231,11 @@ export default function PlayerProfilePage() {
                     <span className="text-xl font-bold">{player.position}</span>
                   </div>
                   <div className="text-4xl mb-4">{player.nationality}</div>
-                  
+
                   {/* Win/Loss Record */}
+                  <div className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-gray-500">
+                    Bilance výběru
+                  </div>
                   <div className="flex gap-2 mb-4">
                     <div className="bg-green-100 text-green-700 px-3 py-1 rounded-lg font-bold">
                       {winLossRecord.wins} V
@@ -239,14 +300,62 @@ export default function PlayerProfilePage() {
               
               {/* Stats */}
               <div className="md:col-span-2">
+                <SeasonCompetitionFilters
+                  playerId={player.id}
+                  playerName={player.name}
+                  seasons={matchSeasons}
+                  competitions={matchCompetitionFilters}
+                  selectedSeason={selectedSeason}
+                  selectedCompetition={selectedCompetition}
+                  competitionCounts={competitionCounts}
+                  onSeasonChange={(season) => {
+                    setSelectedSeason(season);
+                    setSelectedCompetition('all');
+                  }}
+                  onCompetitionChange={setSelectedCompetition}
+                />
+
                 {/* Season Stats */}
                 <div className="mb-6">
-                  <h2 className="text-2xl font-black text-black mb-4 flex items-center gap-3">
+                  <h2 className="text-2xl font-black text-black mb-1 flex flex-wrap items-center gap-3">
                     <Trophy className="text-red-600" />
-                    Statistiky sezóny 2024/2025
+                    Statistiky {selectedSeasonInfo.fullLabel}
+                    <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-black text-gray-600">
+                      {selectedCompetitionInfo.fullLabel}
+                    </span>
                   </h2>
-                  
-                  {player.category === 'goalies' ? (
+                  <p className="mb-4 text-sm text-gray-500">
+                    Individuální údaje ze zápasů ve vybraném období a soutěži.
+                  </p>
+
+                  {incompleteStatsCount > 0 && (
+                    <div className="mb-4 flex gap-3 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+                      <AlertTriangle className="mt-0.5 shrink-0" size={18} aria-hidden="true" />
+                      <p>
+                        {incompleteStatsCount === 1
+                          ? 'U jednoho zápasu zatím nejsou doplněné individuální statistiky.'
+                          : `U ${incompleteStatsCount} zápasů zatím nejsou doplněné individuální statistiky.`}{' '}
+                        Výsledek a sestavu najdeš v seznamu níže.
+                      </p>
+                    </div>
+                  )}
+
+                  {missingGoalieStatsCount > 0 && (
+                    <div className="mb-4 flex gap-3 rounded-xl border border-blue-200 bg-blue-50 p-3 text-sm text-blue-900">
+                      <AlertTriangle className="mt-0.5 shrink-0" size={18} aria-hidden="true" />
+                      <p>
+                        U {missingGoalieStatsCount === 1 ? 'jednoho zápasu chybí' : `${missingGoalieStatsCount} zápasů chybí`}{' '}
+                        brankářské údaje. Zákroky, obdržené góly a úspěšnost proto nezobrazujeme jako úplné.
+                      </p>
+                    </div>
+                  )}
+
+                  {filteredMatches.length === 0 ? (
+                    <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 px-5 py-8 text-center">
+                      <Activity className="mx-auto mb-2 text-gray-400" size={28} aria-hidden="true" />
+                      <p className="font-bold text-gray-700">Pro tento výběr nejsou žádné statistiky.</p>
+                    </div>
+                  ) : player.category === 'goalies' ? (
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                       <div className="bg-gradient-to-br from-gray-50 to-white border border-gray-200 rounded-xl p-4 text-center">
                         <div className="text-3xl font-black text-red-600">{stats?.gamesPlayed || 0}</div>
@@ -261,15 +370,21 @@ export default function PlayerProfilePage() {
                         <div className="text-gray-600 text-sm font-semibold">Proher</div>
                       </div>
                       <div className="bg-gradient-to-br from-blue-50 to-white border border-blue-200 rounded-xl p-4 text-center">
-                        <div className="text-3xl font-black text-blue-600">{stats?.savePercentage || '0.0%'}</div>
+                        <div className="text-3xl font-black text-blue-600">
+                          {goalieDetailStatsIncomplete ? '—' : stats?.savePercentage || '0.0%'}
+                        </div>
                         <div className="text-gray-600 text-sm font-semibold">Úspěšnost</div>
                       </div>
                       <div className="bg-gradient-to-br from-gray-50 to-white border border-gray-200 rounded-xl p-4 text-center">
-                        <div className="text-3xl font-black text-black">{stats?.saves || 0}</div>
+                        <div className="text-3xl font-black text-black">
+                          {goalieDetailStatsIncomplete ? '—' : stats?.saves || 0}
+                        </div>
                         <div className="text-gray-600 text-sm font-semibold">Zákroků</div>
                       </div>
                       <div className="bg-gradient-to-br from-orange-50 to-white border border-orange-200 rounded-xl p-4 text-center">
-                        <div className="text-3xl font-black text-orange-600">{stats?.goalsAgainst || 0}</div>
+                        <div className="text-3xl font-black text-orange-600">
+                          {goalieDetailStatsIncomplete ? '—' : stats?.goalsAgainst || 0}
+                        </div>
                         <div className="text-gray-600 text-sm font-semibold">Obdržených gólů</div>
                       </div>
                     </div>
@@ -312,19 +427,27 @@ export default function PlayerProfilePage() {
                 
                 {/* All Matches */}
                 <div>
-                  <h2 className="text-2xl font-black text-black mb-4 flex items-center gap-3">
-                    <Activity className="text-red-600" />
-                    Všechny zápasy v sezóně
-                    <span className="bg-red-600 text-white px-3 py-1 rounded-full text-sm font-bold">
-                      {allMatches.length}
-                    </span>
-                  </h2>
-                  
-                  {allMatches.length > 0 ? (
-                    <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2">
-                      {allMatches.map((match, index) => {
+                  <div className="mb-4">
+                    <h2 className="flex flex-wrap items-center gap-3 text-2xl font-black text-black">
+                      <Activity className="text-red-600" />
+                      Výsledky hráče
+                      <span className="rounded-full bg-red-600 px-3 py-1 text-sm font-bold text-white">
+                        {filteredMatches.length}
+                      </span>
+                    </h2>
+                    <p className="mt-1 text-sm text-gray-500">
+                      Sezóna {selectedSeasonInfo.fullLabel} • {selectedCompetitionInfo.fullLabel}
+                    </p>
+                  </div>
+
+                  {filteredMatches.length > 0 ? (
+                    <div className="-m-1 max-h-[500px] space-y-3 overflow-y-auto p-1 pr-2">
+                      {filteredMatches.map((match, index) => {
                         const matchStats = getPlayerMatchStats(match);
                         const result = getMatchResult(match);
+                        const isHomeTeam = lineupIncludesPlayer(match.homeLineup, player);
+                        const goalieSaves = match.saves?.[isHomeTeam ? 'home' : 'away'];
+                        const statsMissing = match.statsComplete === false;
                         const bgColor = result === 'win' ? 'from-green-50 to-green-100 border-green-300' : 
                                        result === 'loss' ? 'from-red-50 to-red-100 border-red-300' : 
                                        'from-gray-50 to-gray-100 border-gray-300';
@@ -333,45 +456,51 @@ export default function PlayerProfilePage() {
                                          'text-gray-600';
                         
                         return (
-                          <div 
+                          <button
+                            type="button"
                             key={match.id}
-                            className={`bg-gradient-to-r ${bgColor} border rounded-xl p-4 hover:shadow-lg transition-all cursor-pointer group`}
+                            className={`group w-full rounded-xl border bg-gradient-to-r p-4 text-left transition-all hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-red-500 ${bgColor}`}
                             onClick={() => {
                               setSelectedMatch(match);
                               setShowMatchDetail(true);
                             }}
                           >
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-3">
-                                <div className={iconColor}>
+                            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                              <div className="flex min-w-0 items-start gap-3 sm:items-center">
+                                <div className={`${iconColor} mt-0.5 shrink-0 sm:mt-0`} aria-hidden="true">
                                   {result === 'win' ? <CheckCircle size={24} /> : 
                                    result === 'loss' ? <XCircle size={24} /> : 
                                    <Activity size={24} />}
                                 </div>
-                                <div className="text-gray-500 font-bold">
-                                  #{allMatches.length - index}
+                                <div className="shrink-0 font-bold text-gray-500">
+                                  #{filteredMatches.length - index}
                                 </div>
-                                <div>
-                                  <div className="text-black font-bold group-hover:text-red-600 transition-colors">
+                                <div className="min-w-0">
+                                  <div className="font-bold text-black transition-colors group-hover:text-red-600">
                                     {match.homeTeam} vs {match.awayTeam}
                                   </div>
-                                  <div className="text-gray-600 text-sm flex items-center gap-2 mt-1">
-                                    <Calendar size={14} />
+                                  <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-gray-600">
+                                    <Calendar size={14} aria-hidden="true" />
                                     {match.date}
+                                    {match.time && <span>• {match.time}</span>}
                                     {match.location && (
                                       <>
                                         <span>•</span>
-                                        <MapPin size={14} />
+                                        <MapPin size={14} aria-hidden="true" />
                                         {match.location}
                                       </>
                                     )}
                                   </div>
                                 </div>
                               </div>
-                              
-                              <div className="flex items-center gap-6">
+
+                              <div className="flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center sm:justify-end sm:gap-6">
                                 {/* Statistiky hráče */}
-                                {player.category !== 'goalies' && (
+                                {statsMissing ? (
+                                  <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-bold text-amber-800">
+                                    Statistiky nedoplněny
+                                  </div>
+                                ) : player.category !== 'goalies' ? (
                                   <div className="flex gap-3">
                                     <div className="text-center">
                                       <div className="text-xs font-semibold text-gray-500">G</div>
@@ -392,34 +521,39 @@ export default function PlayerProfilePage() {
                                       </div>
                                     )}
                                   </div>
-                                )}
-                                
-                                {/* Pro brankáře můžeme zobrazit jiné statistiky */}
-                                {player.category === 'goalies' && match.saves && (
-                                  <div className="flex gap-3">
-                                    <div className="text-center">
-                                      <div className="text-xs font-semibold text-gray-500">Zákroky</div>
-                                      <div className="text-xl font-black text-blue-600">
-                                        {match.saves.home || match.saves.away || '-'}
-                                      </div>
-                                    </div>
+                                ) : goalieSaves !== undefined ? (
+                                  <div className="text-center">
+                                    <div className="text-xs font-semibold text-gray-500">Zákroky</div>
+                                    <div className="text-xl font-black text-blue-600">{goalieSaves}</div>
+                                  </div>
+                                ) : (
+                                  <div className="rounded-lg border border-gray-200 bg-white/70 px-3 py-2 text-xs font-bold text-gray-600">
+                                    Zákroky neuvedeny
                                   </div>
                                 )}
                                 
                                 {/* Skóre */}
-                                <div className="text-right">
+                                <div className="shrink-0 text-right">
                                   <div className="text-2xl font-black text-black">{match.score}</div>
-                                  <div className="text-gray-600 text-sm font-semibold">{match.category}</div>
+                                  <div className="text-sm font-semibold text-gray-600">{match.category}</div>
                                 </div>
                               </div>
                             </div>
-                          </div>
+                          </button>
                         );
                       })}
                     </div>
                   ) : (
-                    <div className="bg-gray-50 rounded-xl p-8 text-center border border-gray-200">
-                      <p className="text-gray-600">Zatím žádné zápasy v této sezóně</p>
+                    <div className="rounded-xl border border-gray-200 bg-gray-50 p-8 text-center">
+                      <Calendar className="mx-auto mb-3 text-gray-400" size={30} aria-hidden="true" />
+                      <p className="font-bold text-gray-800">
+                        {seasonMatches.length === 0
+                          ? `${player.name} nemá v sezóně ${selectedSeasonInfo.fullLabel} evidovaný zápas.`
+                          : `${player.name} nemá v sezóně ${selectedSeasonInfo.fullLabel} evidovaný zápas v kategorii „${selectedCompetitionInfo.fullLabel}“.`}
+                      </p>
+                      <p className="mt-2 text-sm text-gray-500">
+                        Jakmile zápas doplníme do databáze, objeví se zde automaticky.
+                      </p>
                     </div>
                   )}
                 </div>
