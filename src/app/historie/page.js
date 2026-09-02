@@ -252,6 +252,15 @@ export default function HistoriePage() {
       icon: '🚀',
       important: false,
       stage: 3
+    },
+    {
+      id: '2025-2026-champions',
+      year: '2025-2026',
+      title: 'Mistři Českého poháru',
+      description: 'Po 4. místě v základní části prošli Lancers play-off bez porážky. Ve finále porazili Kocoury Beroun 9:8 a získali první titul v Českém poháru.',
+      icon: '🏆',
+      important: true,
+      stage: 3
     }
   ];
 
@@ -281,7 +290,8 @@ export default function HistoriePage() {
     { title: 'Turnaj v Belgii', year: '2015', icon: '🌍', detail: '6. místo z 12 týmů' },
     { title: '2. místo Český pohár', year: '2024/25', icon: '🥈' },
     { title: '5. místo KHLA liga', year: '2024/25', icon: '🏅', detail: 'Debutová sezóna' },
-    { title: 'Turnaj Straubing', year: '2025', icon: '🇩🇪', detail: '6. místo, výhra nad Bayern Rangers' }
+    { title: 'Turnaj Straubing', year: '2025', icon: '🇩🇪', detail: '6. místo, výhra nad Bayern Rangers' },
+    { title: '1. místo Český pohár', year: '2025/26', icon: '🏆', detail: 'Vítězné play-off: 8:1, 6:3 a 9:8' }
   ];
 
   return (

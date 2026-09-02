@@ -32,15 +32,55 @@ export const lineupIncludesPlayer = (lineup, player) => {
   return skaters.some((name) => isPlayerName(name, player));
 };
 
+const areSkaterStatsComplete = (match) =>
+  (match.skaterStatsComplete ?? match.statsComplete) !== false;
+
+const areGoalieStatsComplete = (match) =>
+  (match.goalieStatsComplete ?? match.statsComplete) !== false;
+
+const hasSpecificStatsCompleteness = (match) =>
+  typeof match.skaterStatsComplete === 'boolean' ||
+  typeof match.goalieStatsComplete === 'boolean';
+
+const parseMatchScore = (score) => {
+  const parsedScore = String(score || '')
+    .trim()
+    .match(/^(\d+)\s*:\s*(\d+)(?:\s*(sn|pp))?$/i);
+
+  if (!parsedScore) return null;
+  return {
+    home: Number.parseInt(parsedScore[1], 10),
+    away: Number.parseInt(parsedScore[2], 10),
+    decision: parsedScore[3]?.toLowerCase() || null
+  };
+};
+
+const isShootoutGoal = (goal) =>
+  goal?.shootout === true || /^sn$/i.test(String(goal?.time || '').trim());
+
+const getLancersSide = (match) => {
+  if (/lancers/i.test(String(match.homeTeam || ''))) return 'home';
+  if (/lancers/i.test(String(match.awayTeam || ''))) return 'away';
+  return null;
+};
+
 // Získat všechny zápasy, ve kterých hráč hrál
 export const getPlayerMatches = (playerId, matches = matchData) => {
   const player = getPlayerById(playerId);
   if (!player) return [];
   
-  return matches.filter(match =>
-    lineupIncludesPlayer(match.homeLineup, player) ||
-    lineupIncludesPlayer(match.awayLineup, player)
-  );
+  return matches.filter((match) => {
+    const lancersSide = getLancersSide(match);
+    if (lancersSide) {
+      return lineupIncludesPlayer(
+        lancersSide === 'home' ? match.homeLineup : match.awayLineup,
+        player
+      );
+    }
+
+    return lineupIncludesPlayer(match.homeLineup, player) ||
+      lineupIncludesPlayer(match.awayLineup, player);
+  });
 };
 
 // Získat statistiky hráče
@@ -49,7 +89,11 @@ export const getPlayerStats = (playerId, matches = matchData) => {
   if (!player) return null;
   
   const playerMatches = getPlayerMatches(playerId, matches);
-  const completedStatMatches = playerMatches.filter((match) => match.statsComplete !== false);
+  // Starší zápasy používají pouze statsComplete. Nové, podrobnější příznaky
+  // určují úplnost konkrétních událostí, ne známou účast hráče v sestavě.
+  const completedStatMatches = playerMatches.filter((match) =>
+    hasSpecificStatsCompleteness(match) || match.statsComplete !== false
+  );
   
   let stats = {
     gamesPlayed: completedStatMatches.length,
@@ -64,16 +108,19 @@ export const getPlayerStats = (playerId, matches = matchData) => {
     wins: 0,
     losses: 0
   };
+  let allGoalieStatsComplete = true;
   
   completedStatMatches.forEach(match => {
     // Zjistit, za který tým hráč hrál
+    const lancersSide = getLancersSide(match);
     const isHomeTeam = lineupIncludesPlayer(match.homeLineup, player);
-    
-    const teamSide = isHomeTeam ? 'home' : 'away';
+    const teamSide = lancersSide || (isHomeTeam ? 'home' : 'away');
     
     // Počítat góly
-    if (match.goals) {
+    if (areSkaterStatsComplete(match) && match.goals) {
       match.goals.forEach(goal => {
+        if (isShootoutGoal(goal)) return;
+
         if (isPlayerName(goal.scorer, player)) {
           stats.goals++;
           stats.points++;
@@ -87,7 +134,7 @@ export const getPlayerStats = (playerId, matches = matchData) => {
     }
     
     // Počítat vyloučení
-    if (match.penalties) {
+    if (areSkaterStatsComplete(match) && match.penalties) {
       match.penalties.forEach(penalty => {
         if (isPlayerName(penalty.player, player)) {
           stats.penalties++;
@@ -102,22 +149,36 @@ export const getPlayerStats = (playerId, matches = matchData) => {
       if ((teamSide === 'home' && isPlayerName(match.homeLineup?.goalie, player)) ||
           (teamSide === 'away' && isPlayerName(match.awayLineup?.goalie, player))) {
         
-        if (match.saves) {
-          stats.saves += match.saves[teamSide] || 0;
-          stats.goalsAgainst += parseInt(match.score.split(':')[teamSide === 'home' ? 1 : 0]) || 0;
+        const parsedScore = parseMatchScore(match.score);
+        const matchGoalieStatsComplete = areGoalieStatsComplete(match);
+
+        if (!matchGoalieStatsComplete) {
+          allGoalieStatsComplete = false;
+        }
+
+        if (matchGoalieStatsComplete && match.saves && parsedScore) {
+          stats.saves += Number.parseInt(match.saves[teamSide], 10) || 0;
+          const opponentWon = teamSide === 'home'
+            ? parsedScore.away > parsedScore.home
+            : parsedScore.home > parsedScore.away;
+          const opponentScore = teamSide === 'home' ? parsedScore.away : parsedScore.home;
+          stats.goalsAgainst += parsedScore.decision === 'sn' && opponentWon
+            ? Math.max(0, opponentScore - 1)
+            : opponentScore;
         }
         
         // Výhry/prohry
-        const [homeScore, awayScore] = match.score.split(':').map(s => parseInt(s.trim()));
-        if (teamSide === 'home' && homeScore > awayScore) stats.wins++;
-        else if (teamSide === 'away' && awayScore > homeScore) stats.wins++;
-        else stats.losses++;
+        if (parsedScore) {
+          if (teamSide === 'home' && parsedScore.home > parsedScore.away) stats.wins++;
+          else if (teamSide === 'away' && parsedScore.away > parsedScore.home) stats.wins++;
+          else stats.losses++;
+        }
       }
     }
   });
   
   // Výpočet úspěšnosti brankáře
-  if (player.category === 'goalies' && stats.saves > 0) {
+  if (player.category === 'goalies' && allGoalieStatsComplete && stats.saves > 0) {
     const totalShots = stats.saves + stats.goalsAgainst;
     stats.savePercentage = totalShots > 0 
       ? ((stats.saves / totalShots) * 100).toFixed(1) + '%'
