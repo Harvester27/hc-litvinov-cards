@@ -1,4 +1,6 @@
 // Databáze všech zápasů HC Litvínov Lancers
+import { czechCupMatches2025_26 } from './czechCupMatches';
+
 const friendlyMatches = [
   {
     id: 'friendly-berlin-2026-08-29',
@@ -430,8 +432,10 @@ const historicalMatches = [
           { time: '21:00', team: 'away', scorer: 'Sofy', assists: '(Rus)', score: '1:2' },
           { time: '24:00', team: 'away', scorer: 'Ihýk', assists: '(Lucky)', score: '1:3' },
           { time: '28:00', team: 'home', scorer: 'Pavel Schubada ml.', assists: '', score: '2:3' },
-          { time: '42:00', team: 'home', scorer: 'Jan Schubada', assists: '(Pavel Schubada ml.)', score: '3:3' },
-          { time: 'SN', team: 'home', scorer: 'Pavel Schubada ml.', assists: '', score: '4:3' }
+          { time: '42:00', team: 'home', scorer: 'Jan Schubada', assists: '(Pavel Schubada ml.)', score: '3:3' }
+        ],
+        shootout: [
+          { team: 'home', player: 'Pavel Schubada ml.', scored: true, result: 'Rozhodující nájezd' }
         ],
         penalties: [
           { time: '04:00', team: 'home', player: 'Luboš Coufal', reason: 'zdržování hry', duration: '2 min' },
@@ -728,7 +732,11 @@ const completedCzechCupMatches = historicalMatches.map((match) => ({
   status: 'completed'
 }));
 
-export const matchData = [...friendlyMatches, ...completedCzechCupMatches];
+export const matchData = [
+  ...friendlyMatches,
+  ...czechCupMatches2025_26,
+  ...completedCzechCupMatches
+];
 
 const getMatchTimestamp = (match) => {
   const [day = 1, month = 1, year = 1900] = String(match.date || '')

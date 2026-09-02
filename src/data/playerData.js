@@ -296,6 +296,20 @@ export const playerData = [
     description: 'Nejmladší obránce v týmu. Rychlý bruslař s potenciálem.'
   },
   // Útočníci
+  {
+    id: 'tureckova-jana',
+    name: 'Jana Turečková',
+    aliases: ['Turečková'],
+    number: 88,
+    position: 'Útočník',
+    age: null,
+    height: null,
+    weight: null,
+    nationality: '🇨🇿',
+    category: 'forwards',
+    photo: null,
+    description: 'Útočnice Litvínov Lancers, která nastoupila v Českém poháru v sezónách 2024/25 a 2025/26.'
+  },
   { 
     id: 'materna-vasek',
     name: 'Vašek Materna', 

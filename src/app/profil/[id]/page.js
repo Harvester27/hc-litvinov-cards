@@ -36,6 +36,17 @@ const getMatchTimestamp = (match) => {
   return new Date(year, month - 1, day, hour, minute).getTime();
 };
 
+const areSkaterStatsComplete = (match) =>
+  (match.skaterStatsComplete ?? match.statsComplete) !== false;
+
+const areGoalieStatsComplete = (match) =>
+  (match.goalieStatsComplete ?? match.statsComplete) !== false;
+
+const isShootoutGoal = (goal) =>
+  goal?.shootout === true || /^sn$/i.test(String(goal?.time || '').trim());
+
+const isLancersHomeMatch = (match) => /lancers/i.test(String(match.homeTeam || ''));
+
 export default function PlayerProfilePage() {
   const params = useParams();
   const router = useRouter();
@@ -92,21 +103,15 @@ export default function PlayerProfilePage() {
     )
     .sort((a, b) => getMatchTimestamp(b) - getMatchTimestamp(a));
   const stats = getPlayerStats(player.id, filteredMatches);
-  const incompleteStatsCount = filteredMatches.filter(
-    (match) => match.statsComplete === false
-  ).length;
-  const missingGoalieStatsCount =
-    player.category === 'goalies'
-      ? filteredMatches.filter((match) => {
-          const playedInGoal =
-            isPlayerName(match.homeLineup?.goalie, player) ||
-            isPlayerName(match.awayLineup?.goalie, player);
-          return playedInGoal && match.statsComplete !== false && !match.saves;
-        }).length
-      : 0;
-  const goalieDetailStatsIncomplete =
-    player.category === 'goalies' &&
-    (incompleteStatsCount > 0 || missingGoalieStatsCount > 0);
+  const incompleteStatsCount = filteredMatches.filter((match) => {
+    if (player.category !== 'goalies') return !areSkaterStatsComplete(match);
+
+    const playedInGoal =
+      isPlayerName(match.homeLineup?.goalie, player) ||
+      isPlayerName(match.awayLineup?.goalie, player);
+    return playedInGoal && (!areGoalieStatsComplete(match) || !match.saves);
+  }).length;
+  const goalieDetailStatsIncomplete = player.category === 'goalies' && incompleteStatsCount > 0;
 
   const getPositionColor = (position) => {
     if (position === 'Brankář') return 'from-blue-600 to-blue-800';
@@ -127,8 +132,10 @@ export default function PlayerProfilePage() {
     let penaltyMinutes = 0;
     
     // Počítat góly a asistence
-    if (match.goals) {
+    if (areSkaterStatsComplete(match) && match.goals) {
       match.goals.forEach(goal => {
+        if (isShootoutGoal(goal)) return;
+
         if (isPlayerName(goal.scorer, player)) {
           goals++;
         }
@@ -140,7 +147,7 @@ export default function PlayerProfilePage() {
     }
     
     // Počítat trestné minuty
-    if (match.penalties) {
+    if (areSkaterStatsComplete(match) && match.penalties) {
       match.penalties.forEach(penalty => {
         if (isPlayerName(penalty.player, player)) {
           const minutes = parseInt(penalty.duration) || 2;
@@ -159,8 +166,12 @@ export default function PlayerProfilePage() {
 
   // Funkce pro určení výsledku zápasu pro tým hráče
   const getMatchResult = (match) => {
-    // Zjistit, za který tým hráč hrál
-    const isHomeTeam = lineupIncludesPlayer(match.homeLineup, player);
+    // Zápasové statistiky na klubovém webu jsou vždy z pohledu Lancers.
+    const isHomeTeam = /lancers/i.test(String(match.homeTeam || ''))
+      ? true
+      : /lancers/i.test(String(match.awayTeam || ''))
+        ? false
+        : lineupIncludesPlayer(match.homeLineup, player);
     
     // Rozdělit skóre
     const scoreParts = match.score.replace(' sn', '').replace(' pp', '').split(':');
@@ -328,7 +339,7 @@ export default function PlayerProfilePage() {
                     Individuální údaje ze zápasů ve vybraném období a soutěži.
                   </p>
 
-                  {incompleteStatsCount > 0 && (
+                  {player.category !== 'goalies' && incompleteStatsCount > 0 && (
                     <div className="mb-4 flex gap-3 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
                       <AlertTriangle className="mt-0.5 shrink-0" size={18} aria-hidden="true" />
                       <p>
@@ -340,11 +351,11 @@ export default function PlayerProfilePage() {
                     </div>
                   )}
 
-                  {missingGoalieStatsCount > 0 && (
+                  {player.category === 'goalies' && incompleteStatsCount > 0 && (
                     <div className="mb-4 flex gap-3 rounded-xl border border-blue-200 bg-blue-50 p-3 text-sm text-blue-900">
                       <AlertTriangle className="mt-0.5 shrink-0" size={18} aria-hidden="true" />
                       <p>
-                        U {missingGoalieStatsCount === 1 ? 'jednoho zápasu chybí' : `${missingGoalieStatsCount} zápasů chybí`}{' '}
+                        U {incompleteStatsCount === 1 ? 'jednoho zápasu chybí' : `${incompleteStatsCount} zápasů chybí`}{' '}
                         brankářské údaje. Zákroky, obdržené góly a úspěšnost proto nezobrazujeme jako úplné.
                       </p>
                     </div>
@@ -445,9 +456,11 @@ export default function PlayerProfilePage() {
                       {filteredMatches.map((match, index) => {
                         const matchStats = getPlayerMatchStats(match);
                         const result = getMatchResult(match);
-                        const isHomeTeam = lineupIncludesPlayer(match.homeLineup, player);
+                        const isHomeTeam = isLancersHomeMatch(match);
                         const goalieSaves = match.saves?.[isHomeTeam ? 'home' : 'away'];
-                        const statsMissing = match.statsComplete === false;
+                        const statsMissing = player.category === 'goalies'
+                          ? !areGoalieStatsComplete(match) || !match.saves
+                          : !areSkaterStatsComplete(match);
                         const bgColor = result === 'win' ? 'from-green-50 to-green-100 border-green-300' : 
                                        result === 'loss' ? 'from-red-50 to-red-100 border-red-300' : 
                                        'from-gray-50 to-gray-100 border-gray-300';

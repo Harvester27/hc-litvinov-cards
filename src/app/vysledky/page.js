@@ -5,6 +5,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Navigation from '@/components/Navigation';
 import MatchDetail from '@/components/MatchDetail';
 import { matchData } from '@/data/matchData';
+import {
+  getLatestSeasonWithMatches,
+  matchCompetitionFilters,
+  matchSeasons,
+} from '@/data/matchFilters';
 import { getAllPlayers } from '@/data/playerData';
 import { getPlayerStats } from '@/data/playerStats';
 import {
@@ -64,18 +69,10 @@ const competitionLogos = {
   'default': '/images/loga/KHLA.png'
 };
 
-const seasons = [
-  { id: '2024/25', label: '24/25', fullLabel: '2024/2025' },
-  { id: '2025/26', label: '25/26', fullLabel: '2025/2026' },
-  { id: '2026/27', label: '26/27', fullLabel: '2026/2027' }
-];
-
-const competitionFilters = [
-  { id: 'all', label: 'Vše' },
-  { id: 'friendly', label: 'Přátelské zápasy' },
-  { id: 'czech-cup', label: 'Český pohár' },
-  { id: 'khla', label: 'KHLA' }
-];
+const seasons = matchSeasons;
+const competitionFilters = matchCompetitionFilters.filter((competition) =>
+  ['all', 'friendly', 'czech-cup', 'khla'].includes(competition.id)
+);
 
 // Helper functions for logos
 const getTeamLogo = (teamName) => {
@@ -159,7 +156,7 @@ const parseDateTime = (match) => {
 
 export default function VysledkyPage() {
   const [activeTab, setActiveTab] = useState('zapasy'); // 'zapasy' | 'statistiky'
-  const [selectedSeason, setSelectedSeason] = useState('2026/27');
+  const [selectedSeason, setSelectedSeason] = useState(() => getLatestSeasonWithMatches(matchData));
   const [selectedCompetition, setSelectedCompetition] = useState('all');
   const [selectedMatch, setSelectedMatch] = useState(null);
   const [showMatchDetail, setShowMatchDetail] = useState(false);
