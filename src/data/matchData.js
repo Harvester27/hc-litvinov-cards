@@ -3,6 +3,48 @@ import { czechCupMatches2025_26 } from './czechCupMatches';
 
 const friendlyMatches = [
   {
+    id: 'friendly-viper-2026-09-05',
+    title: 'Výhra 3:1 nad Viper Ústí nad Labem',
+    date: '5.9.2026',
+    time: '17:30',
+    location: 'Litvínov',
+    category: 'Přátelský zápas',
+    season: '2026/27',
+    competition: 'friendly',
+    stage: 'friendly',
+    status: 'completed',
+    skaterStatsComplete: true,
+    goalieStatsComplete: false,
+    image: '🤝',
+    excerpt: 'Lancers porazili doma Viper Ústí nad Labem 3:1. Dvakrát skóroval Václav Materna, třetí gól přidal Jiří Belinger.',
+    homeTeam: 'Litvínov Lancers',
+    awayTeam: 'Viper Ústí nad Labem',
+    score: '3:1',
+    periods: '(1:0 0:1 2:0)',
+    format: '3× 15 minut čistého času',
+    homeLineup: {
+      goalie: 'Tomáš Kodrle',
+      defenders: ['Luboš Coufal', 'Jindřich Belinger', 'Jan Hanuš', 'Ondřej Kocurek'],
+      forwards: ['Jiří Belinger', 'Václav Materna', 'Jiří Šalanda', 'Jan Kočí', 'Marian Dlugopolský', 'Gustav Toman']
+    },
+    awayLineup: {
+      goalie: 'Adéla Krejcárková',
+      defenders: ['Jiří Šulc', 'Jiří Štofco', 'Jaroslav Král', 'Zdeněk Zezulák'],
+      forwards: ['Dušan Hruška', 'Martin Novák', 'Roman Pecha', 'Alena Kančiová', 'Jaroslav Kašpar', 'Pavel Windish']
+    },
+    goals: [
+      { time: '02:33', team: 'home', scorer: 'Václav Materna', assists: '(Jiří Šalanda)', score: '1:0' },
+      { time: '21:27', team: 'away', scorer: 'Alena Kančiová', assists: '(Pavel Windish)', score: '1:1' },
+      { time: '35:31', team: 'home', scorer: 'Václav Materna', assists: '(Luboš Coufal)', score: '2:1' },
+      { time: '38:39', team: 'home', scorer: 'Jiří Belinger', assists: '(Marian Dlugopolský)', score: '3:1' }
+    ],
+    penalties: [
+      { time: '12:10', team: 'home', player: 'Litvínov Lancers', servedBy: 'Jiří Belinger', type: 'bench', reason: 'příliš mnoho hráčů na ledě', duration: '2 min' },
+      { time: '33:54', team: 'away', player: 'Roman Pecha', reason: 'nedovolené bránění', duration: '2 min' }
+    ],
+    summary: 'Litvínov Lancers zvítězili nad Viper Ústí nad Labem 3:1 v utkání hraném na tři patnáctiminutové třetiny čistého času. Skóre otevřel v čase 02:33 Václav Materna po asistenci Jiřího Šalandy. Ve druhé třetině vyrovnala Alena Kančiová po přihrávce Pavla Windishe. O výhře Lancers rozhodla třetí třetina: v čase 35:31 skóroval podruhé Václav Materna po asistenci Luboše Coufala a v čase 38:39 upravil Jiří Belinger po přihrávce Mariana Dlugopolského na konečných 3:1. V brance domácích nastoupil Tomáš Kodrle, za hosty chytala Adéla Krejcárková.'
+  },
+  {
     id: 'friendly-berlin-2026-08-29',
     title: 'Vítězný přátelský zápas s Berlín All Stars',
     date: '29.8.2026',

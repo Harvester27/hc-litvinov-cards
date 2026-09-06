@@ -1,6 +1,20 @@
 // Databáze všech hráčů HC Litvínov Lancers
 export const playerData = [
   // Brankáři
+  {
+    id: 'kodrle-tomas',
+    name: 'Tomáš Kodrle',
+    number: null,
+    position: 'Brankář',
+    age: null,
+    height: null,
+    weight: null,
+    nationality: null,
+    category: 'goalies',
+    photo: '/images/players/roster/kodrle-tomas.png',
+    profileMedia: [],
+    description: 'Brankář Litvínov Lancers. Nastoupil v brance při domácí výhře 3:1 nad Viper Ústí nad Labem 5. září 2026.'
+  },
   { 
     id: 'novakova-michaela',
     name: 'Michaela Nováková', 
@@ -224,6 +238,7 @@ export const playerData = [
   },
   { 
     id: 'belinger-jiri',
+    photo: '/images/players/roster/belinger-jiri.png',
     name: 'Jiří Belinger', 
     number: 77, 
     position: 'Obránce', 
@@ -281,6 +296,7 @@ export const playerData = [
   },
   { 
     id: 'kocurek-ondrej',
+    photo: '/images/players/roster/kocurek-ondrej.jpeg',
     legacyIds: ['kocourek-ondrej'],
     name: 'Ondřej Kocurek',
     aliases: ['Ondřej Kocourek'],
@@ -297,6 +313,20 @@ export const playerData = [
   },
   // Útočníci
   {
+    id: 'koci-jan',
+    name: 'Jan Kočí',
+    number: null,
+    position: 'Útočník',
+    age: null,
+    height: null,
+    weight: null,
+    nationality: null,
+    category: 'forwards',
+    photo: null,
+    profileMedia: [],
+    description: 'Útočník Litvínov Lancers. Nastoupil při domácí výhře 3:1 nad Viper Ústí nad Labem 5. září 2026.'
+  },
+  {
     id: 'tureckova-jana',
     name: 'Jana Turečková',
     aliases: ['Turečková'],
@@ -311,8 +341,10 @@ export const playerData = [
     description: 'Útočnice Litvínov Lancers, která nastoupila v Českém poháru v sezónách 2024/25 a 2025/26.'
   },
   { 
-    id: 'materna-vasek',
-    name: 'Vašek Materna', 
+    id: 'materna-vaclav',
+    name: 'Václav Materna',
+    aliases: ['Vašek Materna'],
+    legacyIds: ['materna-vasek'],
     number: 91, 
     position: 'Útočník', 
     age: 27, 
@@ -439,20 +471,6 @@ export const playerData = [
     description: 'Pracovitý útočník třetí formace. Výborný na oslabení.'
   },
   { 
-    id: 'materna-vaclav',
-    name: 'Václav Materna', 
-    number: 17, 
-    position: 'Útočník', 
-    age: 29, 
-    height: 181, 
-    weight: 83, 
-    nationality: '🇨🇿', 
-    category: 'forwards',
-    joinedTeam: '2020',
-    shoots: 'R',
-    description: 'Bratr Vaška Materny, silový útočník. Společně tvoří nebezpečnou bratrskou dvojici.'
-  },
-  { 
     id: 'salanda-jiri',
     name: 'Jiří Šalanda', 
     number: 71, 
@@ -483,6 +501,8 @@ export const playerData = [
   },
   { 
     id: 'toman-gustav',
+    photo: '/images/players/roster/toman-gustav.jpg',
+    photoPosition: 'center top',
     name: 'Gustav Toman', 
     number: 10, 
     position: 'Útočník', 

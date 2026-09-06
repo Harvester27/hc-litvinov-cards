@@ -61,6 +61,10 @@ export default function PlayerProfilePage() {
     if (params.id) {
       const playerData = getPlayerById(params.id);
       if (playerData) {
+        if (params.id !== playerData.id) {
+          router.replace(`/profil/${playerData.id}`);
+          return;
+        }
         const playerMatches = getPlayerMatches(params.id);
         setPlayer(playerData);
         setAllMatches(playerMatches);
@@ -103,6 +107,11 @@ export default function PlayerProfilePage() {
     )
     .sort((a, b) => getMatchTimestamp(b) - getMatchTimestamp(a));
   const stats = getPlayerStats(player.id, filteredMatches);
+  const profileMedia = player.profileMedia?.length > 0
+    ? player.profileMedia
+    : player.photo
+      ? [{ src: player.photo, alt: `Portrét hráče ${player.name}` }]
+      : [];
   const incompleteStatsCount = filteredMatches.filter((match) => {
     if (player.category !== 'goalies') return !areSkaterStatsComplete(match);
 
@@ -223,12 +232,12 @@ export default function PlayerProfilePage() {
               {/* Player Info */}
               <div className="md:col-span-1">
                 <div className="flex flex-col items-center text-center">
-                  {player.profileMedia?.length > 0 ? (
+                  {profileMedia.length > 0 ? (
                     <div className="mb-6 w-full">
                       <PlayerProfileMedia
                         playerName={player.name}
                         playerNumber={player.number}
-                        media={player.profileMedia}
+                        media={profileMedia}
                       />
                     </div>
                   ) : (
@@ -241,7 +250,9 @@ export default function PlayerProfilePage() {
                     {getPositionIcon(player.position)}
                     <span className="text-xl font-bold">{player.position}</span>
                   </div>
-                  <div className="text-4xl mb-4">{player.nationality}</div>
+                  {player.nationality && (
+                    <div className="text-4xl mb-4">{player.nationality}</div>
+                  )}
 
                   {/* Win/Loss Record */}
                   <div className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-gray-500">

@@ -99,7 +99,11 @@ export default function SoupiskyPage() {
             const rating = getPlayerRating(player);
             const [firstName, ...surnameParts] = player.name.split(' ');
             const surname = surnameParts.join(' ') || firstName;
-            const nationalityCode = player.nationality === '🇸🇰' ? 'SK' : 'CZ';
+            const nationalityCode = player.nationality === '🇸🇰'
+              ? 'SK'
+              : player.nationality === '🇨🇿'
+                ? 'CZ'
+                : null;
             const statsLabel = stats && stats.gamesPlayed > 0
               ? player.category === 'goalies'
                 ? stats.savePercentage
@@ -144,9 +148,11 @@ export default function SoupiskyPage() {
                   <div className={`absolute left-6 top-6 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br ${getPositionColor(player.position)} border border-white/20 shadow-xl transition-transform duration-300 group-hover:scale-105`}>
                     <span className="text-xl font-black text-white">#{player.number ?? '—'}</span>
                   </div>
-                  <div className="absolute right-6 top-6 rounded-full border border-white/15 bg-black/55 px-4 py-2 text-sm font-black text-white backdrop-blur">
-                    {nationalityCode}
-                  </div>
+                  {nationalityCode && (
+                    <div className="absolute right-6 top-6 rounded-full border border-white/15 bg-black/55 px-4 py-2 text-sm font-black text-white backdrop-blur">
+                      {nationalityCode}
+                    </div>
+                  )}
 
                   <div className="absolute inset-x-0 bottom-5 px-6">
                     <p className="text-sm font-bold uppercase tracking-[0.22em] text-gray-300">

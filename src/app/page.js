@@ -1,10 +1,10 @@
 ﻿'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Navigation from '@/components/Navigation';
 import MatchDetail from '@/components/MatchDetail';
 import HeroTeamCarousel from '@/components/HeroTeamCarousel';
-import { getRecentMatches } from '@/data/matchData';
+import { getMatchById, getRecentMatches } from '@/data/matchData';
 import { getAllArticles } from '@/data/articleData';
 import { 
   Trophy, Users, Calendar, Flame, Shield, Star, 
@@ -16,37 +16,15 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 export default function HomePage() {
-  const [timeToNextGame, setTimeToNextGame] = useState('');
   const [selectedMatch, setSelectedMatch] = useState(null);
   const [showMatchDetail, setShowMatchDetail] = useState(false);
 
   // Získat poslední 2 zápasy
   const recentMatches = getRecentMatches(2);
+  const featuredMatch = getMatchById('friendly-viper-2026-09-05');
   
   // Získat články
   const articles = getAllArticles();
-
-  useEffect(() => {
-    const calculateTimeToGame = () => {
-      const nextGame = new Date('2026-09-05T17:30:00+02:00');
-      const now = new Date();
-      const diff = nextGame - now;
-      
-      if (diff > 0) {
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        
-        setTimeToNextGame(`${days}d ${hours}h ${minutes}m`);
-      } else {
-        setTimeToNextGame('Zápas právě probíhá!');
-      }
-    };
-
-    calculateTimeToGame();
-    const interval = setInterval(calculateTimeToGame, 60000);
-    return () => clearInterval(interval);
-  }, []);
 
   // KHLA tabulka
   const khlaStandings = [
@@ -62,7 +40,7 @@ export default function HomePage() {
 
   const topPlayers = [
     { name: 'Roman Šimek', number: 27, position: 'Obránce', goals: 4, assists: 8, points: 12 },
-    { name: 'Vašek Materna', number: 91, position: 'Útočník', goals: 6, assists: 5, points: 11 },
+    { name: 'Václav Materna', number: 91, position: 'Útočník', goals: 6, assists: 5, points: 11 },
     { name: 'Michaela Nováková', number: 30, position: 'Brankářka', saves: '89.5%', shutouts: 1 }
   ];
 
@@ -119,7 +97,15 @@ export default function HomePage() {
         {/* Zápasy widget - poslední + nadcházející */}
         <div className="absolute bottom-8 right-8 z-20 w-[320px] max-w-[calc(100vw-4rem)] bg-white rounded-2xl p-6 text-black shadow-2xl">
           {/* Poslední zápas */}
-          <div className="pb-4 border-b border-gray-200 rounded-lg p-2">
+          <button
+            type="button"
+            className="w-full text-left pb-4 border-b border-gray-200 rounded-lg p-2 cursor-pointer hover:bg-gray-50 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+            aria-label="Zobrazit detail zápasu Lancers – Viper Ústí nad Labem 3:1"
+            onClick={() => {
+              setSelectedMatch(featuredMatch);
+              setShowMatchDetail(true);
+            }}
+          >
             <div className="flex items-center gap-2 mb-3">
               <div className="w-2 h-2 bg-red-600 rounded-full"></div>
               <span className="text-red-600 font-bold text-sm uppercase tracking-wider">Poslední zápas - VÝHRA</span>
@@ -134,75 +120,46 @@ export default function HomePage() {
               />
               <div className="text-center">
                 <div className="text-3xl font-black">
-                  <span className="text-green-600">11</span>
+                  <span className="text-green-600">{featuredMatch.score.split(':')[0]}</span>
                   <span className="text-gray-600 mx-2">:</span>
-                  <span className="text-red-600">8</span>
+                  <span className="text-red-600">{featuredMatch.score.split(':')[1]}</span>
                 </div>
               </div>
               <Image 
-                src="/images/loga/Berlin.png"
-                alt="Berlín All Stars"
+                src="/images/loga/Viper.png"
+                alt={featuredMatch.awayTeam}
                 width={40}
                 height={40}
                 className="object-contain"
               />
             </div>
-            <div className="text-2xl font-black mb-2">Berlín All Stars</div>
+            <div className="text-2xl font-black mb-2">{featuredMatch.awayTeam}</div>
             <div className="text-gray-600 flex items-center gap-2 mb-4">
               <MapPin size={16} className="text-red-600" />
               Domácí zápas v Litvínově
             </div>
             <div className="bg-gradient-to-r from-green-600 to-green-700 rounded-xl px-4 py-3 text-center">
-              <div className="text-white text-sm font-semibold">29. srpna 2026 • Litvínov</div>
-              <div className="text-2xl font-black text-white">Domácí výhra 11:8</div>
+              <div className="text-white text-sm font-semibold">{featuredMatch.date} • {featuredMatch.location}</div>
+              <div className="text-2xl font-black text-white">Domácí výhra {featuredMatch.score}</div>
             </div>
-          </div>
+            <div className="mt-3 flex items-center justify-center gap-1 text-sm font-bold text-red-600">
+              Detail zápasu <ChevronRight size={16} />
+            </div>
+          </button>
 
           {/* Nadcházející zápasy */}
           <div className="pt-4">
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-2 h-2 bg-red-600 rounded-full animate-pulse"></div>
+              <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
               <span className="text-red-600 font-bold text-sm uppercase tracking-wider">Příští zápas</span>
             </div>
             
-            <div className="space-y-2">
-              {/* Hlavní příští zápas - Viper Ústí nad Labem */}
-              <div className="bg-gradient-to-r from-red-50 to-white rounded-lg p-3 border-2 border-red-600">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <Image src="/images/loga/Viper.png" alt="Viper Ústí nad Labem" width={32} height={32} className="object-contain" />
-                    <div>
-                      <span className="font-black text-lg leading-tight">Viper Ústí nad Labem</span>
-                      <div className="text-xs text-red-600 font-semibold">Domácí zápas</div>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Calendar size={14} />
-                  <span className="font-semibold">5. 9. 2026 • 17:30</span>
-                  <MapPin size={14} />
-                  <span>Litvínov</span>
-                </div>
-                <div className="mt-2 bg-red-600 text-white text-center py-1 rounded-lg text-sm font-bold">
-                  Zbývá: {timeToNextGame}
-                </div>
+            <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+              <div className="flex items-center gap-2 font-bold text-gray-700">
+                <Calendar size={20} className="shrink-0 text-gray-500" />
+                Zatím není znám
               </div>
-
-              {/* Další zápasy */}
-              <div className="text-xs text-gray-500 font-semibold uppercase tracking-wider mt-3 mb-1">
-                Další zápasy
-              </div>
-
-              {/* Placeholder pro další zápasy */}
-              <div className="flex items-center justify-between p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 bg-gray-300 rounded-full"></div>
-                  <span className="font-semibold text-sm text-gray-600">TBA</span>
-                </div>
-                <div className="text-xs text-gray-500">
-                  Bude upřesněno
-                </div>
-              </div>
+              <p className="mt-2 text-sm text-gray-500">Soupeře a termín upřesníme.</p>
             </div>
           </div>
         </div>

@@ -1,5 +1,5 @@
 // Utility funkce pro práci s články a hráči
-import { playerData } from './playerData';
+import { getPlayerById, playerData } from './playerData';
 import { articles } from './articleData';
 
 // Vytvoří mapu jmen hráčů pro rychlé vyhledávání
@@ -77,14 +77,14 @@ export const findPlayersInArticle = (articleContent) => {
 
 // Funkce pro získání článků, které zmiňují daného hráče
 export const getArticlesForPlayer = (playerId) => {
-  const player = playerData.find(p => p.id === playerId);
+  const player = getPlayerById(playerId);
   if (!player) return [];
   
   const relatedArticles = [];
   
   articles.forEach(article => {
     const mentionedPlayers = findPlayersInArticle(article.content);
-    if (mentionedPlayers.some(p => p.id === playerId)) {
+    if (mentionedPlayers.some(p => p.id === player.id)) {
       relatedArticles.push(article);
     }
   });
