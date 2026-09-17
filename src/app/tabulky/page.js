@@ -34,6 +34,7 @@ const getTeamLogo = (teamName = '') => {
   if (name.includes('gurm')) return '/images/loga/Gurmani.png';
   if (name.includes('ducks')) return '/images/loga/Ducks.png';
   if (name.includes('viper')) return '/images/loga/Viper.png';
+  if (name.includes('glacier') || name.includes('wolves')) return '/images/loga/GlacierWolves.png';
   if (name.includes('sharks')) return '/images/loga/Sharks.png';
   if (name.includes('krokod')) return '/images/loga/HCKrokodyl.png';
   if (name.includes('kopyta')) return '/images/loga/HCKopyta.png';

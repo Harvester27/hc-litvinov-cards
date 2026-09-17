@@ -7,7 +7,7 @@ import HeroTeamCarousel from '@/components/HeroTeamCarousel';
 import { getMatchById, getRecentMatches } from '@/data/matchData';
 import { getAllArticles } from '@/data/articleData';
 import { 
-  Trophy, Users, Calendar, Flame, Shield, Star, 
+  Trophy, Users, Flame, Shield, Star, 
   Clock, MapPin, ChevronRight, Award, TrendingUp,
   Target, Zap, Medal, Heart, BarChart3, ArrowRight,
   Instagram, PlayCircle, Newspaper, Swords, Eye
@@ -154,12 +154,30 @@ export default function HomePage() {
               <span className="text-red-600 font-bold text-sm uppercase tracking-wider">Příští zápas</span>
             </div>
             
-            <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-              <div className="flex items-center gap-2 font-bold text-gray-700">
-                <Calendar size={20} className="shrink-0 text-gray-500" />
-                Zatím není znám
+            <div className="bg-gradient-to-r from-red-50 to-white rounded-lg p-3 border-2 border-red-600">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <Image
+                    src="/images/loga/GlacierWolves.png"
+                    alt="Glacier Wolves"
+                    width={32}
+                    height={32}
+                    className="object-contain"
+                  />
+                  <div>
+                    <span className="font-black text-lg leading-tight">Glacier Wolves</span>
+                    <div className="text-xs text-red-600 font-semibold">Český pohár · venku</div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="font-black text-sm">26.9.</div>
+                  <div className="text-xs text-gray-600">19:15</div>
+                </div>
               </div>
-              <p className="mt-2 text-sm text-gray-500">Soupeře a termín upřesníme.</p>
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <MapPin size={14} className="text-red-600 shrink-0" />
+                Most
+              </div>
             </div>
           </div>
         </div>
