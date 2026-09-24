@@ -4,9 +4,12 @@ import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 import styles from './page.module.css';
 
-const games = [
+const ADMIN_EMAIL = 'sanarycogames@outlook.cz';
+
+const publicGames = [
   {
     name: 'Les stínů',
     category: 'PIXELOVÉ DOBRODRUŽSTVÍ',
@@ -57,6 +60,19 @@ const games = [
   },
 ];
 
+const adminGame = {
+  name: 'Tipovačka',
+  category: 'HOKEJOVÁ TIPOVAČKA',
+  description: 'Tipuj výsledek, střelce, nejproduktivnějšího hráče i první gól zápasu. Body rozhodnou o pořadí v žebříčku.',
+  image: '/images/clanky/lancers-glacier-wolves-2026.jpg',
+  imageAlt: 'Litvínov Lancers a HC Glacier Wolves před zápasem Českého poháru',
+  status: 'NÁHLED PRO ADMINA',
+  detail: 'PŘÍSTUP JEN PRO ADMINA',
+  action: 'Otevřít tipovačku',
+  href: '/games/tipovacka',
+  statusStyle: 'live',
+};
+
 function GameCard({ game, number, priority }) {
   const cardContent = (
     <>
@@ -93,12 +109,16 @@ function GameCard({ game, number, priority }) {
 }
 
 export default function GamesCarousel() {
+  const { user } = useAuth();
+  const isAdmin = Boolean(user?.emailVerified && user.email?.toLowerCase() === ADMIN_EMAIL);
+  const games = isAdmin ? [...publicGames, adminGame] : publicGames;
+  const gameCount = games.length;
   const trackRef = useRef(null);
   const indexRef = useRef(0);
   const visibleRef = useRef(3);
   const [index, setIndex] = useState(0);
   const [visibleCount, setVisibleCount] = useState(3);
-  const maxIndex = games.length - visibleCount;
+  const maxIndex = Math.max(0, gameCount - visibleCount);
 
   useEffect(() => {
     const track = trackRef.current;
@@ -109,7 +129,7 @@ export default function GamesCarousel() {
     const updateLayout = () => {
       const count = window.innerWidth >= 1100 ? 3 : window.innerWidth >= 700 ? 2 : 1;
       visibleRef.current = count;
-      const next = Math.min(indexRef.current, games.length - count);
+      const next = Math.min(indexRef.current, Math.max(0, gameCount - count));
       indexRef.current = next;
       setVisibleCount(count);
       setIndex(next);
@@ -120,7 +140,7 @@ export default function GamesCarousel() {
       scrollTimer = window.setTimeout(() => {
         const step = cardStep();
         if (!step) return;
-        const next = Math.min(Math.round(track.scrollLeft / step), games.length - visibleRef.current);
+        const next = Math.max(0, Math.min(Math.round(track.scrollLeft / step), gameCount - visibleRef.current));
         indexRef.current = next;
         setIndex(next);
       }, 100);
@@ -134,12 +154,12 @@ export default function GamesCarousel() {
       window.removeEventListener('resize', updateLayout);
       track.removeEventListener('scroll', updateScroll);
     };
-  }, []);
+  }, [gameCount]);
 
   const move = (direction) => {
     const track = trackRef.current;
     if (!track) return;
-    const next = Math.max(0, Math.min(indexRef.current + direction, games.length - visibleRef.current));
+    const next = Math.max(0, Math.min(indexRef.current + direction, gameCount - visibleRef.current));
     const step = track.children[1]?.offsetLeft - track.children[0]?.offsetLeft || 0;
     indexRef.current = next;
     setIndex(next);
@@ -147,13 +167,13 @@ export default function GamesCarousel() {
   };
 
   const first = String(index + 1).padStart(2, '0');
-  const last = String(Math.min(index + visibleCount, games.length)).padStart(2, '0');
+  const last = String(Math.min(index + visibleCount, gameCount)).padStart(2, '0');
 
   return (
     <section className={styles.stage} aria-label="Výběr her Lancers">
       <div className={styles.stageTop}>
         <span>HERNÍ SVĚT LANCERS</span>
-        <span aria-live="polite">{visibleCount > 1 ? `${first}–${last}` : first} / 04</span>
+        <span aria-live="polite">{visibleCount > 1 ? `${first}–${last}` : first} / {String(gameCount).padStart(2, '0')}</span>
       </div>
       <div className={styles.carouselShell}>
         <div id="games-carousel" ref={trackRef} className={styles.track} role="region" aria-label="Hry, posunujte vodorovně">

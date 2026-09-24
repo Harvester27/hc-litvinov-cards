@@ -6,6 +6,11 @@ service cloud.firestore {
       return request.auth != null && request.auth.token.email_verified == true;
     }
 
+    function tipovackaAdmin() {
+      return verifiedAccount()
+        && request.auth.token.email == 'sanarycogames@outlook.cz';
+    }
+
     function validCommentText(text) {
       return text is string && text.size() > 0 && text.size() <= 1000;
     }
@@ -38,6 +43,38 @@ service cloud.firestore {
         && request.resource.data.balance is int
         && request.resource.data.balance == 0
         && request.resource.data.createdAt == request.time;
+    }
+
+    // The prediction game is an admin-only preview. Drafts are private to the
+    // verified owner of the single approved email until public launch.
+    match /tipovackaPreview/{uid} {
+      allow get: if tipovackaAdmin() && request.auth.uid == uid;
+
+      allow create, update: if tipovackaAdmin()
+        && request.auth.uid == uid
+        && request.resource.data.keys().hasAll(['roundId', 'picks', 'updatedAt'])
+        && request.resource.data.keys().hasOnly(['roundId', 'picks', 'updatedAt'])
+        && request.resource.data.roundId == 'glacier-wolves-2026-09-26'
+        && request.resource.data.picks is map
+        && request.resource.data.picks.keys().hasAll([
+          'outcome', 'scorer', 'topPoints', 'firstGoal', 'totalGoals'
+        ])
+        && request.resource.data.picks.keys().hasOnly([
+          'outcome', 'scorer', 'topPoints', 'firstGoal', 'totalGoals'
+        ])
+        && request.resource.data.picks.outcome in ['lancers', 'wolves', 'draw']
+        && request.resource.data.picks.scorer in [
+          'jan-schubada', 'marian-dlugopolsky', 'lubos-coufal',
+          'jan-hanus', 'jiri-salanda'
+        ]
+        && request.resource.data.picks.topPoints in [
+          'pavel-novak', 'marian-dlugopolsky', 'gustav-toman'
+        ]
+        && request.resource.data.picks.firstGoal in ['lancers', 'wolves']
+        && request.resource.data.picks.totalGoals is int
+        && request.resource.data.picks.totalGoals >= 0
+        && request.resource.data.picks.totalGoals <= 30
+        && request.resource.data.updatedAt == request.time;
     }
 
     // This is public output for future server-generated standings. Old client
