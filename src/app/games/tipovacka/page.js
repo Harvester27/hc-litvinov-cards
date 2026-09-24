@@ -26,7 +26,7 @@ const emptyScorerStakes = () => Object.fromEntries(TIPOVACKA_ROUND.questions.sco
 const INITIAL_PICKS = { outcome: null, scorer: emptyScorerStakes(), topPoints: null, firstGoal: null, totalGoals: null };
 const QUESTION_DESCRIPTIONS = {
   outcome: 'Rozhoduje skóre po prodloužení. Vítězství na nájezdy se zde počítá jako remíza.',
-  scorer: 'Rozděl přesně 10 bodů mezi libovolné možnosti. Můžeš vsadit na jednoho, více hráčů i na to, že nedá gól nikdo z uvedených.',
+  scorer: 'Rozděl přesně 10 bodů mezi libovolné možnosti. Můžeš vybrat i všech pět hráčů.',
   topPoints: 'Body hráčů znamenají góly a asistence. Při shodě na prvním místě se otázka anuluje.',
   firstGoal: 'Který tým vstřelí první gól? Při zápase bez gólu se otázka anuluje.',
   totalGoals: 'Tipni přesný počet gólů obou týmů včetně prodloužení; nájezdy se nepočítají.',
@@ -167,7 +167,7 @@ function ScorerStakes({ question, selected, onSelect }) {
           );
         })}
       </div>
-      <p className={styles.stakeHint}>Možnost „Nikdo z uvedené pětice“ vyhrává, když neskóruje žádný z těchto pěti hráčů. Můžeš ji kombinovat s tipy na hráče, ale současně s nimi vyhrát nemůže.</p>
+      <p className={styles.stakeHint}>„Nikdo z uvedené pětice“ vyhrává, když neskóruje žádný z nich, i kdyby gól dal jiný hráč Lancers.</p>
     </div>
   );
 }
