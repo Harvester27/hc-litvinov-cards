@@ -2,9 +2,10 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore';
-import { ArrowLeft, ArrowRight, Check, Clock3, FlaskConical, LockKeyhole, RotateCcw, Save, ShieldCheck, Trophy } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, Clock3, FlaskConical, LockKeyhole, RotateCcw, Save, ShieldCheck, Trophy, UserRoundX } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { auth, db } from '@/lib/firebase';
@@ -14,6 +15,13 @@ import styles from './page.module.css';
 const ADMIN_EMAIL = 'sanarycogames@outlook.cz';
 const PREVIEW_COLLECTION = 'tipovackaPreview';
 const QUESTION_KEYS = ['outcome', 'scorer', 'topPoints', 'firstGoal', 'totalGoals'];
+const SCORER_PORTRAITS = {
+  'jan-schubada': '/images/players/roster/schubada-jan.webp',
+  'marian-dlugopolsky': '/images/players/roster/dlugopolsky-marian.webp',
+  'lubos-coufal': '/images/players/roster/coufal-lubos.webp',
+  'jan-hanus': '/images/players/roster/hanus-jan.webp',
+  'jiri-salanda': '/images/players/roster/salanda-jiri.webp',
+};
 const emptyScorerStakes = () => Object.fromEntries(TIPOVACKA_ROUND.questions.scorer.options.map(({ id }) => [id, 0]));
 const INITIAL_PICKS = { outcome: null, scorer: emptyScorerStakes(), topPoints: null, firstGoal: null, totalGoals: null };
 const QUESTION_DESCRIPTIONS = {
@@ -133,9 +141,18 @@ function ScorerStakes({ question, selected, onSelect }) {
           const outcome = scorerStakeOutcome(stake, option.odds);
           return (
             <div key={option.id} className={`${styles.stakeOption} ${stake > 0 ? styles.stakeOptionActive : ''}`}>
-              <div className={styles.stakeOptionInfo}>
-                <strong>{option.label}</strong>
-                <span>Kurz × {formatOdds(option.odds)}</span>
+              <div className={styles.stakeOptionTop}>
+                {SCORER_PORTRAITS[option.id] ? (
+                  <span className={styles.stakePortrait}>
+                    <Image src={SCORER_PORTRAITS[option.id]} alt="" width={64} height={64} />
+                  </span>
+                ) : (
+                  <span className={styles.stakePortraitEmpty} aria-hidden="true"><UserRoundX size={28} /></span>
+                )}
+                <div className={styles.stakeOptionInfo}>
+                  <strong>{option.label}</strong>
+                  <span>Kurz × {formatOdds(option.odds)}</span>
+                </div>
               </div>
               <label className={styles.stakeAmount}>
                 <span className={styles.srOnly}>Body pro {option.label}</span>
@@ -430,9 +447,9 @@ export default function TipovackaPage() {
   const activeKey = showingIntro ? null : QUESTION_KEYS[activeStep];
 
   return (
-    <div className={styles.page}>
+    <div className={`${styles.page} ${showingIntro ? '' : styles.pageFlow}`}>
       <Navigation />
-      <main className={styles.shell}>
+      <main className={`${styles.shell} ${showingIntro ? '' : styles.shellFlow}`}>
         <div className={styles.breadcrumb}><Link href="/games"><ArrowLeft size={15} aria-hidden="true" /> Všechny hry</Link><span>/</span><span>Tipovačka</span></div>
         {showingIntro ? (
           <>
@@ -522,7 +539,7 @@ export default function TipovackaPage() {
             <p className={styles.flowHint}>Odpovězeno {selectedCount} z 5. Dokončený návrh se uloží k tvému administrátorskému účtu.</p>
           </section>
         )}
-        <footer className={styles.footer}><Trophy size={16} aria-hidden="true" /><span>LANCERS PLAY</span><Link href="/games">Zpět na hry <RotateCcw size={13} aria-hidden="true" /></Link></footer>
+        {showingIntro && <footer className={styles.footer}><Trophy size={16} aria-hidden="true" /><span>LANCERS PLAY</span><Link href="/games">Zpět na hry <RotateCcw size={13} aria-hidden="true" /></Link></footer>}
       </main>
     </div>
   );
