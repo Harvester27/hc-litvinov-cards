@@ -11,6 +11,33 @@ service cloud.firestore {
         && request.auth.token.email == 'sanarycogames@outlook.cz';
     }
 
+    function validScorerStakes(stakes) {
+      return stakes is map
+        && stakes.keys().hasAll([
+          'jan-schubada', 'marian-dlugopolsky', 'lubos-coufal',
+          'jan-hanus', 'jiri-salanda', 'none-listed'
+        ])
+        && stakes.keys().hasOnly([
+          'jan-schubada', 'marian-dlugopolsky', 'lubos-coufal',
+          'jan-hanus', 'jiri-salanda', 'none-listed'
+        ])
+        && stakes['jan-schubada'] is int
+        && stakes['marian-dlugopolsky'] is int
+        && stakes['lubos-coufal'] is int
+        && stakes['jan-hanus'] is int
+        && stakes['jiri-salanda'] is int
+        && stakes['none-listed'] is int
+        && stakes['jan-schubada'] >= 0
+        && stakes['marian-dlugopolsky'] >= 0
+        && stakes['lubos-coufal'] >= 0
+        && stakes['jan-hanus'] >= 0
+        && stakes['jiri-salanda'] >= 0
+        && stakes['none-listed'] >= 0
+        && stakes['jan-schubada'] + stakes['marian-dlugopolsky']
+          + stakes['lubos-coufal'] + stakes['jan-hanus']
+          + stakes['jiri-salanda'] + stakes['none-listed'] == 10;
+    }
+
     function validCommentText(text) {
       return text is string && text.size() > 0 && text.size() <= 1000;
     }
@@ -63,10 +90,17 @@ service cloud.firestore {
           'outcome', 'scorer', 'topPoints', 'firstGoal', 'totalGoals'
         ])
         && request.resource.data.picks.outcome in ['lancers', 'wolves', 'draw']
-        && request.resource.data.picks.scorer in [
-          'jan-schubada', 'marian-dlugopolsky', 'lubos-coufal',
-          'jan-hanus', 'jiri-salanda'
-        ]
+        // Accept an old open tab during rollout; new drafts use six stakes.
+        && (
+          (
+            request.resource.data.picks.scorer is string
+            && request.resource.data.picks.scorer in [
+              'jan-schubada', 'marian-dlugopolsky', 'lubos-coufal',
+              'jan-hanus', 'jiri-salanda'
+            ]
+          )
+          || validScorerStakes(request.resource.data.picks.scorer)
+        )
         && request.resource.data.picks.topPoints in [
           'pavel-novak', 'marian-dlugopolsky', 'gustav-toman'
         ]

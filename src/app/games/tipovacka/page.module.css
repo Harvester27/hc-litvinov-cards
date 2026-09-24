@@ -68,6 +68,34 @@
 
 .contentGrid { display: grid; grid-template-columns: minmax(0, 1fr) 330px; align-items: start; gap: clamp(28px, 4vw, 60px); margin-top: 50px; }
 .mainColumn { min-width: 0; }
+.introPanel { min-height: 330px; padding: clamp(26px, 4vw, 45px); border: 1px solid #3d4948; background: linear-gradient(145deg, #192528, #111a1e); }
+.introPanel h2 { margin: 17px 0 14px; font-family: Georgia, 'Times New Roman', serif; font-size: clamp(34px, 4vw, 53px); font-weight: 400; letter-spacing: -.045em; line-height: 1.1; }
+.introPanel > p { max-width: 650px; margin: 0; color: #abb9ba; font-size: 15px; line-height: 1.7; }
+.introActions { display: flex; flex-wrap: wrap; align-items: center; gap: 17px 24px; margin-top: 35px; }
+.introActions > span { color: #9caaa9; font-size: 12px; }
+.startButton { display: inline-flex; min-height: 55px; align-items: center; justify-content: center; gap: 20px; padding: 0 22px; border: 1px solid #e2cd9d; color: #141c1a; background: #dfc990; cursor: pointer; font-size: 13px; font-weight: 850; transition: background .15s ease, transform .15s ease; }
+.startButton:hover:not(:disabled) { background: #f0dcad; transform: translateY(-1px); }
+.startButton:disabled { opacity: .45; cursor: not-allowed; }
+.maximumCard { margin-top: 27px; padding: 20px 24px; border: 1px solid #9b8659; background: linear-gradient(130deg, #4a403024, #d8bb7e0b); }
+.maximumCard > span { color: #c3af82; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 10px; font-weight: 800; letter-spacing: .13em; }
+.maximumCard > strong { display: block; margin: 9px 0; color: #e2cf9e; font-family: Georgia, 'Times New Roman', serif; font-size: clamp(42px, 6vw, 68px); font-weight: 400; line-height: 1; }
+.maximumCard > p { max-width: 640px; margin: 0; color: #b4bdba; font-size: 11px; line-height: 1.6; }
+.flowWrap { width: min(920px, 100%); margin: 46px auto 0; }
+.flowHead { text-align: center; }
+.flowHead h1 { margin: 15px 0 8px; font-family: Georgia, 'Times New Roman', serif; font-size: clamp(38px, 5vw, 59px); font-weight: 400; letter-spacing: -.05em; }
+.flowHead h1 span { color: #bdab83; font-size: .54em; letter-spacing: 0; }
+.flowHead p { margin: 0; color: #a8b7b8; font-size: 13px; }
+.flowProgress { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 28px 0 22px; }
+.flowProgress span { height: 4px; background: #36464b; }
+.flowProgress .flowProgressActive { background: #d9be86; }
+.flowActions { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+.backButton { display: inline-flex; min-height: 50px; align-items: center; gap: 9px; padding: 0 18px; border: 1px solid #55625e; color: #c2cfca; background: #162124; cursor: pointer; font-size: 12px; font-weight: 750; }
+.backButton:hover { border-color: #c4ad80; color: #f1ddaf; }
+.flowHint { margin: 20px 0 0; color: #8fa2a3; font-size: 11px; text-align: center; }
+.simulationAccess { margin-top: 38px; }
+.simulationAccess > button { display: inline-flex; align-items: center; gap: 8px; min-height: 43px; padding: 0 14px; border: 1px solid #55666a; color: #b7c9c8; background: transparent; cursor: pointer; font-size: 12px; }
+.simulationAccess > button:hover { border-color: #d9bd87; color: #e4cf9f; }
+.simulationAccess .simulation { margin-top: 15px; }
 .sectionIntro h2 { margin: 11px 0 7px; font-family: Georgia, 'Times New Roman', serif; font-size: clamp(35px, 4vw, 55px); font-weight: 400; letter-spacing: -.04em; }
 .sectionIntro p { margin: 0; color: #a9b5b6; font-size: 14px; line-height: 1.6; }
 .questions { display: flex; flex-direction: column; gap: 16px; margin-top: 31px; }
@@ -77,6 +105,23 @@
 .questionHeading h2 { margin: 8px 0 7px; font-family: Georgia, 'Times New Roman', serif; font-size: clamp(23px, 2.5vw, 30px); font-weight: 400; line-height: 1.2; }
 .questionHeading p { margin: 0; color: #9babad; font-size: 12px; line-height: 1.55; }
 .options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 24px; }
+.stakesWrap { margin-top: 24px; }
+.stakesProgress { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; color: #c5ceca; font-size: 13px; }
+.stakesProgress strong { color: #e3ce9e; font-size: 17px; }
+.stakesBar { height: 5px; margin: 13px 0 23px; background: #35454b; }
+.stakesBar span { display: block; height: 100%; background: #d9c18d; transition: width .2s ease; }
+.stakeOptions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.stakeOption { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 11px; align-items: center; padding: 16px; border: 1px solid #3a4a4f; background: #0e171b; }
+.stakeOptionActive { border-color: #d3b77e; background: #252b24; }
+.stakeOptionInfo { display: flex; min-width: 0; flex-direction: column; gap: 6px; }
+.stakeOptionInfo strong { color: #eff1ea; font-size: 13px; line-height: 1.3; }
+.stakeOptionInfo span { color: #d9c696; font-family: Georgia, 'Times New Roman', serif; font-size: 16px; font-style: italic; }
+.stakeAmount { display: inline-flex; align-items: center; gap: 5px; color: #aebcb8; font-size: 12px; }
+.stakeAmount input { width: 60px; height: 46px; border: 1px solid #aa9567; border-radius: 0; color: #f4e4bc; background: #111e20; font: inherit; font-size: 19px; font-weight: 700; text-align: center; }
+.stakeAmount input:focus { outline: 2px solid #eedaa5; outline-offset: 2px; }
+.stakeReturns { display: flex; flex-wrap: wrap; grid-column: 1 / -1; gap: 5px 15px; padding-top: 9px; border-top: 1px solid #344343; font-size: 11px; }
+.stakeHint { margin: 15px 0 0; color: #9babab; font-size: 11px; line-height: 1.6; }
+.srOnly { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .option { position: relative; display: flex; align-items: flex-start; gap: 12px; min-height: 85px; padding: 16px; border: 1px solid #3a4a4f; color: #edf0eb; background: #0e171b; cursor: pointer; transition: border-color .15s ease, background .15s ease, transform .15s ease; }
 .option:hover { border-color: #b89e6c; background: #172329; transform: translateY(-1px); }
 .optionSelected { border-color: #d9bd84; background: #263026; box-shadow: inset 0 0 0 1px #d9bd8455; }
@@ -170,6 +215,9 @@
 .breadcrumb a:focus-visible,
 .simulationToggle:focus-visible,
 .saveButton:focus-visible,
+.startButton:focus-visible,
+.backButton:focus-visible,
+.simulationAccess > button:focus-visible,
 .footer a:focus-visible,
 .loadingCard button:focus-visible { outline: 2px solid #ead29d; outline-offset: 3px; }
 
@@ -195,6 +243,7 @@
   .questionHeading { gap: 12px; }
   .questionNumber { font-size: 24px; }
   .options { grid-template-columns: 1fr; }
+  .stakeOptions { grid-template-columns: 1fr; }
   .option { min-height: 72px; }
   .goalsPick { margin-left: 0; }
   .sidebar, .simulationFields { grid-template-columns: 1fr; }
