@@ -3,7 +3,8 @@ import ArticleDetailClient from './ArticleDetailClient';
 
 // Generování dynamických metadat pro každý článek
 export async function generateMetadata({ params }) {
-  const article = getArticleBySlug(params.slug);
+  const { slug } = await params;
+  const article = getArticleBySlug(slug);
   
   if (!article) {
     return {
@@ -30,7 +31,7 @@ export async function generateMetadata({ params }) {
       type: 'article',
       publishedTime: article.date,
       authors: [article.author?.name || 'HC Litvínov Lancers'],
-      url: `${baseUrl}/clanky/${params.slug}`,
+      url: `${baseUrl}/clanky/${slug}`,
       siteName: 'HC Litvínov Lancers',
       images: [
         {
@@ -49,13 +50,14 @@ export async function generateMetadata({ params }) {
       images: [imageUrl],
     },
     alternates: {
-      canonical: `${baseUrl}/clanky/${params.slug}`,
+      canonical: `${baseUrl}/clanky/${slug}`,
     },
     keywords: article.tags ? article.tags.join(', ') : 'HC Litvínov, Lancers, hokej, článek',
   };
 }
 
 // Server Component - pouze předává data do Client Component
-export default function ArticleDetailPage({ params }) {
-  return <ArticleDetailClient slug={params.slug} />;
+export default async function ArticleDetailPage({ params }) {
+  const { slug } = await params;
+  return <ArticleDetailClient slug={slug} />;
 }
