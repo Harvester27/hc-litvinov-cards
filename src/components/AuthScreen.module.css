@@ -1,0 +1,118 @@
+.page {
+  min-height: 100svh;
+  padding: 150px 24px 64px;
+  color: #ebe9dc;
+  background: radial-gradient(ellipse at 48% 0%, #213234 0%, transparent 56%), #0a1115;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.layout {
+  width: min(1040px, 100%);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 440px);
+  gap: clamp(35px, 8vw, 130px);
+  align-items: center;
+}
+
+.intro { padding: 42px 0; }
+.eyebrow, .panelTop {
+  color: #c8af77;
+  font-family: monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+.eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin: 0 10px 2px 0;
+  transform: rotate(45deg);
+  background: #d7bd82;
+}
+.intro h1 {
+  margin: 32px 0 24px;
+  font: 400 clamp(42px, 5vw, 74px)/1.03 Georgia, 'Times New Roman', serif;
+  letter-spacing: -.035em;
+}
+.intro h1 em { color: #d9c28c; font-weight: 400; }
+.intro p {
+  max-width: 390px;
+  color: #a8b5b2;
+  font-size: 16px;
+  line-height: 1.7;
+}
+.introRule { width: min(330px, 100%); height: 1px; margin: 42px 0 25px; background: #374743; }
+.introDetail { display: flex; gap: 13px; align-items: flex-start; max-width: 325px; color: #a8b6ad; font-size: 13px; line-height: 1.55; }
+.introDetail svg { flex: none; color: #c9b27b; }
+.backLink { display: inline-flex; align-items: center; gap: 9px; margin-top: 55px; color: #d2c295; font-size: 12px; text-decoration: none; }
+.backLink:hover { color: #f4dda6; }
+
+.panel {
+  padding: 34px;
+  border: 1px solid #41504b;
+  background: #142023;
+  box-shadow: 0 28px 70px #0005;
+}
+.panelTop { display: flex; align-items: center; gap: 10px; }
+.panel h2 { margin: 26px 0 8px; font: 400 35px/1.1 Georgia, 'Times New Roman', serif; color: #edebdf; }
+.panelLead { margin: 0 0 26px; color: #a8b5b2; font-size: 13px; line-height: 1.6; }
+.modeSwitch { display: grid; grid-template-columns: 1fr 1fr; padding: 3px; margin-bottom: 25px; background: #0d1719; border: 1px solid #33413e; }
+.modeSwitch button { min-height: 39px; border: 0; color: #9daca7; background: transparent; cursor: pointer; font-size: 12px; font-weight: 700; }
+.modeSwitch button:hover:not(:disabled) { color: #f0e6ce; }
+.modeSwitch .modeActive { color: #1b2828; background: #d9c28b; }
+.modeSwitch .modeActive:hover:not(:disabled) { color: #1b2828; }
+
+.notice, .error { padding: 12px 13px; margin-bottom: 20px; font-size: 12px; line-height: 1.55; }
+.notice { color: #d6e8d6; border: 1px solid #54745a; background: #23402d63; }
+.error { color: #ffd1c9; border: 1px solid #a35950; background: #4b272c63; }
+
+.form { display: flex; flex-direction: column; }
+.form label { margin: 0 0 8px; color: #d2d4ca; font-size: 12px; font-weight: 700; }
+.inputWrap { display: flex; align-items: center; gap: 12px; min-height: 46px; padding: 0 13px; margin-bottom: 19px; border: 1px solid #4a5954; background: #0c1619; transition: border-color .2s; }
+.inputWrap:focus-within { border-color: #d6bf86; }
+.inputWrap svg { flex: none; color: #8b9d93; }
+.inputWrap input { min-width: 0; width: 100%; height: 44px; border: 0; outline: 0; color: #f2f0e8; background: transparent; font: inherit; font-size: 13px; }
+.inputWrap input::placeholder { color: #7e8f8a; }
+.inputWrap:has(input:disabled) { opacity: .65; }
+.textButton { align-self: flex-end; margin: -5px 0 24px; padding: 3px 0; border: 0; color: #d7c28d; background: transparent; cursor: pointer; font-size: 12px; }
+.textButton:hover, .resetBack:hover { color: #f5dfa6; }
+.primaryButton { display: flex; justify-content: space-between; align-items: center; width: 100%; min-height: 48px; padding: 0 16px; border: 1px solid #dfca97; color: #1a2525; background: #ddc791; cursor: pointer; font-size: 12px; font-weight: 800; }
+.primaryButton:hover:not(:disabled) { background: #efd9a2; }
+.primaryButton:disabled, .googleButton:disabled, .modeSwitch button:disabled, .textButton:disabled, .resetBack:disabled { cursor: wait; opacity: .65; }
+.divider { display: flex; align-items: center; gap: 14px; margin: 25px 0; color: #92a09a; font-size: 12px; }
+.divider::before, .divider::after { content: ''; height: 1px; flex: 1; background: #35443f; }
+.googleButton { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; min-height: 46px; border: 1px solid #66736b; color: #e6e8de; background: #1b2929; cursor: pointer; font-size: 12px; font-weight: 700; }
+.googleButton:hover:not(:disabled) { border-color: #d0bc87; background: #243333; }
+.footnote { margin: 22px 0 0; color: #879990; font-size: 11px; line-height: 1.6; text-align: center; }
+.resetBack { display: inline-flex; align-items: center; gap: 7px; margin-top: 23px; padding: 0; border: 0; color: #d2c295; background: transparent; cursor: pointer; font-size: 12px; }
+.loadingPage { display: grid; place-items: center; min-height: 100svh; padding: 130px 24px 45px; color: #d9c995; background: #0a1115; }
+.loadingMessage { display: flex; align-items: center; gap: 12px; font-size: 13px; }
+.spinner { width: 18px; height: 18px; border: 2px solid #5b645c; border-top-color: #e5ca8f; border-radius: 50%; animation: spin .75s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.backLink:focus-visible, .modeSwitch button:focus-visible, .textButton:focus-visible, .primaryButton:focus-visible, .googleButton:focus-visible, .resetBack:focus-visible, .inputWrap:focus-within { outline: 2px solid #f0d9a2; outline-offset: 3px; }
+
+@media (max-width: 800px) {
+  .page { padding-top: 132px; }
+  .layout { grid-template-columns: 1fr; gap: 28px; width: min(500px, 100%); }
+  .intro { padding: 0; }
+  .intro h1 { margin: 20px 0 15px; font-size: clamp(39px, 9vw, 58px); }
+  .intro p { font-size: 14px; }
+  .introRule, .introDetail { display: none; }
+  .backLink { margin-top: 16px; }
+}
+
+@media (max-width: 480px) {
+  .page { padding: 124px 16px 32px; }
+  .panel { padding: 24px 19px; }
+  .panel h2 { font-size: 30px; }
+  .intro h1 { font-size: 40px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner { animation: none; }
+  .inputWrap { transition: none; }
+}

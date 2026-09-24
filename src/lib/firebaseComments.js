@@ -79,7 +79,7 @@ export const getComments = async (articleId) => {
 };
 
 // Real-time listener pro komentáře
-export const subscribeToComments = (articleId, callback) => {
+export const subscribeToComments = (articleId, callback, onError) => {
   const q = query(
     collection(db, 'comments'),
     where('articleId', '==', articleId),
@@ -87,16 +87,23 @@ export const subscribeToComments = (articleId, callback) => {
     orderBy('createdAt', 'desc')
   );
   
-  return onSnapshot(q, (querySnapshot) => {
-    const comments = [];
-    querySnapshot.forEach((doc) => {
-      comments.push({
-        id: doc.id,
-        ...doc.data()
+  return onSnapshot(
+    q,
+    (querySnapshot) => {
+      const comments = [];
+      querySnapshot.forEach((doc) => {
+        comments.push({
+          id: doc.id,
+          ...doc.data()
+        });
       });
-    });
-    callback(comments);
-  });
+      callback(comments);
+    },
+    (error) => {
+      console.error('Error subscribing to comments:', error);
+      onError?.(error);
+    }
+  );
 };
 
 // Upravit komentář

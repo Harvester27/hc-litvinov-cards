@@ -787,7 +787,7 @@ export default function TabulkyPage() {
             <div>
               <h4 className="mb-3 font-semibold text-red-500">Pro fanoušky</h4>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><Link href="/games/cards" className="hover:text-white">HC Cards hra</Link></li>
+                <li><Link href="/games" className="hover:text-white">Přehled her</Link></li>
                 <li><Link href="/vstupenky" className="hover:text-white">Vstupenky</Link></li>
                 <li><Link href="/fanshop" className="hover:text-white">Fan Shop</Link></li>
               </ul>

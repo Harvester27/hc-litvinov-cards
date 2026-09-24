@@ -15,7 +15,6 @@ import {
   validateComment 
 } from '@/lib/firebaseComments';
 import { useAuth } from '@/hooks/useAuth';
-import { getUserProfile } from '@/lib/firebaseProfile';
 import { 
   ArrowLeft, Calendar, User, Eye, Heart, Share2, 
   MessageCircle, Send, Trash2, Edit2, AlertCircle,
@@ -29,7 +28,6 @@ export default function ArticleDetailClient({ slug }) {
   const { user } = useAuth();
   
   const [article, setArticle] = useState(null);
-  const [profile, setProfile] = useState(null);
   const [mentionedPlayers, setMentionedPlayers] = useState([]);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
@@ -101,29 +99,15 @@ export default function ArticleDetailClient({ slug }) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Načíst profil uživatele
-  useEffect(() => {
-    if (user) {
-      loadUserProfile();
-    }
-  }, [user]);
-
-  const loadUserProfile = async () => {
-    try {
-      const profileData = await getUserProfile(user.uid);
-      setProfile(profileData);
-    } catch (error) {
-      console.error('Error loading profile:', error);
-    }
-  };
-
   // Subscribovat na komentáře
   useEffect(() => {
     if (!article) return;
 
-    const unsubscribe = subscribeToComments(article.id, (newComments) => {
-      setComments(newComments);
-    });
+    const unsubscribe = subscribeToComments(
+      article.id,
+      (newComments) => setComments(newComments),
+      () => setError('Komentáře se teď nepodařilo načíst.')
+    );
 
     return () => unsubscribe();
   }, [article]);
@@ -176,8 +160,8 @@ export default function ArticleDetailClient({ slug }) {
       await addComment(
         article.id,
         user.uid,
-        profile?.displayName || 'Hráč',
-        profile?.avatar || null,
+        user.displayName || 'Hráč Lancers',
+        null,
         newComment
       );
 
@@ -470,17 +454,7 @@ export default function ArticleDetailClient({ slug }) {
               <form onSubmit={handleSubmitComment} className="p-6 border-b border-gray-200">
                 <div className="flex gap-4">
                   <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center flex-shrink-0">
-                    {profile?.avatar ? (
-                      <Image
-                        src={profile.avatar}
-                        alt="Avatar"
-                        width={48}
-                        height={48}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <User size={24} className="text-white" />
-                    )}
+                    <User size={24} className="text-white" />
                   </div>
                   
                   <div className="flex-1">
@@ -531,7 +505,7 @@ export default function ArticleDetailClient({ slug }) {
               <div className="p-6 border-b border-gray-200 bg-gray-50">
                 <p className="text-gray-600 text-center">
                   Pro přidání komentáře se musíte{' '}
-                  <Link href="/games/cards" className="text-red-600 font-semibold hover:text-red-700">
+                  <Link href={`/auth?next=${encodeURIComponent(`/clanky/${slug}`)}`} className="text-red-600 font-semibold hover:text-red-700">
                     přihlásit
                   </Link>
                 </p>
@@ -563,6 +537,9 @@ export default function ArticleDetailClient({ slug }) {
                           <div>
                             <div className="font-semibold text-gray-900">
                               {comment.userDisplayName}
+                              <span className="ml-2 text-xs font-normal text-gray-500" title={`ID účtu: ${comment.userId}`}>
+                                #{comment.userId?.slice(0, 8)}
+                              </span>
                             </div>
                             <div className="text-sm text-gray-500">
                               {formatCommentDate(comment.createdAt)}

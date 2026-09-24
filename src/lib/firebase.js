@@ -1,31 +1,22 @@
-import { initializeApp, getApps } from "firebase/app";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
-import { getAnalytics, isSupported } from "firebase/analytics";
+import { getApp, getApps, initializeApp } from 'firebase/app';
+import { getAuth, GoogleAuthProvider } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
 
+// Firebase web configuration is public. All account and game data now live in
+// the new project; the previous hc-litvinov project is left untouched.
 const firebaseConfig = {
-  apiKey: "AIzaSyCO6XhPvjWZMfPIfMIB3-v_szBTwpk6WfE",
-  authDomain: "hc-litvinov.firebaseapp.com",
-  projectId: "hc-litvinov",
-  storageBucket: "hc-litvinov.firebasestorage.app",
-  messagingSenderId: "1009236163103",
-  appId: "1:1009236163103:web:9faa49bad1e1153598332a",
-  measurementId: "G-15WQB9LCRM"
+  apiKey: 'AIzaSyD_TNm4d86RaHPe5I9JGx7tWPPrd8jxZFI',
+  authDomain: 'lancers-web-cards-2026.firebaseapp.com',
+  projectId: 'lancers-web-cards-2026',
+  storageBucket: 'lancers-web-cards-2026.firebasestorage.app',
+  messagingSenderId: '1044163449026',
+  appId: '1:1044163449026:web:fde498f63b76fc74ceeb5b',
 };
 
-// Inicializace jen pokud ještě neexistuje
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 export const googleProvider = new GoogleAuthProvider();
-
-// Analytics jen na klientovi
-export const initAnalytics = async () => {
-  if (typeof window !== 'undefined' && await isSupported()) {
-    return getAnalytics(app);
-  }
-  return null;
-};

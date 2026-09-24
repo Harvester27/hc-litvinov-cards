@@ -1,0 +1,50 @@
+.overlay { position: absolute; inset: 0; z-index: 3; pointer-events: none; color: #e9dec6; font-family: Arial, Helvetica, sans-serif; }
+.toolbar { position: absolute; top: 9px; right: 9px; z-index: 2; display: flex; align-items: center; gap: 5px; pointer-events: auto; }
+.toolbar button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 44px; border: 1px solid #a69a743d; color: #ddceb0; background: #09151ec7; cursor: pointer; }
+.iconButton { width: 44px; padding: 0; }
+.skip { padding: 9px 11px; font-size: 11px; }
+.toolbar button:hover { border-color: #d2b8779e; color: #f1deae; background: #15232ae8; }
+.toolbar button[aria-pressed='true'] { border-color: #a995677a; color: #e6c990; }
+.overlay button:focus-visible { outline: 2px solid #edcf8e; outline-offset: 2px; }
+.pauseShade { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 23px; background: #040d1738; }
+.pausePanel { width: 100%; max-width: 280px; padding: 19px 18px; border: 1px solid #aa925757; background: #0b1720d9; text-align: center; pointer-events: auto; }
+.pauseIcon { margin: 0 auto 11px; color: #d5bc88; }
+.pausePanel h2 { margin: 0 0 17px; color: #eadfc8; font: 400 23px/1.15 Georgia, 'Times New Roman', serif; }
+.resume { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid #e0c896; color: #20291f; background: #d2b983; box-shadow: inset 0 -3px #99804f; cursor: pointer; font-size: 12px; }
+.resume:hover { background: #e3cfa1; }
+.captionArea { position: absolute; right: 14px; bottom: 24px; left: 14px; z-index: 1; text-align: center; }
+.caption { padding: 10px 12px 12px; border-top: 1px solid #b29a6166; background: #07131bdc; box-shadow: 0 4px 15px #0003; }
+.caption > span { display: block; margin-bottom: 5px; color: #d1b77e; font: 9px monospace; letter-spacing: 1.5px; text-transform: uppercase; }
+.caption p { margin: 0; color: #f0eadc; font-size: 14px; line-height: 1.45; text-shadow: 0 1px 2px #0008; }
+.saveNotice { margin: 0 0 7px; color: #cfb985; font-size: 9px; line-height: 1.4; text-shadow: 0 1px 4px #000; }
+
+@container (min-width: 360px) {
+  .toolbar { top: 13px; right: 13px; gap: 7px; }
+  .skip { padding-right: 14px; padding-left: 14px; font-size: 12px; }
+  .captionArea { right: 20px; bottom: 31px; left: 20px; }
+  .caption { padding: 12px 16px 15px; }
+  .caption p { font-size: 16px; }
+  .caption > span { font-size: 10px; }
+}
+
+@container (max-width: 300px) {
+  .toolbar { top: 7px; right: 7px; gap: 4px; }
+  .skip { padding-right: 9px; padding-left: 9px; font-size: 10px; }
+  .pausePanel { padding: 17px 14px; }
+  .pausePanel h2 { font-size: 21px; }
+  .captionArea { right: 10px; bottom: 18px; left: 10px; }
+  .caption p { font-size: 13px; }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .pauseShade { justify-content: flex-start; padding: 60px 14px 14px; }
+  .pausePanel { width: 46%; max-width: 280px; padding: 12px 10px; }
+  .pauseIcon { display: none; }
+  .pausePanel h2 { margin-bottom: 10px; font-size: 20px; }
+  .overlay[data-paused='true'] .captionArea { left: auto; right: 14px; bottom: 24px; width: 46%; }
+  .overlay[data-paused='true'] .caption p { font-size: 13px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay *, .overlay *::before, .overlay *::after { transition: none !important; }
+}

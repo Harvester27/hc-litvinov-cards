@@ -1,0 +1,78 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function verifiedAccount() {
+      return request.auth != null && request.auth.token.email_verified == true;
+    }
+
+    function validCommentText(text) {
+      return text is string && text.size() > 0 && text.size() <= 1000;
+    }
+
+    // Profiles may contain private data. The new client can only read its own
+    // profile; trusted server code must create or change profile and game data.
+    match /users/{uid}/profile/data {
+      allow get: if verifiedAccount() && request.auth.uid == uid;
+    }
+
+    // This is public output for future server-generated standings. Old client
+    // code is not permitted to invent scores or rewards.
+    match /leaderboard/{entryId} {
+      allow get, list: if true;
+    }
+
+    // Article comments are public. A verified account may write only its own
+    // text and may soft-delete its own comment. Likes are intentionally not
+    // writable from the browser because the old counter can be forged.
+    match /comments/{commentId} {
+      allow get, list: if resource.data.isDeleted == false;
+
+      allow create: if verifiedAccount()
+        && request.resource.data.keys().hasAll([
+          'articleId', 'userId', 'userDisplayName', 'userAvatar',
+          'content', 'createdAt', 'editedAt', 'likes', 'likedBy', 'isDeleted'
+        ])
+        && request.resource.data.keys().hasOnly([
+          'articleId', 'userId', 'userDisplayName', 'userAvatar',
+          'content', 'createdAt', 'editedAt', 'likes', 'likedBy', 'isDeleted'
+        ])
+        && request.resource.data.articleId is string
+        && request.resource.data.articleId.size() > 0
+        && request.resource.data.articleId.size() <= 160
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.userDisplayName is string
+        && request.resource.data.userDisplayName.size() > 0
+        && request.resource.data.userDisplayName.size() <= 40
+        && request.resource.data.userAvatar == null
+        && validCommentText(request.resource.data.content)
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.editedAt == null
+        && request.resource.data.likes == 0
+        && request.resource.data.likedBy == []
+        && request.resource.data.isDeleted == false;
+
+      allow update: if verifiedAccount()
+        && resource.data.userId == request.auth.uid
+        && resource.data.isDeleted == false
+        && (
+          (
+            request.resource.data.diff(resource.data).affectedKeys().hasOnly(['content', 'editedAt'])
+            && request.resource.data.diff(resource.data).affectedKeys().hasAll(['content', 'editedAt'])
+            && validCommentText(request.resource.data.content)
+            && request.resource.data.editedAt == request.time
+          )
+          ||
+          (
+            request.resource.data.diff(resource.data).affectedKeys().hasOnly(['isDeleted', 'deletedAt'])
+            && request.resource.data.diff(resource.data).affectedKeys().hasAll(['isDeleted', 'deletedAt'])
+            && request.resource.data.isDeleted == true
+            && request.resource.data.deletedAt == request.time
+          )
+        );
+    }
+
+    // Everything else is denied by default, including packs, card balances,
+    // match state, marketplace listings, and old client-authored game progress.
+  }
+}

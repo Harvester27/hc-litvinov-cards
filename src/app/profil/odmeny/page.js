@@ -39,7 +39,7 @@ export default function RewardsPage() {
   // Načíst data při mountu
   useEffect(() => {
     if (!authLoading && !user) {
-      router.push('/games/cards');
+      router.push('/auth?next=%2Fprofil%2Fodmeny');
       return;
     }
     

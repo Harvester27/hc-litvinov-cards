@@ -1,0 +1,55 @@
+.menu { position: absolute; inset: 0; z-index: 3; display: flex; align-items: center; flex-direction: column; justify-content: center; padding: 38px 11% 25px; background: linear-gradient(#04102018, #03112455 32%, #041018e3 90%); color: #efe5d1; }
+.logo { text-align: center; margin-top: auto; }
+.ornament { display: flex; justify-content: center; align-items: center; gap: 12px; color: #c7b584; margin-bottom: 14px; }
+.ornament > span { width: 28px; height: 1px; background: #ac965c69; }
+.logo > p { font-family: monospace; color: #b3bbab; font-size: 6px; letter-spacing: 1.8px; margin: 0 0 20px; }
+.logo h2 { font-family: Georgia, 'Times New Roman', serif; font-size: clamp(50px, 17cqw, 74px); font-weight: 400; line-height: .97; letter-spacing: -2px; text-shadow: 0 3px 18px #0009; outline: none; }
+.logo h2 > span { color: #d5c091; }
+.subtitle { font-family: monospace; font-size: 6px; letter-spacing: 1.8px; color: #b9c1b3; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 21px; }
+.subtitle span { height: 1px; background: #8f916254; width: 15px; }
+.actions { display: flex; flex-direction: column; gap: 12px; width: 100%; margin: 37px auto 0; }
+.newButton, .continueButton { width: 100%; min-height: 49px; display: flex; align-items: center; gap: 10px; padding: 11px 12px; text-align: left; }
+.newButton { background: #d4bd89; color: #202a26; border: 1px solid #ead4a2; box-shadow: inset 0 -3px #a48c5c; outline: 1px solid #9a845d70; outline-offset: 3px; }
+.newButton > span { font-family: monospace; font-size: 11px; letter-spacing: 1.8px; }
+.newButton > svg:last-child, .continueButton > svg:last-child { margin-left: auto; }
+.newButton:hover { background: #e7d0a0; }
+.continueButton { background: #15292cdc; border: 1px solid #a391628a; color: #e3d3ab; }
+.continueButton:hover { background: #2b3d39; border-color: #ddc789; }
+.continueButton strong { font-family: monospace; font-size: 10px; font-weight: 400; letter-spacing: 1.2px; }
+.continueButton small { display: block; color: #a6b6b1; font-size: 8px; margin-top: 4px; }
+.helpButton { min-height: 35px; display: flex; align-items: center; justify-content: center; gap: 7px; color: #b8c2b6; font-size: 10px; }
+.chapter { margin-top: 24px; display: flex; align-items: center; gap: 10px; color: #9da78f; }
+.chapter > span { font-family: monospace; font-size: 6px; letter-spacing: 1.7px; }
+.chapter b { display: block; font-family: Georgia, serif; font-size: 13px; font-weight: 400; letter-spacing: 0; color: #d2cfb5; margin-top: 4px; }
+.saveNote { max-width: 235px; text-align: center; color: #97aaa2; font-size: 8px; line-height: 1.7; margin-top: 18px; }
+.early { margin-top: auto; padding-top: 28px; text-align: center; font-family: monospace; font-size: 5px; letter-spacing: .8px; color: #7e938d; }
+@media (max-width: 1024px) and (pointer: coarse) and (orientation: landscape), (max-width: 700px) and (orientation: landscape) {
+  .menu { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr auto auto; gap: 10px 6%; align-content: center; justify-items: center; padding: 12px 6%; overflow-y: auto; }
+  .logo { grid-column: 1; grid-row: 1 / 4; margin: auto 0; }
+  .logo > p { display: none; }
+  .logo h2 { font-size: 52px; }
+  .logo .ornament { margin-bottom: 8px; }
+  .logo .subtitle { margin-top: 14px; font-size: 5px; letter-spacing: 1px; }
+  .actions { grid-column: 2; grid-row: 1; align-self: end; gap: 8px; margin: 0; }
+  .newButton, .continueButton, .helpButton { min-height: 44px; }
+  .chapter { grid-column: 2; grid-row: 2; margin-top: 0; }
+  .saveNote { grid-column: 2; grid-row: 3; margin-top: 0; font-size: 7px; }
+  .early { display: none; }
+}
+@container (max-width: 320px) {
+  .menu { padding-top: 34px; padding-bottom: 13px; }
+  .logo > p { margin-bottom: 13px; font-size: 5px; }
+  .ornament { margin-bottom: 10px; }
+  .ornament svg { width: 18px; }
+  .subtitle { margin-top: 14px; font-size: 5px; letter-spacing: 1.2px; }
+  .actions { margin-top: 24px; gap: 9px; }
+  .newButton, .continueButton { min-height: 44px; padding: 8px 10px; }
+  .newButton > span { font-size: 10px; }
+  .chapter { margin-top: 8px; }
+  .chapter b { font-size: 11px; }
+  .saveNote { margin-top: 10px; font-size: 7px; }
+  .early { padding-top: 15px; font-size: 4px; }
+  .hasRun .ornament { display: none; }
+  .hasRun .logo h2 { font-size: 43px; }
+  .hasRun .actions { margin-top: 19px; }
+}

@@ -29,7 +29,7 @@ export default function CollectionPage() {
   // Načíst profil a karty
   useEffect(() => {
     if (!authLoading && !user) {
-      router.push('/games/cards');
+      router.push('/auth?next=%2Fsbirka-karet');
       return;
     }
     

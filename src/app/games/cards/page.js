@@ -1,15 +1,13 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { useAuth } from '@/hooks/useAuth';
 import AuthScreen from '@/components/AuthScreen';
 import GameHomeScreen from '@/components/GameHomeScreen';
 import LoadingScreen from '@/components/LoadingScreen';
 import CareerMode from '@/components/CareerMode';
 
 export default function CardsGamePage() {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { user, loading } = useAuth();
   const [currentView, setCurrentView] = useState('home'); // home | career
   const [playerStats, setPlayerStats] = useState({
     cardsOwned: 3,
@@ -20,20 +18,16 @@ export default function CardsGamePage() {
   });
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (u) => {
-      setUser(u);
-      setLoading(false);
-      
-      // Načti statistiky hráče pokud je přihlášen
-      if (u) {
-        const savedStats = localStorage.getItem(`playerStats_${u.uid}`);
-        if (savedStats) {
-          setPlayerStats(JSON.parse(savedStats));
-        }
+    if (!user) return;
+    const savedStats = localStorage.getItem(`playerStats_${user.uid}`);
+    if (savedStats) {
+      try {
+        setPlayerStats(JSON.parse(savedStats));
+      } catch {
+        localStorage.removeItem(`playerStats_${user.uid}`);
       }
-    });
-    return () => unsubscribe();
-  }, []);
+    }
+  }, [user]);
 
   const updatePlayerStats = (newStats) => {
     setPlayerStats(newStats);

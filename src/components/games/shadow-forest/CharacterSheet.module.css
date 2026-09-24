@@ -1,0 +1,72 @@
+.sheet {
+  width: 100%;
+  min-width: 0;
+  color: #e9e7db;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.heading { position: relative; padding-right: 34px; }
+.eyebrow { margin: 0 0 6px; color: #bca97c; font-family: monospace; font-size: 7px; letter-spacing: 1.5px; }
+.heading h2 { margin: 0; color: #f0e8d7; font-family: Georgia, 'Times New Roman', serif; font-size: 25px; font-weight: 400; line-height: 1.1; }
+.close { position: absolute; top: -5px; right: -5px; display: grid; place-items: center; width: 36px; height: 36px; color: #bdc6bc; }
+.intro { margin: 10px 0 13px; color: #aab9b7; font-size: 10px; line-height: 1.5; }
+
+.presets { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; }
+.preset { display: flex; align-items: center; justify-content: center; gap: 5px; min-height: 38px; padding: 6px 3px; border: 1px solid #3d4e51; color: #c1cecb; background: #15262d; font-size: 9px; transition: border-color .15s, background .15s; }
+.preset svg { flex-shrink: 0; color: #b7a679; }
+.preset:not(:disabled):hover { border-color: #bca36e; background: #263a3e; }
+.selected { color: #eddbb4; border-color: #b79d65; background: #4b432ccc; }
+.preset:disabled { opacity: .65; }
+.selected:disabled { opacity: 1; }
+
+.points { display: flex; align-items: center; justify-content: space-between; margin-top: 11px; padding-bottom: 8px; border-bottom: 1px solid #3a4540; }
+.points > span { color: #9eaca5; font-family: monospace; font-size: 8px; letter-spacing: 1.3px; }
+.points output { color: #e0c990; font-family: monospace; font-size: 13px; }
+.points output span { color: #8fa19e; font-size: 9px; }
+
+.attributes { display: flex; flex-direction: column; }
+.attribute { padding: 7px 0; border-bottom: 1px solid #283b3e; }
+.attributeTop { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+.attributeName { display: flex; align-items: center; gap: 7px; color: #e2ddcc; font-size: 12px; }
+.attributeName svg { color: #c9b27b; flex-shrink: 0; }
+.stepper { display: flex; align-items: center; gap: 2px; }
+.stepper button { display: grid; place-items: center; width: 31px; height: 31px; border: 1px solid #5b6965; color: #dfd1a7; background: #192c32; }
+.stepper button:not(:disabled):hover { background: #30444a; border-color: #dac28e; }
+.stepper button:disabled { opacity: .35; }
+.stepper output { width: 27px; text-align: center; color: #edd9ac; font-family: monospace; font-size: 15px; }
+.benefit { margin: 3px 0 0; color: #a5b7b7; font-size: 9px; line-height: 1.4; }
+
+.footnote { color: #a1b1a8; font-size: 9px; line-height: 1.6; margin: 11px 0 13px; }
+.ready { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 41px; padding: 9px 8px; border: 1px solid #eddbab; color: #1c2925; background: #d4bd89; box-shadow: inset 0 -3px 0 #9f8a5d; font-size: 9px; font-weight: 700; letter-spacing: 1.4px; transition: background .15s; }
+.ready:hover { background: #e7d1a0; }
+.ready:active { transform: translateY(1px); }
+.sheet button { cursor: pointer; }
+.sheet button:disabled { cursor: default; }
+.sheet button:focus-visible { outline: 2px solid #e6cc8b; outline-offset: 2px; }
+
+@container (min-width: 360px) {
+  .heading h2 { font-size: 29px; }
+  .intro { font-size: 11px; }
+  .preset { font-size: 10px; min-height: 42px; }
+  .attribute { padding-top: 10px; padding-bottom: 10px; }
+  .attributeName { font-size: 13px; }
+  .benefit { font-size: 10px; }
+  .stepper button { width: 35px; height: 35px; }
+  .footnote { font-size: 10px; }
+  .ready { min-height: 45px; font-size: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet *, .sheet *::before, .sheet *::after { transition: none !important; }
+}
+@media (pointer: coarse) {
+  .stepper button { width: 44px; height: 44px; }
+  .preset, .ready { min-height: 44px; }
+  .close { width: 44px; height: 44px; }
+}
+@container (max-width: 300px) {
+  .attribute { padding-top: 3px; padding-bottom: 3px; }
+  .intro { margin-top: 7px; margin-bottom: 7px; font-size: 9px; }
+  .points { margin-top: 8px; padding-bottom: 6px; }
+  .footnote { margin-top: 8px; margin-bottom: 8px; font-size: 8px; }
+}

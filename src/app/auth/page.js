@@ -1,43 +1,47 @@
-// app/auth/page.js
 'use client';
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
+import Navigation from '@/components/Navigation';
 import AuthScreen from '@/components/AuthScreen';
+import styles from '@/components/AuthScreen.module.css';
+
+function getSafeReturnPath() {
+  if (typeof window === 'undefined') return '/';
+
+  const requested = new URLSearchParams(window.location.search).get('next');
+  if (!requested || !requested.startsWith('/') || requested.startsWith('//') || /[\\\u0000-\u001f]/.test(requested)) {
+    return '/';
+  }
+
+  try {
+    const destination = new URL(requested, window.location.origin);
+    if (destination.origin !== window.location.origin || destination.pathname === '/auth') return '/';
+    return destination.pathname + destination.search + destination.hash;
+  } catch {
+    return '/';
+  }
+}
 
 export default function AuthPage() {
   const router = useRouter();
   const { user, loading } = useAuth();
 
-  // Pokud je uživatel již přihlášen, přesměrovat na hlavní stránku
   useEffect(() => {
-    if (!loading && user) {
-      router.push('/');
-    }
-  }, [user, loading, router]);
+    if (!loading && user) router.replace(getSafeReturnPath());
+  }, [loading, user, router]);
 
-  const handleLoginSuccess = (user) => {
-    // Po úspěšném přihlášení přesměrovat na hlavní stránku
-    setTimeout(() => {
-      router.push('/');
-    }, 1000);
-  };
-
-  // Pokud se načítá stav autentizace, zobrazit loading
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-red-600 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
-      </div>
-    );
-  }
-
-  // Pokud uživatel není přihlášen, zobrazit AuthScreen
-  if (!user) {
-    return <AuthScreen onLoginSuccess={handleLoginSuccess} />;
-  }
-
-  // Pokud je uživatel přihlášen (nemělo by nastat díky redirect výše)
-  return null;
+  return (
+    <>
+      <Navigation />
+      {loading || user ? (
+        <main className={styles.loadingPage}>
+          <div className={styles.loadingMessage} role="status"><span className={styles.spinner} aria-hidden="true" /> Načítám účet…</div>
+        </main>
+      ) : (
+        <AuthScreen onLoginSuccess={() => router.replace(getSafeReturnPath())} />
+      )}
+    </>
+  );
 }
