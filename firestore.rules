@@ -16,6 +16,30 @@ service cloud.firestore {
       allow get: if verifiedAccount() && request.auth.uid == uid;
     }
 
+    // A verified player may create one game profile with a zero starting balance.
+    // Later balance changes require trusted server code.
+    match /lancersCardsPlayers/{uid} {
+      allow get: if verifiedAccount() && request.auth.uid == uid;
+
+      allow create: if verifiedAccount()
+        && request.auth.uid == uid
+        && request.resource.data.keys().hasAll([
+          'playerName', 'teamName', 'balance', 'createdAt'
+        ])
+        && request.resource.data.keys().hasOnly([
+          'playerName', 'teamName', 'balance', 'createdAt'
+        ])
+        && request.resource.data.playerName is string
+        && request.resource.data.playerName.size() >= 2
+        && request.resource.data.playerName.size() <= 32
+        && request.resource.data.teamName is string
+        && request.resource.data.teamName.size() >= 2
+        && request.resource.data.teamName.size() <= 40
+        && request.resource.data.balance is int
+        && request.resource.data.balance == 0
+        && request.resource.data.createdAt == request.time;
+    }
+
     // This is public output for future server-generated standings. Old client
     // code is not permitted to invent scores or rewards.
     match /leaderboard/{entryId} {
@@ -72,7 +96,7 @@ service cloud.firestore {
         );
     }
 
-    // Everything else is denied by default, including packs, card balances,
+    // Everything else is denied by default, including packs, balance changes,
     // match state, marketplace listings, and old client-authored game progress.
   }
 }

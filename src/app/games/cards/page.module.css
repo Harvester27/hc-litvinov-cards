@@ -1,0 +1,98 @@
+.page {
+  min-height: 100svh;
+  color: #e9e8df;
+  background: radial-gradient(ellipse at 50% 0%, #1c3034 0%, transparent 56%), #0a1115;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.header {
+  min-height: 86px;
+  padding: 18px clamp(20px, 4vw, 68px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  border-bottom: 1px solid #34423f;
+  background: #0d171ad9;
+}
+
+.headerLeft,
+.playerInfo,
+.backLink {
+  display: flex;
+  align-items: center;
+}
+
+.headerLeft { gap: clamp(15px, 2vw, 30px); min-width: 0; }
+.backLink { gap: 8px; color: #aebbb6; font-size: 12px; text-decoration: none; white-space: nowrap; }
+.backLink:hover { color: #e2cc98; }
+.headerDivider { width: 1px; height: 27px; background: #43514a; }
+.brand { color: #e9e6d9; font-family: Georgia, 'Times New Roman', serif; font-size: clamp(18px, 2vw, 25px); letter-spacing: .08em; text-decoration: none; white-space: nowrap; }
+.brand span { color: #d9bf87; }
+
+.playerInfo { gap: clamp(16px, 2.5vw, 36px); }
+.infoItem { display: flex; flex-direction: column; gap: 5px; min-width: 60px; }
+.infoItem strong { color: #f0eee5; font-size: 15px; font-weight: 700; overflow-wrap: anywhere; }
+.infoItem:last-child strong { color: #dcc58d; }
+.infoLabel,
+.smallLabel { color: #baab82; font-family: monospace; font-size: 10px; font-weight: 700; letter-spacing: 1.8px; }
+.infoDivider { width: 1px; height: 32px; background: #43514a; }
+
+.center {
+  min-height: calc(100svh - 86px);
+  padding: 48px 20px;
+  display: grid;
+  place-items: center;
+}
+
+.setupPanel,
+.statusPanel {
+  width: min(560px, 100%);
+  border: 1px solid #43524d;
+  background: #142023;
+  box-shadow: 0 28px 70px #0005;
+}
+
+.setupPanel { padding: clamp(26px, 4vw, 48px); }
+.setupPanel h1,
+.home h1 { font-family: Georgia, 'Times New Roman', serif; font-weight: 400; line-height: 1.08; letter-spacing: -.03em; }
+.setupPanel h1 { margin: 24px 0 15px; font-size: clamp(38px, 5vw, 58px); }
+.lead { margin: 0 0 32px; color: #acbab5; font-size: 15px; line-height: 1.65; }
+.form { display: flex; flex-direction: column; }
+.form label { margin: 0 0 8px; color: #e0e1d8; font-size: 12px; font-weight: 700; }
+.form input { width: 100%; min-height: 50px; margin-bottom: 23px; padding: 0 14px; border: 1px solid #50605a; border-radius: 0; outline: 0; color: #f2f0e7; background: #0c1719; font: inherit; font-size: 15px; }
+.form input:focus { border-color: #dfc88e; box-shadow: 0 0 0 2px #dfc88e33; }
+.form input:disabled { opacity: .65; }
+.formError { margin: -7px 0 20px; padding: 12px 14px; border: 1px solid #a85f57; color: #ffd8d1; background: #5b2c3066; font-size: 13px; line-height: 1.5; }
+.submitButton { min-height: 52px; margin-top: 4px; padding: 0 17px; display: flex; align-items: center; justify-content: space-between; gap: 20px; border: 1px solid #e4ce99; color: #152126; background: #dec790; cursor: pointer; font-size: 13px; font-weight: 800; }
+.submitButton:hover:not(:disabled) { background: #f0dba8; }
+.submitButton:disabled { opacity: .65; cursor: wait; }
+
+.statusPanel { padding: 35px; text-align: center; }
+.statusPanel p { margin: 16px 0 0; color: #d9ded5; font-size: 15px; line-height: 1.6; }
+.retryButton { margin-top: 24px; padding: 11px 18px; border: 1px solid #d6be87; color: #e9d29a; background: transparent; cursor: pointer; font-size: 12px; font-weight: 700; }
+.retryButton:hover { background: #d6be871a; }
+
+.home { width: min(1120px, calc(100% - 40px)); margin: 0 auto; padding: clamp(80px, 13vh, 160px) 0 80px; }
+.home h1 { max-width: 900px; margin: 22px 0 15px; color: #e3cc95; font-size: clamp(48px, 8vw, 104px); overflow-wrap: anywhere; }
+.home p { margin: 0; color: #aebbb5; font-size: clamp(16px, 2vw, 20px); line-height: 1.6; }
+
+.backLink:focus-visible,
+.brand:focus-visible,
+.submitButton:focus-visible,
+.retryButton:focus-visible { outline: 2px solid #f0d9a2; outline-offset: 4px; }
+
+@media (max-width: 620px) {
+  .header { min-height: 108px; align-items: flex-start; flex-wrap: wrap; gap: 14px; padding: 16px 20px; }
+  .headerLeft { width: 100%; }
+  .brand { font-size: 19px; }
+  .playerInfo { width: 100%; justify-content: flex-end; gap: 20px; }
+  .infoItem { gap: 2px; }
+  .infoItem strong { font-size: 13px; }
+  .infoLabel { font-size: 8px; }
+  .infoDivider { height: 28px; }
+  .center { min-height: calc(100svh - 108px); padding: 30px 16px; }
+  .setupPanel { padding: 28px 22px; }
+  .setupPanel h1 { font-size: 38px; }
+  .home { padding-top: 76px; }
+}
