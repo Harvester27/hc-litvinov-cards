@@ -277,6 +277,58 @@
   background: transparent;
 }
 
+.privacyPanel {
+  margin-top: 18px;
+  padding: 29px;
+  border: 1px solid #354346;
+  background: #152024;
+}
+
+.privacyPanel h2 {
+  margin: 11px 0 9px;
+  color: #eae8df;
+  font: 400 30px/1.18 Georgia, 'Times New Roman', serif;
+}
+
+.privacyPanel p {
+  margin: 0;
+  color: #aebbb9;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.privacyPanel p a {
+  color: #e7cb8b;
+  text-underline-offset: 3px;
+}
+
+.privacyActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 22px 0 17px;
+}
+
+.privacyActions a {
+  text-decoration: none;
+}
+
+.dangerButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 10px 17px;
+  border: 1px solid #bd7771;
+  color: #ffd4cf;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.dangerButton:hover { background: #733a3a40; }
+.privacyPanel .privacyNote { color: #91a59e; font-size: 12px; }
+
 .panel .providerNote {
   margin-top: 22px;
   color: #91a59e;
@@ -315,6 +367,8 @@
 .backLink:focus-visible,
 .primaryButton:focus-visible,
 .secondaryButton:focus-visible,
+.dangerButton:focus-visible,
+.privacyPanel a:focus-visible,
 .logoutButton:focus-visible {
   outline: 2px solid #f3dda5;
   outline-offset: 3px;
@@ -327,6 +381,7 @@
   .verified { margin-left: 85px; }
   .grid { grid-template-columns: 1fr; }
   .panel { padding: 23px; }
+  .privacyPanel { padding: 23px; }
   .logoutPanel { flex-direction: column; align-items: stretch; padding: 23px; }
   .logoutButton { align-self: flex-start; }
 }

@@ -6,11 +6,26 @@ import { useRouter } from 'next/navigation';
 import { sendPasswordResetEmail, signOut, updateProfile } from 'firebase/auth';
 import { ArrowLeft, Check, KeyRound, LoaderCircle, LogOut, ShieldCheck, UserRound } from 'lucide-react';
 import Navigation from '@/components/Navigation';
+import ChangeEmail from '@/components/account/ChangeEmail';
 import { useAuth } from '@/hooks/useAuth';
 import { auth } from '@/lib/firebase';
 import styles from './page.module.css';
 
 const LOGIN_URL = '/auth?next=%2Fprofil';
+const PRIVACY_EMAIL = 'sanarycogames@outlook.cz';
+
+function privacyMailto(subject, user) {
+  const body = [
+    'Dobrý den,',
+    '',
+    'prosím o vyřízení této žádosti týkající se mého účtu na webu Litvínov Lancers.',
+    `E-mail účtu: ${user.email || 'neuveden'}`,
+    `ID účtu: ${user.uid}`,
+    '',
+    'Prosím o potvrzení přijetí žádosti a informace o dalším postupu.',
+  ].join('\n');
+  return `mailto:${PRIVACY_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
 
 function authErrorMessage(error) {
   if (error?.code === 'auth/too-many-requests') {
@@ -216,6 +231,30 @@ export default function ProfilePage() {
                 )}
               </section>
             </div>
+
+            <ChangeEmail user={user} disabled={Boolean(busy)} />
+
+            <section className={styles.privacyPanel} aria-labelledby="privacy-heading">
+              <span className={styles.smallLabel}>SOUKROMÍ</span>
+              <h2 id="privacy-heading">Tvoje údaje</h2>
+              <p>
+                V <Link href="/ochrana-osobnich-udaju">zásadách ochrany osobních údajů</Link> najdeš,
+                co ukládáme a jak můžeš uplatnit svá práva.
+              </p>
+              <div className={styles.privacyActions}>
+                <a href={privacyMailto('Žádost o kopii údajů – Litvínov Lancers', user)} className={styles.secondaryButton}>
+                  Požádat o kopii údajů
+                </a>
+                <a href={privacyMailto('Žádost o smazání účtu a dat – Litvínov Lancers', user)} className={styles.dangerButton}>
+                  Požádat o smazání účtu
+                </a>
+              </div>
+              <p className={styles.privacyNote}>
+                Tlačítka otevřou tvůj e-mailový program. Žádost odešleš až potvrzením zprávy v něm.
+                Smazání neproběhne hned; po ověření účtu zahrne i navázaný herní profil a komentáře.
+                Pokud se e-mailový program neotevře, napiš na <a href={`mailto:${PRIVACY_EMAIL}`}>{PRIVACY_EMAIL}</a>.
+              </p>
+            </section>
 
             <section className={styles.logoutPanel}>
               <div>

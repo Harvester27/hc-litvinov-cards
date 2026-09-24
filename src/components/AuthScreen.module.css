@@ -87,6 +87,9 @@
 .googleButton { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; min-height: 46px; border: 1px solid #66736b; color: #e6e8de; background: #1b2929; cursor: pointer; font-size: 12px; font-weight: 700; }
 .googleButton:hover:not(:disabled) { border-color: #d0bc87; background: #243333; }
 .footnote { margin: 22px 0 0; color: #879990; font-size: 11px; line-height: 1.6; text-align: center; }
+.privacyFootnote { margin: 16px 0 0; color: #9baaa5; font-size: 11px; line-height: 1.6; text-align: center; }
+.privacyFootnote a { color: #e5ce97; text-underline-offset: 3px; }
+.privacyFootnote a:focus-visible { outline: 2px solid #f0d9a2; outline-offset: 3px; }
 .resetBack { display: inline-flex; align-items: center; gap: 7px; margin-top: 23px; padding: 0; border: 0; color: #d2c295; background: transparent; cursor: pointer; font-size: 12px; }
 .loadingPage { display: grid; place-items: center; min-height: 100svh; padding: 130px 24px 45px; color: #d9c995; background: #0a1115; }
 .loadingMessage { display: flex; align-items: center; gap: 12px; font-size: 13px; }

@@ -18,6 +18,7 @@ import Link from 'next/link';
 export default function HomePage() {
   const [selectedMatch, setSelectedMatch] = useState(null);
   const [showMatchDetail, setShowMatchDetail] = useState(false);
+  const [showInstagramEmbed, setShowInstagramEmbed] = useState(false);
 
   // Získat poslední 2 zápasy
   const recentMatches = getRecentMatches(2);
@@ -362,14 +363,43 @@ export default function HomePage() {
               </a>
             </div>
             <div className="relative bg-black rounded-xl overflow-hidden" style={{ paddingBottom: '177.78%' }}>
-              <iframe
-                src="https://www.instagram.com/reel/C23YfD1Ium-/embed"
-                className="absolute inset-0 w-full h-full"
-                frameBorder="0"
-                scrolling="no"
-                allowtransparency="true"
-                title="Instagram Reel"
-              ></iframe>
+              {showInstagramEmbed ? (
+                <iframe
+                  src="https://www.instagram.com/reel/C23YfD1Ium-/embed"
+                  className="absolute inset-0 w-full h-full"
+                  frameBorder="0"
+                  scrolling="no"
+                  title="Instagram Reel HC Lancers"
+                />
+              ) : (
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-5 bg-gradient-to-b from-gray-900 via-black to-red-950 px-6 text-center text-white">
+                  <div className="flex h-20 w-20 items-center justify-center rounded-full border border-white/20 bg-white/10">
+                    <Instagram size={36} aria-hidden="true" />
+                  </div>
+                  <div>
+                    <p className="text-xl font-black">Video HC Lancers</p>
+                    <p className="mt-3 max-w-xs text-sm leading-relaxed text-gray-300">
+                      Video se načte z Instagramu až po kliknutí. Instagram pak může zpracovat vaše údaje podle svých pravidel.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowInstagramEmbed(true)}
+                    className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-red-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                  >
+                    <PlayCircle size={20} aria-hidden="true" />
+                    Načíst video z Instagramu
+                  </button>
+                  <a
+                    href="https://www.instagram.com/reel/C23YfD1Ium-/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm font-semibold text-gray-300 underline underline-offset-4 hover:text-white"
+                  >
+                    Otevřít na Instagramu
+                  </a>
+                </div>
+              )}
             </div>
           </div>
 
@@ -519,6 +549,9 @@ export default function HomePage() {
                 <p className="text-gray-500 text-sm">
                   © 2025 HC Litvínov Lancers
                 </p>
+                <Link href="/ochrana-osobnich-udaju" className="mt-3 inline-block text-sm text-gray-300 underline underline-offset-4 hover:text-white">
+                  Ochrana osobních údajů
+                </Link>
               </div>
             </div>
           </div>

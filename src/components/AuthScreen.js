@@ -281,6 +281,9 @@ export default function AuthScreen({ onLoginSuccess }) {
               <p className={styles.footnote}>Staré účty už neplatí. Založ si prosím nový účet.</p>
             </>
           )}
+          <p className={styles.privacyFootnote}>
+            Informace o použití údajů najdeš v <Link href="/ochrana-osobnich-udaju">zásadách ochrany osobních údajů</Link>.
+          </p>
         </section>
       </div>
     </main>

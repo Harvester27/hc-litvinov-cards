@@ -1,0 +1,97 @@
+.page {
+  min-height: 100svh;
+  color: #e9e8df;
+  background: radial-gradient(ellipse at 50% 0%, #1c3034 0%, transparent 48%), #0a1115;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.main {
+  width: min(100% - 40px, 980px);
+  margin: 0 auto;
+  padding: 155px 0 100px;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #d7c38f;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.eyebrow {
+  display: block;
+  margin-top: 48px;
+  color: #c9b37e;
+  font: 700 10px/1.5 monospace;
+  letter-spacing: 1.8px;
+}
+
+.main h1 {
+  max-width: 850px;
+  margin: 16px 0 20px;
+  color: #f2eee5;
+  font: 400 clamp(46px, 6vw, 78px)/1.08 Georgia, 'Times New Roman', serif;
+}
+
+.lead {
+  max-width: 740px;
+  margin: 0 0 36px;
+  color: #bdc9c3;
+  font-size: 17px;
+  line-height: 1.75;
+}
+
+.identity {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 18px 30px;
+  padding: 26px 30px;
+  border: 1px solid #52604f;
+  background: #182522;
+}
+
+.identity strong { display: block; color: #e5d19b; font-size: 18px; }
+.identity span { display: block; margin: 4px 0 0; color: #aab8af; font-size: 13px; }
+.identity a { color: #ecd49c; text-underline-offset: 3px; }
+
+.section {
+  padding: 35px 0;
+  border-bottom: 1px solid #35443f;
+}
+
+.section h2 {
+  margin: 0 0 17px;
+  color: #e8e4d6;
+  font: 400 clamp(27px, 3vw, 36px)/1.2 Georgia, 'Times New Roman', serif;
+}
+
+.section h3 {
+  margin: 26px 0 10px;
+  color: #e7d29e;
+  font-size: 16px;
+}
+
+.section p,
+.section li {
+  color: #b9c5c0;
+  font-size: 14px;
+  line-height: 1.75;
+}
+
+.section p { margin: 0 0 13px; }
+.section ul { margin: 0; padding-left: 21px; }
+.section li + li { margin-top: 8px; }
+.section a { color: #e7ce93; text-underline-offset: 3px; }
+.section strong { color: #e7e6dd; }
+
+.updated { margin: 33px 0 0; color: #8ea29a; font-size: 12px; }
+.backLink:focus-visible,
+.main a:focus-visible { outline: 2px solid #efd59c; outline-offset: 4px; }
+
+@media (max-width: 620px) {
+  .main { width: min(100% - 32px, 980px); padding: 132px 0 70px; }
+  .identity { grid-template-columns: 1fr; padding: 23px; }
+  .section { padding: 28px 0; }
+}
