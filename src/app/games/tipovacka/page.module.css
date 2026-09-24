@@ -324,6 +324,9 @@
   .checkGrid { grid-template-columns: 1fr; }
 }
 @media (min-width: 351px) and (max-width: 620px) and (max-height: 750px) {
+  .pageFlow .shellFlow { padding-top: calc(var(--tip-nav-height) + 4px); padding-bottom: 4px; }
+  .pageFlow .flowProgress { margin: 5px 0 6px; }
+  .pageFlow .question { padding: 8px; }
   .pageFlow .stakeOption { grid-template-columns: 38px minmax(0, 1fr) auto; align-items: center; gap: 3px 5px; }
   .pageFlow .stakeOptionTop { display: contents; }
   .pageFlow .stakePortrait, .pageFlow .stakePortraitEmpty { flex-basis: 38px; width: 38px; height: 38px; }
@@ -333,6 +336,7 @@
   .pageFlow .stakeAmount input { width: 38px; height: 38px; font-size: 15px; }
   .pageFlow .stakeReturns { grid-column: 1 / -1; font-size: 10px; }
   .pageFlow .stakeHint { font-size: 10px; line-height: 1.3; }
+  .pageFlow .flowActions { padding-top: 6px; }
   .pageFlow .flowHint { display: none; }
 }
 @media (max-width: 350px) {
