@@ -69,6 +69,8 @@ after(async () => { await Promise.all([env, boundaryEnv, closedEnv].filter(Boole
 test('two verified named players create, read, and update only their own ticket', async () => {
   const alice = dbFor('alice');
   const bob = dbFor('bob');
+  await assertSucceeds(setDoc(doc(alice, 'tipovackaStandings', 'player-alice'), standing('Alice Lancers')));
+  await assertSucceeds(setDoc(doc(bob, 'tipovackaStandings', 'player-bob'), standing('Bob Wolves')));
   await assertSucceeds(setDoc(ticketRef(alice, 'player-alice'), ticket()));
   await assertSucceeds(setDoc(ticketRef(bob, 'player-bob'), ticket()));
   await assertSucceeds(getDoc(ticketRef(alice, 'player-alice')));
@@ -81,8 +83,27 @@ test('two verified named players create, read, and update only their own ticket'
   await assertFails(deleteDoc(ticketRef(alice, 'player-alice')));
 });
 
+test('ticket creation and updates require the owner to have a scoring row', async () => {
+  await seed({ 'tipovackaStandings/player-bob': standing('Bob Wolves') });
+  for (const who of ['alice', 'admin']) {
+    const [uid, identity] = actors[who];
+    const db = dbFor(who);
+    const ref = ticketRef(db, uid);
+    // Another player's row must not satisfy the invariant.
+    await assertFails(setDoc(ref, ticket()));
+    await seed({ [`tipovackaPreview/${uid}`]: ticket() });
+    await assertFails(updateDoc(ref, { 'picks.totalGoals': 6, updatedAt: serverTimestamp() }));
+    await assertSucceeds(setDoc(doc(db, 'tipovackaStandings', uid), standing(identity.name)));
+    await assertSucceeds(updateDoc(ref, { 'picks.totalGoals': 6, updatedAt: serverTimestamp() }));
+  }
+});
+
 test('only the verified exact administrator can inspect all tickets', async () => {
-  await seed({ 'tipovackaPreview/player-alice': ticket(), 'tipovackaPreview/player-bob': ticket() });
+  await seed({
+    'tipovackaPreview/player-alice': ticket(), 'tipovackaPreview/player-bob': ticket(),
+    'tipovackaStandings/player-alice': standing('Alice Lancers'),
+    'tipovackaStandings/player-bob': standing('Bob Wolves'),
+  });
   const admin = dbFor('admin');
   assert.equal((await assertSucceeds(getDocs(collection(admin, 'tipovackaPreview')))).size, 2);
   await assertSucceeds(getDoc(ticketRef(admin, 'player-alice')));
@@ -97,6 +118,7 @@ test('anonymous, unverified, unnamed, and blank-name users cannot access the gam
   for (const who of ['anonymous', 'unverified', 'unnamed', 'blank']) {
     const db = dbFor(who);
     const uid = actors[who]?.[0] ?? 'anonymous';
+    await seed({ [`tipovackaStandings/${uid}`]: standing('Existing scoring row') });
     await assertFails(setDoc(ticketRef(db, uid), ticket()));
     await assertFails(getDoc(ticketRef(db, uid)));
     await assertFails(getDocs(collection(db, 'tipovackaStandings')));
@@ -106,7 +128,7 @@ test('anonymous, unverified, unnamed, and blank-name users cannot access the gam
 
 test('stored legacy administrator ticket stays readable and remains valid when saved', async () => {
   const legacy = ticket({ picks: { ...picks, scorer: 'marian-dlugopolsky' } });
-  await seed({ 'tipovackaPreview/admin': legacy });
+  await seed({ 'tipovackaPreview/admin': legacy, 'tipovackaStandings/admin': standing('Správce') });
   const admin = dbFor('admin');
   assert.equal((await assertSucceeds(getDoc(ticketRef(admin, 'admin')))).data().picks.scorer, 'marian-dlugopolsky');
   await assertSucceeds(setDoc(ticketRef(admin, 'admin'), legacy));
@@ -115,6 +137,7 @@ test('stored legacy administrator ticket stays readable and remains valid when s
 test('tickets reject invalid stakes, enum values, numeric ranges, fields, and stale timestamps', async () => {
   const alice = dbFor('alice');
   const ref = ticketRef(alice, 'player-alice');
+  await seed({ 'tipovackaStandings/player-alice': standing('Alice Lancers') });
   const invalid = [
     ticket({ roundId: 'other-round' }), ticket({ injected: true }), ticket({ updatedAt: new Date(0) }),
     ticket({ picks: { ...picks, outcome: 'invalid' } }),
@@ -139,6 +162,7 @@ test('deadline blocks creates and updates exactly at cutoff and after cutoff, in
     for (const who of ['alice', 'admin']) {
       const uid = actors[who][0];
       const ref = ticketRef(dbFor(who, target), uid);
+      await seed({ [`tipovackaStandings/${uid}`]: standing(actors[who][1].name) }, target);
       await assertFails(setDoc(ref, ticket()));
       await seed({ [`tipovackaPreview/${uid}`]: ticket() }, target);
       await assertFails(updateDoc(ref, { 'picks.totalGoals': 7, updatedAt: serverTimestamp() }));
@@ -148,7 +172,11 @@ test('deadline blocks creates and updates exactly at cutoff and after cutoff, in
 });
 
 test('published round closes ticket creation and edits even before the deadline', async () => {
-  await seed({ [`tipovackaRounds/${ROUND_ID}`]: { status: 'published' }, 'tipovackaPreview/player-alice': ticket() });
+  await seed({
+    [`tipovackaRounds/${ROUND_ID}`]: { status: 'published' }, 'tipovackaPreview/player-alice': ticket(),
+    'tipovackaStandings/player-alice': standing('Alice Lancers'),
+    'tipovackaStandings/player-bob': standing('Bob Wolves'),
+  });
   await assertFails(setDoc(ticketRef(dbFor('bob'), 'player-bob'), ticket()));
   await assertFails(updateDoc(ticketRef(dbFor('alice'), 'player-alice'), { 'picks.totalGoals': 7, updatedAt: serverTimestamp() }));
 });

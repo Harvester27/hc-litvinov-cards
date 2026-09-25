@@ -41,6 +41,14 @@ Bezpečné aktualizace odstranily hlášené produkční problémy high/critical
 | Zveřejnění karty pomocí `publicFeatures/tipovacka.visible` jako poslední krok | **PASS**, `true` nastaveno až po živých kontrolách, `2026-09-25T15:13:07.984712Z`; karta se objevila i nepřihlášenému návštěvníkovi |
 | Kontrola živé hry a odkaz na nasazení / commit | **PASS**, commit `9712d55` na `origin/main`, přihlašovací vstup, vlastní admin tiket a administrace; anonymní GET tickets i POST preview/publish vrací 401 |
 
+## Dodatečná kontrola před zápasem
+
+25. září 2026 byl potvrzen produkční čas uzávěrky 26. září v 19:15 Europe/Prague. Ruční zadání konečného výsledku kolem 22:00 nebo později je podporované; v tento čas neběží automatická publikace. Správce vyhodnocuje až po skutečném konci utkání.
+
+Při dodatečné kontrole byla odstraněna možnost uložit přes přímý klientský zápis tiket bez vlastního řádku v tabulce, který by pak blokoval serverové vyhodnocení. Pravidla nyní vyžadují existenci `tipovackaStandings/{uid}` při vytvoření i změně tiketu. Běžné rozhraní tento řádek vytváří předem. Produkční kontrola našla jediný původní tiket s platným řádkem a nezměněným časem posledního zápisu.
+
+Regresní sada `npm run test:rules`: **PASS 15/15**, včetně chybějícího vlastního řádku pro hráče i administrátora, vlastních a cizích dat, uzávěrky a validace. Nová pravidla nasazena 25. září v 15:29:57 UTC, ruleset `57f384c3-71da-4bcd-bef2-395108845383`; zpětně stažený obsah se shoduje s otestovaným souborem.
+
 ## Omezení a navazující práce
 
 - Jedna atomická publikace podporuje nejvýše **200 tiketů**. Vyšší počet vyhodnocení bezpečně zablokuje; žádný hráč se tiše nepřeskočí. Navýšení kapacity vyžaduje samostatnou úpravu a ověření.
