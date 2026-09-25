@@ -111,6 +111,38 @@ service cloud.firestore {
         && request.resource.data.updatedAt == request.time;
     }
 
+    // The prediction standings are still an admin-only preview. Entering the
+    // game may add one zero-point row for the verified owner. Only trusted
+    // server code may later change scores or the number of evaluated rounds.
+    match /tipovackaStandings/{uid} {
+      allow get, list: if tipovackaAdmin();
+
+      allow create: if tipovackaAdmin()
+        && request.auth.uid == uid
+        && request.resource.data.keys().hasAll([
+          'displayName', 'totalPoints', 'roundsPlayed', 'joinedAt'
+        ])
+        && request.resource.data.keys().hasOnly([
+          'displayName', 'totalPoints', 'roundsPlayed', 'joinedAt'
+        ])
+        && request.resource.data.displayName is string
+        && request.resource.data.displayName.size() >= 2
+        && request.resource.data.displayName.size() <= 30
+        && request.resource.data.totalPoints is int
+        && request.resource.data.totalPoints == 0
+        && request.resource.data.roundsPlayed is int
+        && request.resource.data.roundsPlayed == 0
+        && request.resource.data.joinedAt == request.time;
+
+      allow update: if tipovackaAdmin()
+        && request.auth.uid == uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['displayName'])
+        && request.resource.data.diff(resource.data).affectedKeys().hasAll(['displayName'])
+        && request.resource.data.displayName is string
+        && request.resource.data.displayName.size() >= 2
+        && request.resource.data.displayName.size() <= 30;
+    }
+
     // This is public output for future server-generated standings. Old client
     // code is not permitted to invent scores or rewards.
     match /leaderboard/{entryId} {

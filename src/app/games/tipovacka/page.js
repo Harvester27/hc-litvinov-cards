@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, onSnapshot, runTransaction, serverTimestamp, setDoc } from 'firebase/firestore';
 import { ArrowLeft, ArrowRight, Check, Clock3, FlaskConical, LockKeyhole, RotateCcw, Save, ShieldCheck, Trophy, UserRoundX } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import { useAuth } from '@/hooks/useAuth';
@@ -14,6 +14,7 @@ import styles from './page.module.css';
 
 const ADMIN_EMAIL = 'sanarycogames@outlook.cz';
 const PREVIEW_COLLECTION = 'tipovackaPreview';
+const STANDINGS_COLLECTION = 'tipovackaStandings';
 const QUESTION_KEYS = ['outcome', 'scorer', 'topPoints', 'firstGoal', 'totalGoals'];
 const SCORER_PORTRAITS = {
   'jan-schubada': '/images/players/roster/schubada-jan.webp',
@@ -34,6 +35,20 @@ const QUESTION_DESCRIPTIONS = {
 
 const formatPoints = (value) => `${value > 0 ? '+' : value < 0 ? '−' : ''}${Math.abs(value).toLocaleString('cs-CZ', { maximumFractionDigits: 1 })}`;
 const formatOdds = (value) => Number(value).toLocaleString('cs-CZ', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+const normalizedPlayerName = (name) => typeof name === 'string' ? name.trim().replace(/\s+/g, ' ') : '';
+const validPlayerName = (name) => name.length >= 2 && name.length <= 30 && !/[\u0000-\u001F\u007F]/.test(name);
+
+async function joinStandings(uid, displayName) {
+  const playerRef = doc(db, STANDINGS_COLLECTION, uid);
+  await runTransaction(db, async (transaction) => {
+    const current = await transaction.get(playerRef);
+    if (!current.exists()) {
+      transaction.set(playerRef, { displayName, totalPoints: 0, roundsPlayed: 0, joinedAt: serverTimestamp() });
+    } else if (current.data().displayName !== displayName) {
+      transaction.update(playerRef, { displayName });
+    }
+  });
+}
 
 function normalizeSavedPicks(raw) {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return INITIAL_PICKS;
@@ -315,8 +330,13 @@ export default function TipovackaPage() {
   const { user, loading } = useAuth();
   const admin = Boolean(user?.emailVerified && user.email?.toLowerCase() === ADMIN_EMAIL);
   const uid = user?.uid;
+  const playerName = normalizedPlayerName(user?.displayName);
+  const named = validPlayerName(playerName);
   const [loadState, setLoadState] = useState('loading');
   const [loadedUid, setLoadedUid] = useState(null);
+  const [standings, setStandings] = useState([]);
+  const [standingsState, setStandingsState] = useState('loading');
+  const [standingsRetry, setStandingsRetry] = useState(0);
   const [picks, setPicks] = useState(INITIAL_PICKS);
   const [activeStep, setActiveStep] = useState(null);
   const [finished, setFinished] = useState(false);
@@ -336,6 +356,10 @@ export default function TipovackaPage() {
       router.replace('/games');
       return;
     }
+    if (!named) {
+      router.replace('/profil?tipovacka=1');
+      return;
+    }
 
     let active = true;
     const loadDraft = async () => {
@@ -347,6 +371,8 @@ export default function TipovackaPage() {
       setFinished(false);
       setShowSimulation(false);
       try {
+        await joinStandings(uid, playerName);
+        if (!active || !isCurrentAdmin(uid)) return;
         const snapshot = await getDoc(doc(db, PREVIEW_COLLECTION, uid));
         if (!active || !isCurrentAdmin(uid)) return;
         const data = snapshot.data();
@@ -369,7 +395,28 @@ export default function TipovackaPage() {
 
     loadDraft();
     return () => { active = false; };
-  }, [admin, loading, router, retryCount, uid]);
+  }, [admin, loading, named, playerName, router, retryCount, uid]);
+
+  useEffect(() => {
+    if (loading || !admin || !named || loadState !== 'ready' || loadedUid !== uid) return;
+    setStandingsState('loading');
+    const unsubscribe = onSnapshot(
+      collection(db, STANDINGS_COLLECTION),
+      (snapshot) => {
+        if (!isCurrentAdmin(uid)) return;
+        const players = snapshot.docs.map((entry) => ({ uid: entry.id, ...entry.data() }));
+        players.sort((a, b) =>
+          (b.totalPoints ?? 0) - (a.totalPoints ?? 0)
+          || (b.roundsPlayed ?? 0) - (a.roundsPlayed ?? 0)
+          || (a.joinedAt?.toMillis?.() ?? 0) - (b.joinedAt?.toMillis?.() ?? 0)
+          || a.displayName.localeCompare(b.displayName, 'cs'));
+        setStandings(players);
+        setStandingsState('ready');
+      },
+      () => setStandingsState('error'),
+    );
+    return unsubscribe;
+  }, [admin, loading, loadState, loadedUid, named, standingsRetry, uid]);
 
   useEffect(() => {
     if (activeStep !== null) document.getElementById('tip-flow-heading')?.focus();
@@ -437,12 +484,13 @@ export default function TipovackaPage() {
     [finished, picks],
   );
 
-  if (loading || !admin || loadState === 'loading' || loadedUid !== user.uid) return <LoadingScreen />;
-  if (loadState === 'error') return <LoadingScreen message="Soukromý návrh tipů se nepodařilo načíst." retry={() => setRetryCount((count) => count + 1)} />;
+  if (loading || !admin || !named || loadState === 'loading') return <LoadingScreen />;
+  if (loadState === 'error') return <LoadingScreen message="Účet nebo soukromý návrh tipů se nepodařilo načíst." retry={() => setRetryCount((count) => count + 1)} />;
+  if (loadedUid !== user.uid) return <LoadingScreen />;
 
   const complete = isCompletePicks(picks);
   const selectedCount = QUESTION_KEYS.filter((key) => hasAnswered(key, picks)).length;
-  const adminName = user.displayName || user.email.split('@')[0];
+  const adminName = playerName;
   const showingIntro = activeStep === null;
   const activeKey = showingIntro ? null : QUESTION_KEYS[activeStep];
 
@@ -501,6 +549,41 @@ export default function TipovackaPage() {
                 {notice && <p className={styles.notice} role="status">{notice}</p>}
               </div>
               <aside className={styles.sidebar}>
+                <section className={styles.standingsCard} aria-labelledby="standings-title">
+                  <div className={styles.standingsHeading}>
+                    <span className={styles.eyebrow}>ŽIVÁ TABULKA</span>
+                    <span className={styles.standingsLive}><span /> Online</span>
+                  </div>
+                  <h2 id="standings-title">Hráči ve hře</h2>
+                  <p>Po vstupu do Tipovačky se tu objevíš automaticky.</p>
+                  {standingsState === 'loading' ? (
+                    <p className={styles.standingsMessage} role="status">Načítám tabulku…</p>
+                  ) : standingsState === 'error' ? (
+                    <div className={styles.standingsMessage} role="alert">
+                      <p>Tabulku se nepodařilo načíst.</p>
+                      <button type="button" onClick={() => setStandingsRetry((count) => count + 1)}>Zkusit znovu</button>
+                    </div>
+                  ) : standings.length === 0 ? (
+                    <p className={styles.standingsMessage}>Zatím tu nikdo není.</p>
+                  ) : (
+                    <div className={styles.standingsScroll}>
+                      <table className={styles.standingsTable}>
+                        <caption className={styles.srOnly}>Aktuální pořadí hráčů Tipovačky</caption>
+                        <thead><tr><th scope="col">#</th><th scope="col">Hráč</th><th scope="col">Body</th></tr></thead>
+                        <tbody>
+                          {standings.map((player, index) => (
+                            <tr key={player.uid} className={player.uid === uid ? styles.standingsMe : ''}>
+                              <td>{String(index + 1).padStart(2, '0')}</td>
+                              <th scope="row">{player.displayName}{player.uid === uid && <span className={styles.standingsYou}>Ty</span>}</th>
+                              <td>{formatPoints(player.totalPoints ?? 0)}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                  <p className={styles.standingsFoot}>Zatím 0 bodů. Skutečné body přibudou až po vyhodnocení zápasu.</p>
+                </section>
                 <div className={styles.rulesCard}>
                   <span className={styles.eyebrow}>JAK FUNGUJÍ BODY</span>
                   <h2>Riskuješ. Nebo získáš.</h2>
@@ -509,7 +592,7 @@ export default function TipovackaPage() {
                   <div className={styles.ruleStat}><span>Bonus a extra tip při chybě</span><strong>0 b.</strong></div>
                   <p className={styles.rulesSmall}>Záporné skóre je možné. Přesný počet gólů přidá za trefu 18 bodů.</p>
                 </div>
-                <div className={styles.privateCard}><LockKeyhole size={20} aria-hidden="true" /><div><strong>Soukromý náhled</strong><p>Tipy teď ukládá pouze administrátor. Výsledky a veřejný žebříček ještě nejsou spuštěné.</p></div></div>
+                <div className={styles.privateCard}><LockKeyhole size={20} aria-hidden="true" /><div><strong>Soukromý náhled</strong><p>Hru i online tabulku zatím vidí jen administrátor. Oficiální výsledky spustíme až po vyhodnocení zápasu.</p></div></div>
               </aside>
             </div>
             {finished && complete && (

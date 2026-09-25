@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { sendPasswordResetEmail, signOut, updateProfile } from 'firebase/auth';
-import { ArrowLeft, Check, KeyRound, LoaderCircle, LogOut, ShieldCheck, UserRound } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, KeyRound, LoaderCircle, LogOut, ShieldCheck, UserRound } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import ChangeEmail from '@/components/account/ChangeEmail';
 import { useAuth } from '@/hooks/useAuth';
@@ -47,9 +47,17 @@ export default function ProfilePage() {
   const [savedName, setSavedName] = useState('');
   const [busy, setBusy] = useState('');
   const [notice, setNotice] = useState(null);
+  const [fromTipovacka, setFromTipovacka] = useState(false);
 
   useEffect(() => {
-    if (!loading && !user) router.replace(LOGIN_URL);
+    setFromTipovacka(new URLSearchParams(window.location.search).get('tipovacka') === '1');
+  }, []);
+
+  useEffect(() => {
+    if (!loading && !user) {
+      const fromGame = new URLSearchParams(window.location.search).get('tipovacka') === '1';
+      router.replace(fromGame ? '/auth?next=%2Fprofil%3Ftipovacka%3D1' : LOGIN_URL);
+    }
   }, [loading, user, router]);
 
   useEffect(() => {
@@ -120,6 +128,10 @@ export default function ProfilePage() {
 
   const hasPassword = user?.providerData?.some((provider) => provider.providerId === 'password');
   const hasGoogle = user?.providerData?.some((provider) => provider.providerId === 'google.com');
+  const normalizedSavedName = savedName.trim().replace(/\s+/g, ' ');
+  const hasDisplayName = normalizedSavedName.length >= 2
+    && normalizedSavedName.length <= 30
+    && !/[\u0000-\u001F\u007F]/.test(normalizedSavedName);
   const initials = (savedName || user?.email || 'L').trim().slice(0, 1).toLocaleUpperCase('cs-CZ');
   const providerLabel = hasPassword && hasGoogle
     ? 'Google a e-mail'
@@ -153,6 +165,25 @@ export default function ProfilePage() {
               <h1>Můj účet<span>.</span></h1>
               <p>Tady spravuješ své přihlašování a jméno, pod kterým tě ostatní uvidí.</p>
             </div>
+
+            {fromTipovacka && (
+              <section className={styles.gamePrompt} aria-labelledby="tipovacka-profile-heading">
+                <div>
+                  <span className={styles.smallLabel}>TIPOVAČKA / ZOBRAZOVANÉ JMÉNO</span>
+                  <h2 id="tipovacka-profile-heading">{hasDisplayName ? 'Jméno je připravené.' : 'Nejdřív si nastav jméno.'}</h2>
+                  <p id="tipovacka-name-note">
+                    {hasDisplayName
+                      ? `V online tabulce Tipovačky se zobrazíš jako ${normalizedSavedName}.`
+                      : 'Vyplň a ulož jméno v profilu níže. Pak se můžeš vrátit do Tipovačky a hra tě zařadí do online tabulky.'}
+                  </p>
+                </div>
+                {hasDisplayName && (
+                  <Link href="/games/tipovacka" className={styles.returnLink}>
+                    Zpět do Tipovačky <ArrowRight size={16} aria-hidden="true" />
+                  </Link>
+                )}
+              </section>
+            )}
 
             <section className={styles.identity} aria-label="Přihlášený účet">
               <div className={styles.avatar} aria-hidden="true">{initials}</div>
@@ -194,6 +225,7 @@ export default function ProfilePage() {
                     maxLength={30}
                     value={displayName}
                     onChange={(event) => setDisplayName(event.target.value)}
+                    aria-describedby={fromTipovacka && !hasDisplayName ? 'tipovacka-name-note' : undefined}
                     disabled={Boolean(busy)}
                   />
                   <button
