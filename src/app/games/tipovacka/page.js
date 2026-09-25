@@ -5,11 +5,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { collection, doc, getDoc, onSnapshot, runTransaction, serverTimestamp, setDoc } from 'firebase/firestore';
-import { ArrowLeft, ArrowRight, Check, Clock3, FlaskConical, LockKeyhole, RotateCcw, Save, ShieldCheck, Trophy, UserRoundX } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, Clock3, LockKeyhole, RotateCcw, Save, ShieldCheck, Trophy, UserRoundX } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { auth, db } from '@/lib/firebase';
-import { TIPOVACKA_ROUND, riskOutcome, scorerStakeOutcome, hasConflictingScorerStakes, isCompletePicks, maxPossiblePoints, scoreRound } from '@/lib/tipovacka.mjs';
+import { TIPOVACKA_ROUND, riskOutcome, scorerStakeOutcome, hasConflictingScorerStakes, isCompletePicks, maxPossiblePoints } from '@/lib/tipovacka.mjs';
+import OfficialEvaluation from './OfficialEvaluation';
+import ResultAdminPanel from './ResultAdminPanel';
 import styles from './page.module.css';
 
 const ADMIN_EMAIL = 'sanarycogames@outlook.cz';
@@ -85,18 +87,6 @@ function hasAnswered(key, picks) {
   }
   if (key === 'totalGoals') return Number.isInteger(picks.totalGoals) && picks.totalGoals >= question.min && picks.totalGoals <= question.max;
   return question.options.some(({ id }) => id === picks[key]);
-}
-
-function makeInitialSimulation() {
-  const pointPlayers = TIPOVACKA_ROUND.questions.topPoints.options;
-  return {
-    homeGoals: 2,
-    awayGoals: 1,
-    scorerIds: [],
-    playerPoints: Object.fromEntries(pointPlayers.map((player) => [player.id, 0])),
-    firstGoalTeam: 'lancers',
-    didNotPlayIds: [],
-  };
 }
 
 function isCurrentAdmin(uid) {
@@ -294,102 +284,6 @@ function QuestionCard({ index, questionKey, question, selected, onSelect, onStak
   );
 }
 
-function Simulation({ picks, adminName }) {
-  const [result, setResult] = useState(makeInitialSimulation);
-  const [visible, setVisible] = useState(false);
-  const complete = isCompletePicks(picks);
-
-  const evaluated = useMemo(() => {
-    if (!complete) return { score: null, error: '' };
-    try {
-      return { score: scoreRound(picks, result), error: '' };
-    } catch {
-      return { score: null, error: 'Zkontroluj zadaný testovací výsledek a body hráčů.' };
-    }
-  }, [complete, picks, result]);
-
-  const setNumber = (key, value) => setResult((previous) => ({ ...previous, [key]: value === '' ? null : Number(value) }));
-  const toggleId = (key, id) => setResult((previous) => ({
-    ...previous,
-    [key]: previous[key].includes(id) ? previous[key].filter((current) => current !== id) : [...previous[key], id],
-  }));
-
-  return (
-    <section className={styles.simulation} aria-labelledby="sim-title">
-      <div className={styles.simulationIntro}>
-        <div className={styles.simulationIcon}><FlaskConical size={22} aria-hidden="true" /></div>
-        <div>
-          <span className={styles.eyebrow}>POUZE V TOMTO PROHLÍŽEČI</span>
-          <h2 id="sim-title">Zkusit vyhodnocení</h2>
-          <p>Testovací výsledek se neukládá. Zatím nejde o skutečný zápas ani veřejný žebříček.</p>
-        </div>
-        <button type="button" className={styles.simulationToggle} onClick={() => setVisible((value) => !value)} aria-expanded={visible}>
-          {visible ? 'Skrýt simulaci' : 'Otevřít simulaci'} <ArrowRight size={16} aria-hidden="true" />
-        </button>
-      </div>
-      {visible && (
-        <div className={styles.simulationContent}>
-          <div className={styles.simulationFields}>
-            <div className={styles.simBlock}>
-              <h3>Testovací skóre</h3>
-              <div className={styles.scoreInputs}>
-                <label>Lancers<input type="number" min="0" max="30" step="1" value={result.homeGoals ?? ''} onChange={(event) => setNumber('homeGoals', event.target.value)} /></label>
-                <span>:</span>
-                <label>Wolves<input type="number" min="0" max="30" step="1" value={result.awayGoals ?? ''} onChange={(event) => setNumber('awayGoals', event.target.value)} /></label>
-              </div>
-              <p>Skóre po prodloužení; nájezdy se nezapočítávají.</p>
-            </div>
-            <div className={styles.simBlock}>
-              <h3>Kdo z pěti vstřelil gól?</h3>
-              <div className={styles.checkGrid}>
-                {TIPOVACKA_ROUND.questions.scorer.options.filter((player) => player.id !== 'none-listed').map((player) => (
-                  <label key={player.id}><input type="checkbox" checked={result.scorerIds.includes(player.id)} onChange={() => toggleId('scorerIds', player.id)} />{player.label}</label>
-                ))}
-              </div>
-            </div>
-            <div className={styles.simBlock}>
-              <h3>Body vybrané trojice (góly + asistence)</h3>
-              <div className={styles.playerPoints}>
-                {TIPOVACKA_ROUND.questions.topPoints.options.map((player) => (
-                  <label key={player.id}><span>{player.label}</span><input type="number" min="0" max="30" step="1" value={result.playerPoints[player.id] ?? ''} onChange={(event) => setResult((previous) => ({ ...previous, playerPoints: { ...previous.playerPoints, [player.id]: event.target.value === '' ? null : Number(event.target.value) } }))} /></label>
-                ))}
-              </div>
-              <p>Shoda na nejvyšším počtu bodů znamená 0 bodů za tuto otázku.</p>
-            </div>
-            <div className={styles.simBlock}>
-              <h3>První gól</h3>
-              <select value={result.firstGoalTeam ?? ''} onChange={(event) => setResult((previous) => ({ ...previous, firstGoalTeam: event.target.value || null }))}>
-                <option value="lancers">Lancers</option>
-                <option value="wolves">Wolves</option>
-                <option value="">Bez gólu</option>
-              </select>
-              <p>Pokud vybraný hráč nenastoupil, označ ho níže.</p>
-              <div className={styles.checkGrid}>
-                {[...new Map([...TIPOVACKA_ROUND.questions.scorer.options.filter((player) => player.id !== 'none-listed'), ...TIPOVACKA_ROUND.questions.topPoints.options].map((player) => [player.id, player])).values()].map((player) => (
-                  <label key={player.id}><input type="checkbox" checked={result.didNotPlayIds.includes(player.id)} onChange={() => toggleId('didNotPlayIds', player.id)} />{player.label} nenastoupil</label>
-                ))}
-              </div>
-            </div>
-          </div>
-          <div className={styles.simResult} aria-live="polite">
-            <span className={styles.eyebrow}>ZKUŠEBNÍ ŽEBŘÍČEK</span>
-            {!complete ? <p>Nejdřív vyber všech pět tipů.</p> : evaluated.error ? <p role="alert">{evaluated.error}</p> : (
-              <>
-                <div className={styles.leaderRow}><span className={styles.rank}>01</span><strong>{adminName}</strong><strong className={styles.leaderPoints}>{formatPoints(evaluated.score.total)} b.</strong></div>
-                <ul className={styles.breakdown}>
-                  {QUESTION_KEYS.map((key, index) => (
-                    <li key={key}><span>{String(index + 1).padStart(2, '0')} · {TIPOVACKA_ROUND.questions[key].title}</span><strong className={evaluated.score.breakdown[key].points < 0 ? styles.negative : styles.positive}>{formatPoints(evaluated.score.breakdown[key].points)}</strong></li>
-                  ))}
-                </ul>
-              </>
-            )}
-          </div>
-        </div>
-      )}
-    </section>
-  );
-}
-
 export default function TipovackaPage() {
   const router = useRouter();
   const { user, loading } = useAuth();
@@ -405,11 +299,27 @@ export default function TipovackaPage() {
   const [picks, setPicks] = useState(INITIAL_PICKS);
   const [activeStep, setActiveStep] = useState(null);
   const [finished, setFinished] = useState(false);
-  const [showSimulation, setShowSimulation] = useState(false);
+  const [now, setNow] = useState(() => Date.now());
+  const [publishedRound, setPublishedRound] = useState(null);
+  const [evaluation, setEvaluation] = useState(null);
+  const [evaluationState, setEvaluationState] = useState('idle');
+  const [roundState, setRoundState] = useState('loading');
+  const [showResultAdmin, setShowResultAdmin] = useState(false);
+  const [tickets, setTickets] = useState([]);
+  const [skippedTickets, setSkippedTickets] = useState([]);
+  const [ticketsState, setTicketsState] = useState('idle');
+  const [ticketsRetry, setTicketsRetry] = useState(0);
+  const [publishing, setPublishing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveFailed, setSaveFailed] = useState(false);
   const [notice, setNotice] = useState('');
   const [retryCount, setRetryCount] = useState(0);
+  const canEdit = roundState === 'ready' && now < Date.parse(TIPOVACKA_ROUND.startsAt) && !publishedRound;
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(Date.now()), 30_000);
+    return () => window.clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     if (loading) return;
@@ -418,6 +328,8 @@ export default function TipovackaPage() {
       setLoadedUid(null);
       setActiveStep(null);
       setFinished(false);
+      setPublishedRound(null);
+      setEvaluation(null);
       router.replace('/games');
       return;
     }
@@ -433,7 +345,6 @@ export default function TipovackaPage() {
       setPicks(INITIAL_PICKS);
       setActiveStep(null);
       setFinished(false);
-      setShowSimulation(false);
       try {
         await joinStandings(uid, playerName);
         if (!active || !isCurrentAdmin(uid)) return;
@@ -487,10 +398,81 @@ export default function TipovackaPage() {
   }, [admin, loading, loadState, loadedUid, named, standingsRetry, uid]);
 
   useEffect(() => {
+    if (loading || !admin || !named || loadState !== 'ready' || loadedUid !== uid) return;
+    setRoundState('loading');
+    const unsubscribe = onSnapshot(
+      doc(db, 'tipovackaRounds', TIPOVACKA_ROUND.id),
+      (snapshot) => {
+        if (!isCurrentAdmin(uid)) return;
+        const round = snapshot.data();
+        setPublishedRound(round?.status === 'published' ? round : null);
+        setRoundState('ready');
+      },
+      () => setRoundState('error'),
+    );
+    return unsubscribe;
+  }, [admin, loading, loadState, loadedUid, named, uid]);
+
+  useEffect(() => {
+    if (loading || !admin || !named || !publishedRound || loadedUid !== uid) {
+      setEvaluation(null);
+      setEvaluationState('idle');
+      return;
+    }
+    setEvaluationState('loading');
+    const unsubscribe = onSnapshot(
+      doc(db, 'tipovackaRounds', TIPOVACKA_ROUND.id, 'evaluations', uid),
+      (snapshot) => {
+        if (isCurrentAdmin(uid)) {
+          setEvaluation(snapshot.data() ?? null);
+          setEvaluationState('ready');
+        }
+      },
+      () => setEvaluationState('error'),
+    );
+    return unsubscribe;
+  }, [admin, loading, loadedUid, named, publishedRound, uid]);
+
+  useEffect(() => {
+    if (!showResultAdmin || !admin || !user || loadedUid !== uid || publishedRound) return;
+    const controller = new AbortController();
+    const loadTickets = async () => {
+      setTicketsState('loading');
+      try {
+        const token = await user.getIdToken();
+        const response = await fetch('/api/tipovacka/tickets', {
+          headers: { Authorization: `Bearer ${token}` },
+          cache: 'no-store',
+          signal: controller.signal,
+        });
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.error || 'Nepodařilo se načíst uložené tikety.');
+        if (controller.signal.aborted || !isCurrentAdmin(uid)) return;
+        setTickets(payload.tickets ?? []);
+        setSkippedTickets(payload.skipped ?? []);
+        setTicketsState('ready');
+      } catch {
+        if (controller.signal.aborted) return;
+        setTicketsState('error');
+      }
+    };
+    void loadTickets();
+    return () => controller.abort();
+  }, [admin, loadedUid, publishedRound, showResultAdmin, ticketsRetry, uid, user]);
+
+  useEffect(() => {
     if (activeStep !== null) document.getElementById('tip-flow-heading')?.focus();
   }, [activeStep]);
 
+  useEffect(() => {
+    if (roundState === 'ready' && !canEdit && activeStep !== null) {
+      setActiveStep(null);
+      setNotice('Tipování už je uzavřené. Uložené tipy zůstávají beze změny.');
+    }
+  }, [activeStep, canEdit, roundState]);
+
   const selectPick = (questionKey, value) => {
+    if (!canEdit) return;
     setPicks((previous) => ({ ...previous, [questionKey]: value }));
     setFinished(false);
     setSaveFailed(false);
@@ -498,6 +480,7 @@ export default function TipovackaPage() {
   };
 
   const selectStake = (id, raw) => {
+    if (!canEdit) return;
     const amount = raw === '' ? 0 : Number(raw);
     const maxStake = TIPOVACKA_ROUND.questions.scorer.stake;
     if (!Number.isInteger(amount) || amount < 0 || amount > maxStake) return;
@@ -518,7 +501,7 @@ export default function TipovackaPage() {
   };
 
   const saveDraft = async () => {
-    if (!admin || !user || saving || !isCompletePicks(picks) || !isCurrentAdmin(user.uid)) return;
+    if (!admin || !user || saving || !canEdit || !isCompletePicks(picks) || !isCurrentAdmin(user.uid)) return;
     setSaving(true);
     setSaveFailed(false);
     setNotice('');
@@ -528,7 +511,10 @@ export default function TipovackaPage() {
         picks,
         updatedAt: serverTimestamp(),
       });
-      if (isCurrentAdmin(user.uid)) setNotice('Návrh tipů je uložený jen pro tvůj administrátorský účet.');
+      if (isCurrentAdmin(user.uid)) {
+        setNotice('Návrh tipů je uložený jen pro tvůj administrátorský účet.');
+        setTicketsRetry((value) => value + 1);
+      }
     } catch {
       if (isCurrentAdmin(user.uid)) {
         setSaveFailed(true);
@@ -540,22 +526,51 @@ export default function TipovackaPage() {
   };
 
   const showStep = (step) => {
+    if (step !== null && !canEdit) return;
     setActiveStep(step);
-    setShowSimulation(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const startPicks = () => {
+    if (!canEdit) return;
     const firstIncomplete = QUESTION_KEYS.findIndex((key) => !hasAnswered(key, picks));
     showStep(firstIncomplete < 0 ? 0 : firstIncomplete);
   };
 
   const finishPicks = () => {
-    if (!isCompletePicks(picks)) return;
+    if (!canEdit || !isCompletePicks(picks)) return;
     setActiveStep(null);
     setFinished(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     void saveDraft();
+  };
+
+  const publishResult = async (result, evaluations) => {
+    if (!admin || !user || !isCurrentAdmin(user.uid) || publishedRound || publishing) {
+      throw new Error('Administrátorský účet nebo aktuální stav zápasu nelze ověřit.');
+    }
+    setPublishing(true);
+    try {
+      const token = await user.getIdToken();
+      const response = await fetch('/api/tipovacka/publish', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          result,
+          previewEvaluations: evaluations.map(({ uid: playerUid, score }) => ({
+            uid: playerUid,
+            total: score.total,
+            breakdown: score.breakdown,
+          })),
+        }),
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || 'Zveřejnění výsledku se nepovedlo.');
+      setNotice('Výsledek je zveřejněný. Body v tabulce a rozpis tipů se právě načítají.');
+      setTicketsRetry((value) => value + 1);
+    } finally {
+      setPublishing(false);
+    }
   };
 
   const maximum = useMemo(
@@ -568,10 +583,18 @@ export default function TipovackaPage() {
   if (loadState === 'loading') return <LoadingScreen />;
   if (loadState === 'error') return <LoadingScreen message="Účet nebo soukromý návrh tipů se nepodařilo načíst." retry={() => setRetryCount((count) => count + 1)} />;
   if (loadedUid !== user.uid) return <LoadingScreen />;
+  if (roundState === 'error') return <LoadingScreen message="Stav zápasu se nepodařilo načíst." retry={() => window.location.reload()} />;
 
   const complete = isCompletePicks(picks);
   const selectedCount = QUESTION_KEYS.filter((key) => hasAnswered(key, picks)).length;
-  const adminName = playerName;
+  const preparedTickets = tickets.map((ticket) => ({
+    ...ticket,
+    displayName: standings.find((player) => player.uid === ticket.uid)?.displayName ?? `Hráč ${ticket.uid.slice(0, 6)}`,
+  }));
+  const missingStandings = tickets.filter((ticket) => !standings.some((player) => player.uid === ticket.uid));
+  const canPublish = now >= Date.parse(TIPOVACKA_ROUND.startsAt)
+    && roundState === 'ready' && standingsState === 'ready'
+    && ticketsState === 'ready' && skippedTickets.length === 0 && missingStandings.length === 0;
   const showingIntro = activeStep === null;
   const activeKey = showingIntro ? null : QUESTION_KEYS[activeStep];
   const choiceScreen = activeKey === 'outcome' || activeKey === 'topPoints' || activeKey === 'firstGoal';
@@ -587,17 +610,17 @@ export default function TipovackaPage() {
               <div className={styles.heroText}>
                 <span className={styles.heroKicker}><span className={styles.liveDot} /> LANCERS PLAY / TIPOVAČKA</span>
                 <h1>Každý zápas<br /><em>má svůj tip.</em></h1>
-                <p>Tipni si zápas Lancers proti Wolves. Na pět otázek odpovíš postupně, jednu po druhé.</p>
+                <p>{publishedRound ? 'Zápas je vyhodnocený. Níže najdeš své body za každou otázku a aktuální pořadí.' : 'Tipni si zápas Lancers proti Wolves. Na pět otázek odpovíš postupně, jednu po druhé.'}</p>
                 <div className={styles.adminBadge}><ShieldCheck size={16} aria-hidden="true" /> Administrátorský náhled · vidíš jen ty</div>
               </div>
               <div className={styles.matchCard}>
-                <span className={styles.matchEyebrow}>PŘÍŠTÍ ZÁPAS / ČESKÝ POHÁR</span>
+                <span className={styles.matchEyebrow}>{publishedRound ? 'VYHODNOCENÝ ZÁPAS / ČESKÝ POHÁR' : 'PŘÍŠTÍ ZÁPAS / ČESKÝ POHÁR'}</span>
                 <div className={styles.matchNames}>
                   <div className={styles.matchTeam}>
                     <Image className={styles.matchLogo} src="/images/loga/lancers-logo.png" alt="Logo Litvínov Lancers" width={110} height={110} />
                     <strong>LANCERS</strong>
                   </div>
-                  <span>VS</span>
+                  <span>{publishedRound ? `${publishedRound.result.homeGoals} : ${publishedRound.result.awayGoals}` : 'VS'}</span>
                   <div className={styles.matchTeam}>
                     <Image className={styles.matchLogo} src="/images/loga/GlacierWolves.png" alt="Logo HC Glacier Wolves" width={110} height={110} />
                     <strong>WOLVES</strong>
@@ -610,11 +633,17 @@ export default function TipovackaPage() {
             <div className={styles.contentGrid}>
               <div className={styles.mainColumn}>
                 <section className={styles.introPanel} aria-labelledby="intro-title">
-                  <span className={styles.eyebrow}>KOLO 01 / PŘÍPRAVA</span>
-                  {finished && complete ? (
+                  <span className={styles.eyebrow}>KOLO 01 / {publishedRound ? 'VÝSLEDEK' : canEdit ? 'PŘÍPRAVA' : 'UZAVŘENO'}</span>
+                  {publishedRound ? (
                     <>
-                      <h2 id="intro-title">Tiket je připravený.</h2>
-                      <p>Všech pět odpovědí máš vyplněných. Kdykoli je můžeš projít a upravit.</p>
+                      <h2 id="intro-title">Zápas je vyhodnocený.</h2>
+                      <p>Výsledek a body za jednotlivé otázky najdeš pod tabulkou. Pořadí se aktualizovalo automaticky.</p>
+                      {evaluationState === 'ready' && evaluation && <div className={styles.maximumCard}><span>TVÉ BODY ZA TOTO KOLO</span><strong>{formatPoints(evaluation.total)} b.</strong></div>}
+                    </>
+                  ) : finished && complete ? (
+                    <>
+                      <h2 id="intro-title">{canEdit ? 'Tiket je připravený.' : 'Tipování je uzavřené.'}</h2>
+                      <p>{canEdit ? 'Všech pět odpovědí máš vyplněných. Do začátku zápasu je můžeš projít a upravit.' : 'Tvůj uložený tiket čeká na skutečný výsledek zápasu.'}</p>
                       <div className={styles.maximumCard} aria-live="polite">
                         <span>TEORETICKÉ MAXIMUM TVÉHO TIKETU</span>
                         <strong>{formatPoints(maximum)} b.</strong>
@@ -623,16 +652,16 @@ export default function TipovackaPage() {
                     </>
                   ) : (
                     <>
-                      <h2 id="intro-title">Jsi připravený tipovat?</h2>
-                      <p>Čeká tě pět krátkých otázek. U střelců rozdělíš 10 bodů, jak budeš chtít. Chybné rizikové tipy mohou skóre dostat i do mínusu.</p>
+                      <h2 id="intro-title">{canEdit ? 'Jsi připravený tipovat?' : 'Tipování je uzavřené.'}</h2>
+                      <p>{canEdit ? 'Čeká tě pět krátkých otázek. U střelců rozdělíš 10 bodů, jak budeš chtít. Chybné rizikové tipy mohou skóre dostat i do mínusu.' : 'Zápas už začal. Až bude zadaný a potvrzený skutečný výsledek, uvidíš tu vyhodnocení.'}</p>
                     </>
                   )}
-                  <div className={styles.introActions}>
-                    <button type="button" className={styles.startButton} onClick={startPicks}>{finished && complete ? 'Upravit tipy' : 'Začít tipovačku'} <ArrowRight size={20} aria-hidden="true" /></button>
+                  {!publishedRound && <div className={styles.introActions}>
+                    {canEdit && <button type="button" className={styles.startButton} onClick={startPicks}>{finished && complete ? 'Upravit tipy' : 'Začít tipovačku'} <ArrowRight size={20} aria-hidden="true" /></button>}
                     <span>{selectedCount} z 5 odpovědí připraveno</span>
-                  </div>
+                  </div>}
                 </section>
-                {finished && complete && (
+                {finished && complete && canEdit && (
                   <div className={styles.savePanel}>
                     <div><strong>{saving ? 'Ukládám tiket…' : saveFailed ? 'Uložení vyžaduje opakování' : 'Tvůj soukromý tiket'}</strong><p>Uložení návrhu neotevře Tipovačku ostatním.</p></div>
                     <button type="button" className={styles.saveButton} disabled={saving} onClick={() => void saveDraft()}><Save size={17} aria-hidden="true" /> {saveFailed ? 'Zkusit uložit znovu' : 'Uložit znovu'}</button>
@@ -676,7 +705,7 @@ export default function TipovackaPage() {
                       </table>
                     </div>
                   )}
-                  <p className={styles.standingsFoot}>Zatím 0 bodů. Skutečné body přibudou až po vyhodnocení zápasu.</p>
+                  <p className={styles.standingsFoot}>{publishedRound ? 'Body jsou započtené po zveřejnění oficiálního výsledku.' : 'Body přibudou až po zveřejnění výsledku zápasu.'}</p>
                 </section>
                 <div className={styles.rulesCard}>
                   <span className={styles.eyebrow}>JAK FUNGUJÍ BODY</span>
@@ -686,17 +715,24 @@ export default function TipovackaPage() {
                   <div className={styles.ruleStat}><span>Bonus a extra tip při chybě</span><strong>0 b.</strong></div>
                   <p className={styles.rulesSmall}>Záporné skóre je možné. Přesný počet gólů přidá za trefu 18 bodů.</p>
                 </div>
-                <div className={styles.privateCard}><LockKeyhole size={20} aria-hidden="true" /><div><strong>Soukromý náhled</strong><p>Hru i online tabulku zatím vidí jen administrátor. Oficiální výsledky spustíme až po vyhodnocení zápasu.</p></div></div>
+                <div className={styles.privateCard}><LockKeyhole size={20} aria-hidden="true" /><div><strong>Soukromý náhled</strong><p>Hru, vyhodnocení i tabulku zatím vidí jen administrátor. Přístup ostatním hráčům otevřeme později.</p></div></div>
               </aside>
             </div>
-            {finished && complete && (
-              <div className={styles.simulationAccess}>
-                <button type="button" onClick={() => setShowSimulation((value) => !value)} aria-expanded={showSimulation}>
-                  <FlaskConical size={17} aria-hidden="true" /> {showSimulation ? 'Skrýt test vyhodnocení' : 'Otestovat vyhodnocení'}
-                </button>
-                {showSimulation && <Simulation picks={picks} adminName={adminName} />}
-              </div>
-            )}
+            {publishedRound && evaluationState === 'loading' && <p className={styles.notice} role="status">Načítám tvůj rozpis bodů…</p>}
+            {publishedRound && evaluationState === 'error' && <p className={styles.notice} role="alert">Rozpis bodů se nepodařilo načíst. Zkus stránku obnovit.</p>}
+            {publishedRound && evaluationState === 'ready' && <OfficialEvaluation round={publishedRound} evaluation={evaluation} />}
+            {!publishedRound && <div className={styles.resultAdminAccess}>
+              <button type="button" onClick={() => setShowResultAdmin((value) => !value)} aria-expanded={showResultAdmin}>
+                <ShieldCheck size={17} aria-hidden="true" /> {showResultAdmin ? 'Skrýt zadání výsledku' : 'Zadat a vyhodnotit výsledek'}
+              </button>
+              {showResultAdmin && ticketsState === 'loading' && <p className={styles.resultAdminMessage} role="status">Načítám uložené tikety pro náhled vyhodnocení…</p>}
+              {showResultAdmin && ticketsState === 'error' && <p className={styles.resultAdminMessage} role="alert">Tikety se nepodařilo načíst. <button type="button" onClick={() => setTicketsRetry((value) => value + 1)}>Zkusit znovu</button></p>}
+              {showResultAdmin && ticketsState === 'ready' && <>
+                {skippedTickets.length > 0 && <p className={styles.resultAdminMessage} role="alert">{skippedTickets.length} neplatný nebo nedokončený tiket se nemůže vyhodnotit. Zveřejnění je pozastavené, dokud se to neopraví.</p>}
+                {missingStandings.length > 0 && <p className={styles.resultAdminMessage} role="alert">{missingStandings.length} tiket nemá hráče v tabulce. Otevři Tipovačku pod tímto účtem, aby se hráč do tabulky zapsal.</p>}
+                <ResultAdminPanel tickets={preparedTickets} onPublish={publishResult} publishing={publishing} canPublish={canPublish} />
+              </>}
+            </div>}
           </>
         ) : (
           <section className={styles.flowWrap} aria-labelledby="tip-flow-heading">

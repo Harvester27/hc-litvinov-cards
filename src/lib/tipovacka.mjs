@@ -109,7 +109,7 @@ export function isCompletePicks(picks) {
     && picks.totalGoals <= questions.totalGoals.max);
 }
 
-function validateResult(result) {
+export function validateResult(result) {
   if (!result || typeof result !== 'object' || Array.isArray(result)) {
     throw new TypeError('Výsledek zápasu musí být objekt.');
   }

@@ -81,6 +81,10 @@ service cloud.firestore {
 
       allow create, update: if tipovackaAdmin()
         && request.auth.uid == uid
+        // Tickets close at 19:15 Prague time on 26 September 2026.
+        && request.time < timestamp.value(1790442900000)
+        // Publishing the official round also closes any remaining draft tab.
+        && !exists(/databases/$(database)/documents/tipovackaRounds/glacier-wolves-2026-09-26)
         && request.resource.data.keys().hasAll(['roundId', 'picks', 'updatedAt'])
         && request.resource.data.keys().hasOnly(['roundId', 'picks', 'updatedAt'])
         && request.resource.data.roundId == 'glacier-wolves-2026-09-26'
@@ -111,6 +115,23 @@ service cloud.firestore {
         && request.resource.data.picks.totalGoals >= 0
         && request.resource.data.picks.totalGoals <= 30
         && request.resource.data.updatedAt == request.time;
+    }
+
+    // Trusted server code publishes the official result and computed scores.
+    // Browser clients may only read them after publication, during the
+    // admin-only preview. Server Admin SDK writes bypass these rules.
+    match /tipovackaRounds/{roundId} {
+      // A get must also work before the document exists for live listeners.
+      allow get: if tipovackaAdmin();
+      allow list: if tipovackaAdmin()
+        && resource.data.status == 'published';
+
+      match /evaluations/{uid} {
+        allow get: if tipovackaAdmin();
+        allow list: if tipovackaAdmin()
+          && get(/databases/$(database)/documents/tipovackaRounds/$(roundId))
+            .data.status == 'published';
+      }
     }
 
     // The prediction standings are still an admin-only preview. Entering the

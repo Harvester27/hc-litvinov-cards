@@ -39,7 +39,7 @@ export default function PrivacyPage() {
           <ul>
             <li><strong>Účet:</strong> e-mail, identifikátor účtu, zobrazované jméno, způsob přihlášení a údaje potřebné pro ověření a zabezpečení účtu. Heslo spravuje Firebase Authentication.</li>
             <li><strong>Lancers Card:</strong> jméno hráče a týmu, počáteční herní finance a datum vytvoření profilu.</li>
-            <li><strong>Tipovačka (administrátorský náhled):</strong> vybrané tipy k zápasu a čas posledního uložení, přiřazené k identifikátoru účtu. Při vstupu do hry se pro žebříček uloží také zobrazované jméno, čas zařazení a počáteční nulové skóre. Žebříček je zatím přístupný jen administrátorovi.</li>
+            <li><strong>Tipovačka (administrátorský náhled):</strong> tipy k zápasu a čas jejich uložení, přiřazené k účtu. Při vstupu do hry se uloží zobrazované jméno a účast v tabulce. Po potvrzení výsledku ukládáme správné odpovědi, body za každou otázku a celkové skóre. Tipy, vyhodnocení i žebříček zatím vidí jen administrátor.</li>
             <li><strong>Komentáře:</strong> text komentáře, zobrazované jméno, identifikátor účtu a čas vložení nebo úpravy. Komentář a jméno jsou viditelné ostatním.</li>
             <li><strong>Klubový obsah:</strong> ve veřejných soupiskách, článcích a výsledcích mohou být jména, fotografie, sportovní statistiky a u některých hráčů také datum a místo narození, výška, váha nebo další údaje sportovního profilu.</li>
             <li><strong>Technický provoz:</strong> poskytovatelé přihlášení a hostingu zpracovávají například IP adresu, údaje o prohlížeči a bezpečnostní záznamy. Prohlížeč může uchovávat přihlášení a uložený postup hry Les stínů.</li>
@@ -65,7 +65,7 @@ export default function PrivacyPage() {
 
         <section className={styles.section} aria-labelledby="retention-heading">
           <h2 id="retention-heading">Jak dlouho údaje zůstávají</h2>
-          <p>Údaje účtu, herní profil, uložené tipy a záznam v žebříčku uchováváme po dobu existence účtu. Komentáře uchováváme po dobu fungování diskuse a účtu autora. Po ověřené žádosti o smazání odstraníme účet a údaje, které už nepotřebujeme nebo je nemusíme uchovat z právního důvodu. Veřejný klubový obsah uchováváme po dobu, kdy je relevantní pro informace o týmu a jeho sportovní historii; požadavky na opravu či odstranění posuzujeme jednotlivě.</p>
+          <p>Údaje účtu, herní profil, uložené tipy, jejich vyhodnocení a záznam v žebříčku uchováváme po dobu existence účtu. Komentáře uchováváme po dobu fungování diskuse a účtu autora. Po ověřené žádosti o smazání odstraníme účet a údaje, které už nepotřebujeme nebo je nemusíme uchovat z právního důvodu. Veřejný klubový obsah uchováváme po dobu, kdy je relevantní pro informace o týmu a jeho sportovní historii; požadavky na opravu či odstranění posuzujeme jednotlivě.</p>
           <p>Tlačítko pro smazání jednotlivého komentáře jej nyní skryje na webu, ale jeho obsah zůstane v databázi. O úplné odstranění komentářů můžeš požádat e-mailem. Technické záznamy a zálohy se mažou podle cyklů jednotlivých poskytovatelů; Google popisuje svůj postup v <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener noreferrer">dokumentaci Firebase</a>.</p>
         </section>
 
@@ -76,7 +76,7 @@ export default function PrivacyPage() {
           <p>Pokud nejsi s vyřízením spokojen(a), můžeš podat stížnost u <a href="https://uoou.gov.cz/" target="_blank" rel="noopener noreferrer">Úřadu pro ochranu osobních údajů</a>.</p>
         </section>
 
-        <p className={styles.updated}>Naposledy aktualizováno 24. září 2026.</p>
+        <p className={styles.updated}>Naposledy aktualizováno 25. září 2026.</p>
       </main>
     </div>
   );

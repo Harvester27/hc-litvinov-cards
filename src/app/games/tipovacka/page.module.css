@@ -135,6 +135,12 @@
 .simulationAccess > button { display: inline-flex; align-items: center; gap: 8px; min-height: 43px; padding: 0 14px; border: 1px solid #55666a; color: #b7c9c8; background: transparent; cursor: pointer; font-size: 12px; }
 .simulationAccess > button:hover { border-color: #d9bd87; color: #e4cf9f; }
 .simulationAccess .simulation { margin-top: 15px; }
+.resultAdminAccess { margin-top: 38px; }
+.resultAdminAccess > button { display: inline-flex; align-items: center; gap: 8px; min-height: 46px; padding: 0 16px; border: 1px solid #977747; color: #765620; background: #fff; cursor: pointer; font-size: 12px; font-weight: 750; }
+.resultAdminAccess > button:hover { border-color: #a12c31; color: #a12c31; }
+.resultAdminAccess > button:focus-visible, .resultAdminMessage button:focus-visible { outline: 3px solid #a12c31; outline-offset: 2px; }
+.resultAdminMessage { margin: 13px 0; padding: 14px 16px; border: 1px solid #cfc7b8; color: #252525; background: #f2f0eb; font-size: 13px; }
+.resultAdminMessage button { margin-left: 7px; border: 0; color: #8b252c; background: transparent; cursor: pointer; font: inherit; font-weight: 750; text-decoration: underline; }
 .sectionIntro h2 { margin: 11px 0 7px; font-family: Georgia, 'Times New Roman', serif; font-size: clamp(35px, 4vw, 55px); font-weight: 400; letter-spacing: -.04em; }
 .sectionIntro p { margin: 0; color: #a9b5b6; font-size: 14px; line-height: 1.6; }
 .questions { display: flex; flex-direction: column; gap: 16px; margin-top: 31px; }
