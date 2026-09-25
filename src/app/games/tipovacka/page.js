@@ -139,7 +139,7 @@ function OptionGroup({ questionKey, question, selected, onSelect }) {
             />
             <span className={styles.optionCheck} aria-hidden="true">{selected === option.id && <Check size={14} strokeWidth={3} />}</span>
             {picture && (
-              <span className={`${styles.optionPortrait} ${playerOptions ? styles.optionPlayerPortrait : styles.optionTeamLogo}`} aria-hidden="true">
+              <span className={`${styles.optionPortrait} ${playerOptions ? styles.optionPlayerPortrait : styles.optionTeamLogo} ${option.id === 'tomas-turecek' ? styles.optionPortraitTurecek : ''}`} aria-hidden="true">
                 <Image src={picture} alt="" width={120} height={120} />
               </span>
             )}
