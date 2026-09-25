@@ -35,7 +35,9 @@ service cloud.firestore {
         && stakes['none-listed'] >= 0
         && stakes['jan-schubada'] + stakes['marian-dlugopolsky']
           + stakes['lubos-coufal'] + stakes['jan-hanus']
-          + stakes['jiri-salanda'] + stakes['none-listed'] == 10;
+          + stakes['jiri-salanda'] + stakes['none-listed'] == 10
+        // A bet on no listed scorer must occupy all ten points.
+        && (stakes['none-listed'] == 0 || stakes['none-listed'] == 10);
     }
 
     function validCommentText(text) {

@@ -84,12 +84,19 @@ export function scorerStakeOutcome(stake, odds) {
   return { win: Math.round(stake * (odds - 1) * 10) / 10, loss: -stake };
 }
 
+export function hasConflictingScorerStakes(scorer) {
+  return Boolean(scorer && typeof scorer === 'object' && !Array.isArray(scorer)
+    && scorer['none-listed'] > 0
+    && scorerPlayers.some(({ id }) => scorer[id] > 0));
+}
+
 function isScorerAllocation(scorer) {
   return scorer && typeof scorer === 'object' && !Array.isArray(scorer)
     && Object.keys(scorer).length === scorerOptionIds.length
     && Object.keys(scorer).every((id) => scorerOptionSet.has(id))
     && scorerOptionIds.every((id) => isWholeNonnegative(scorer[id])
       && scorer[id] <= questions.scorer.stake)
+    && !hasConflictingScorerStakes(scorer)
     && scorerOptionIds.reduce((sum, id) => sum + scorer[id], 0) === questions.scorer.stake;
 }
 

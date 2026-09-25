@@ -652,6 +652,15 @@
   font-size: 12px;
   line-height: 1.45;
 }
+.stakeConflictInfo {
+  margin: 0 0 8px;
+  padding: 8px 11px;
+  border-left: 3px solid var(--tip-red);
+  color: var(--tip-ink);
+  background: #faf1f1;
+  font-size: 12px;
+  line-height: 1.45;
+}
 .pageScorer .stakeOptions { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
 .pageScorer .stakeOption {
   grid-template-columns: minmax(0, 1fr) auto;
@@ -660,6 +669,8 @@
   padding: 16px;
 }
 .pageScorer .stakeOptionTop { gap: 12px; }
+.pageScorer .stakeOptionBlocked { background: #eae8e4; }
+.pageScorer .stakeOptionBlocked .stakeInput { color: var(--tip-muted); background: #f2f1ef; }
 .pageScorer .stakePortrait,
 .pageScorer .stakePortraitEmpty { flex-basis: 72px; width: 72px; height: 72px; }
 .pageScorer .stakeOptionInfo strong { font-size: 16px; }

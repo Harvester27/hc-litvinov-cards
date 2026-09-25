@@ -9,7 +9,7 @@ import { ArrowLeft, ArrowRight, Check, Clock3, FlaskConical, LockKeyhole, Rotate
 import Navigation from '@/components/Navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { auth, db } from '@/lib/firebase';
-import { TIPOVACKA_ROUND, riskOutcome, scorerStakeOutcome, isCompletePicks, maxPossiblePoints, scoreRound } from '@/lib/tipovacka.mjs';
+import { TIPOVACKA_ROUND, riskOutcome, scorerStakeOutcome, hasConflictingScorerStakes, isCompletePicks, maxPossiblePoints, scoreRound } from '@/lib/tipovacka.mjs';
 import styles from './page.module.css';
 
 const ADMIN_EMAIL = 'sanarycogames@outlook.cz';
@@ -27,7 +27,7 @@ const emptyScorerStakes = () => Object.fromEntries(TIPOVACKA_ROUND.questions.sco
 const INITIAL_PICKS = { outcome: null, scorer: emptyScorerStakes(), topPoints: null, firstGoal: null, totalGoals: null };
 const QUESTION_DESCRIPTIONS = {
   outcome: 'Rozhoduje skóre po prodloužení. Vítězství na nájezdy se zde počítá jako remíza.',
-  scorer: 'Rozděl přesně 10 bodů mezi libovolné možnosti. Můžeš vybrat i všech pět hráčů.',
+  scorer: 'Rozděl přesně 10 bodů mezi hráče, nebo všech 10 dej na možnost „Nikdo z uvedené pětice“. Tyto varianty nelze kombinovat.',
   topPoints: 'Body hráčů znamenají góly a asistence. Při shodě na prvním místě se otázka anuluje.',
   firstGoal: 'Který tým vstřelí první gól? Při zápase bez gólu se otázka anuluje.',
   totalGoals: 'Tipni přesný počet gólů obou týmů včetně prodloužení; nájezdy se nepočítají.',
@@ -71,6 +71,7 @@ function hasAnswered(key, picks) {
   if (key === 'scorer') {
     const stakes = picks.scorer;
     return question.options.every(({ id }) => Number.isInteger(stakes?.[id]) && stakes[id] >= 0 && stakes[id] <= question.stake)
+      && !hasConflictingScorerStakes(stakes)
       && Object.values(stakes ?? {}).reduce((sum, stake) => sum + stake, 0) === question.stake;
   }
   if (key === 'totalGoals') return Number.isInteger(picks.totalGoals) && picks.totalGoals >= question.min && picks.totalGoals <= question.max;
@@ -160,6 +161,9 @@ function MissingNameScreen({ onConfirm }) {
 
 function ScorerStakes({ question, selected, onSelect }) {
   const allocated = Object.values(selected).reduce((sum, stake) => sum + stake, 0);
+  const noneChosen = selected['none-listed'] > 0;
+  const playersChosen = question.options.some(({ id }) => id !== 'none-listed' && selected[id] > 0);
+  const conflicting = hasConflictingScorerStakes(selected);
   return (
     <div className={styles.stakesWrap}>
       <div className={styles.stakesProgress} aria-live="polite">
@@ -167,13 +171,16 @@ function ScorerStakes({ question, selected, onSelect }) {
         <span>{allocated === question.stake ? 'Hotovo' : allocated > question.stake ? `O ${allocated - question.stake} více` : `Zbývá ${question.stake - allocated}`}</span>
       </div>
       <div className={styles.stakesBar}><span style={{ width: `${Math.min(allocated / question.stake, 1) * 100}%` }} /></div>
+      {conflicting && <p className={styles.stakeConflictInfo} role="alert">Starší tiket kombinuje hráče s možností „Nikdo z uvedené pětice“. Odeber body z jedné varianty a zbývající znovu rozděl.</p>}
       <p className={styles.stakeVoidInfo}>Pokud vybraný hráč nenastoupí, body vložené na něj se anulují: za tuto volbu nezískáš ani neztratíš body. Ostatní volby se vyhodnotí běžně.</p>
       <div className={styles.stakeOptions} role="group" aria-label="Rozdělení bodů mezi střelce">
         {question.options.map((option) => {
           const stake = selected[option.id] ?? 0;
+          const noneOption = option.id === 'none-listed';
+          const blocked = stake === 0 && (noneOption ? playersChosen : noneChosen);
           const outcome = scorerStakeOutcome(stake, option.odds);
           return (
-            <div key={option.id} className={`${styles.stakeOption} ${stake > 0 ? styles.stakeOptionActive : ''}`}>
+            <div key={option.id} className={`${styles.stakeOption} ${stake > 0 ? styles.stakeOptionActive : ''} ${blocked ? styles.stakeOptionBlocked : ''}`}>
               <div className={styles.stakeOptionTop}>
                 {SCORER_PORTRAITS[option.id] ? (
                   <span className={styles.stakePortrait}>
@@ -191,9 +198,9 @@ function ScorerStakes({ question, selected, onSelect }) {
                 <button
                   type="button"
                   className={styles.stakeAdjust}
-                  aria-label={`Odebrat bod: ${option.label}`}
+                  aria-label={noneOption ? `Zrušit tip: ${option.label}` : `Odebrat bod: ${option.label}`}
                   disabled={stake === 0}
-                  onClick={() => onSelect(option.id, stake - 1)}
+                  onClick={() => onSelect(option.id, noneOption ? 0 : stake - 1)}
                 >−</button>
                 <input
                   type="text"
@@ -202,14 +209,16 @@ function ScorerStakes({ question, selected, onSelect }) {
                   pattern="[0-9]*"
                   aria-label={`Počet bodů pro ${option.label}`}
                   value={stake}
+                  readOnly={noneOption}
+                  disabled={blocked}
                   onChange={(event) => onSelect(option.id, event.target.value)}
                 />
                 <button
                   type="button"
                   className={styles.stakeAdjust}
-                  aria-label={`Přidat bod: ${option.label}`}
-                  disabled={allocated >= question.stake}
-                  onClick={() => onSelect(option.id, stake + 1)}
+                  aria-label={noneOption ? `Vybrat ${option.label} za 10 bodů` : `Přidat bod: ${option.label}`}
+                  disabled={blocked || allocated >= question.stake || (noneOption && stake > 0)}
+                  onClick={() => onSelect(option.id, noneOption ? question.stake : stake + 1)}
                 >+</button>
                 <span>b.</span>
               </div>
@@ -221,7 +230,7 @@ function ScorerStakes({ question, selected, onSelect }) {
           );
         })}
       </div>
-      <p className={styles.stakeHint}>„Nikdo z uvedené pětice“ vyhrává, když neskóruje žádný z nich, i kdyby gól dal jiný hráč Lancers.</p>
+      <p className={styles.stakeHint}>„Nikdo z uvedené pětice“ využije všech 10 bodů a vyhrává, když neskóruje žádný z nich, i kdyby gól dal jiný hráč Lancers.</p>
     </div>
   );
 }
@@ -418,9 +427,11 @@ export default function TipovackaPage() {
           const restored = normalizeSavedPicks(data.picks);
           setPicks(restored);
           setFinished(isCompletePicks(restored));
-          setNotice(typeof data.picks?.scorer === 'string'
-            ? 'Starší tip na střelce byl převeden na vklad 10 bodů. Po úpravě tiket znovu ulož.'
-            : 'Uložený návrh byl načten.');
+          setNotice(hasConflictingScorerStakes(restored.scorer)
+            ? 'Starší tiket kombinuje tip na hráče s tipem „Nikdo z uvedené pětice“. Ve druhé otázce jednu variantu zruš a znovu rozděl 10 bodů.'
+            : typeof data.picks?.scorer === 'string'
+              ? 'Starší tip na střelce byl převeden na vklad 10 bodů. Po úpravě tiket znovu ulož.'
+              : 'Uložený návrh byl načten.');
         }
         setLoadedUid(uid);
         setLoadState('ready');
@@ -471,7 +482,13 @@ export default function TipovackaPage() {
     const amount = raw === '' ? 0 : Number(raw);
     const maxStake = TIPOVACKA_ROUND.questions.scorer.stake;
     if (!Number.isInteger(amount) || amount < 0 || amount > maxStake) return;
+    if (id === 'none-listed' && amount !== 0 && amount !== maxStake) return;
     setPicks((previous) => {
+      const current = previous.scorer[id];
+      const opposingStake = id === 'none-listed'
+        ? Object.entries(previous.scorer).reduce((sum, [optionId, stake]) => sum + (optionId === 'none-listed' ? 0 : stake), 0)
+        : previous.scorer['none-listed'];
+      if (amount > current && opposingStake > 0) return previous;
       const otherAllocated = Object.entries(previous.scorer).reduce((sum, [optionId, stake]) => sum + (optionId === id ? 0 : stake), 0);
       if (otherAllocated + amount > maxStake) return previous;
       return { ...previous, scorer: { ...previous.scorer, [id]: amount } };

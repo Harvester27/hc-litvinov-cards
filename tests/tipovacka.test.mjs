@@ -41,10 +41,10 @@ test('single scorer selection preserves the original 63-point ticket', () => {
   assert.deepEqual(result, beforeResult);
 });
 
-test('all six options can receive stakes, with multiple goals scored', () => {
+test('all five named scorers can receive stakes, with multiple goals scored', () => {
   const split = { ...picks, scorer: {
     'jan-schubada': 2, 'marian-dlugopolsky': 3, 'lubos-coufal': 2,
-    'jan-hanus': 1, 'jiri-salanda': 1, 'none-listed': 1,
+    'jan-hanus': 1, 'jiri-salanda': 2, 'none-listed': 0,
   } };
   const scored = scoreRound(split, {
     ...result, scorerIds: ['marian-dlugopolsky', 'lubos-coufal'],
@@ -53,7 +53,7 @@ test('all six options can receive stakes, with multiple goals scored', () => {
   assert.deepEqual(scored.breakdown.scorer.lines.map(({ id, points }) => [id, points]), [
     ['jan-schubada', -2], ['marian-dlugopolsky', 9],
     ['lubos-coufal', 2.4], ['jan-hanus', -1],
-    ['jiri-salanda', -1], ['none-listed', -1],
+    ['jiri-salanda', -2],
   ]);
   assert.equal(scored.breakdown.scorer.points, 6.4);
   assert.equal(scored.total, 39.4);
@@ -142,20 +142,33 @@ test('allocation needs six integer values adding to exactly ten', () => {
   assert.equal(isCompletePicks({ ...picks, firstGoal: 'both' }), false);
 });
 
-test('maximum is feasible and respects mutually exclusive no-one and player hits', () => {
+test('nobody listed cannot share a stake with named scorers', () => {
+  const mixed = { ...picks, scorer: { ...scorer,
+    'marian-dlugopolsky': 5, 'none-listed': 5,
+  } };
+  assert.equal(isCompletePicks(mixed), false);
+  assert.throws(() => scoreRound(mixed, result), /platných odpovědí/);
+  assert.throws(() => maxPossiblePoints(mixed), /platných odpovědí/);
+  const nobody = { ...picks, scorer: { ...scorer,
+    'marian-dlugopolsky': 0, 'none-listed': 10,
+  } };
+  assert.equal(isCompletePicks(nobody), true);
+});
+
+test('maximum is feasible for both named scorers and nobody listed', () => {
   assert.equal(maxPossiblePoints(picks), 63);
-  const mixed = {
+  const named = {
     outcome: 'draw', scorer: { ...scorer,
-      'marian-dlugopolsky': 5, 'none-listed': 5 },
+      'jan-schubada': 10, 'marian-dlugopolsky': 0 },
     topPoints: 'pavel-novak', firstGoal: 'lancers', totalGoals: 2,
   };
-  assert.equal(maxPossiblePoints(mixed), 94);
-  assert.equal(scoreRound(mixed, {
-    homeGoals: 1, awayGoals: 1, scorerIds: [],
+  assert.equal(maxPossiblePoints(named), 75);
+  assert.equal(scoreRound(named, {
+    homeGoals: 1, awayGoals: 1, scorerIds: ['jan-schubada'],
     playerPoints: { 'pavel-novak': 1, 'marian-dlugopolsky': 0, 'gustav-toman': 0 },
     firstGoalTeam: 'lancers', didNotPlayIds: [],
-  }).total, 94);
-  const scoreless = { ...mixed, scorer: { ...scorer,
+  }).total, 75);
+  const scoreless = { ...named, scorer: { ...scorer,
     'marian-dlugopolsky': 0, 'none-listed': 10 },
     firstGoal: 'wolves', totalGoals: 0 };
   assert.equal(maxPossiblePoints(scoreless), 118);
