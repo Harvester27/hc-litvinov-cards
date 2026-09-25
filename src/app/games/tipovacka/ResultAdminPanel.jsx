@@ -148,7 +148,7 @@ export default function ResultAdminPanel({ tickets = [], onPublish, publishing =
   const [publishSucceeded, setPublishSucceeded] = useState(false);
   const ticketSignature = JSON.stringify(tickets.map(({ uid, displayName, picks }) => [uid, displayName, picks]));
   const invalidTickets = useMemo(() => tickets.filter(({ picks }) => !isCompletePicks(picks)), [tickets]);
-  const previewCurrent = preview && preview.ticketSignature === ticketSignature;
+  const previewCurrent = preview?.ticketSignature === ticketSignature ? preview : null;
   const locked = Boolean(publishedResult || publishSucceeded);
 
   const setField = (key, value) => {
