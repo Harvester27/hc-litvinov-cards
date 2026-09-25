@@ -638,6 +638,85 @@
 .simBlock select:focus,
 .standingsMessage button:focus-visible { outline-color: var(--tip-red); }
 
+/* The scorer screen uses the spare viewport width for larger, easier to use cards. */
+.pageScorer .flowWrap { width: min(1480px, 100%); }
+.pageScorer .question { padding: clamp(16px, 1.6vw, 25px); }
+.pageScorer .stakesWrap { margin-top: 15px; }
+.pageScorer .stakesBar { margin: 8px 0 10px; }
+.stakeVoidInfo {
+  margin: 0 0 12px;
+  padding: 8px 11px;
+  border-left: 3px solid var(--tip-gold);
+  color: var(--tip-ink);
+  background: #f6f4f0;
+  font-size: 12px;
+  line-height: 1.45;
+}
+.pageScorer .stakeOptions { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.pageScorer .stakeOption {
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 9px 12px;
+  min-height: 180px;
+  padding: 16px;
+}
+.pageScorer .stakeOptionTop { gap: 12px; }
+.pageScorer .stakePortrait,
+.pageScorer .stakePortraitEmpty { flex-basis: 72px; width: 72px; height: 72px; }
+.pageScorer .stakeOptionInfo strong { font-size: 16px; }
+.pageScorer .stakeOptionInfo span { font-size: 18px; }
+.pageScorer .stakeReturns { grid-column: 1 / -1; gap: 5px 16px; padding-top: 10px; font-size: 13px; }
+.stakeAmount { gap: 5px; }
+.stakeAdjust {
+  display: grid;
+  flex: none;
+  width: 50px;
+  height: 50px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--tip-gold-line);
+  border-radius: 0;
+  color: var(--tip-ink);
+  background: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 29px;
+  font-weight: 600;
+  line-height: 1;
+}
+.stakeAdjust:hover:not(:disabled) { border-color: var(--tip-gold); color: #fff; background: var(--tip-gold); }
+.stakeAdjust:disabled { opacity: .38; cursor: not-allowed; }
+.stakeAdjust:focus-visible { outline: 3px solid var(--tip-red); outline-offset: 2px; }
+.pageScorer .stakeAmount .stakeInput { width: 52px; height: 50px; padding: 0; font-size: 20px; }
+
+@media (max-width: 1450px) {
+  .pageScorer .stakeOptions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 850px) {
+  .pageScorer .stakeOption { grid-template-columns: minmax(0, 1fr); min-height: 170px; }
+  .pageScorer .stakeAmount { justify-content: flex-end; }
+  .pageScorer .stakeReturns { grid-column: auto; }
+}
+@media (max-width: 620px) {
+  .pageScorer .question { padding: 10px; }
+  .pageScorer .stakeOptions { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+  .pageScorer .stakeOption { min-height: 154px; gap: 5px; padding: 8px; }
+  .pageScorer .stakeOptionTop { display: flex; gap: 6px; }
+  .pageScorer .stakePortrait,
+  .pageScorer .stakePortraitEmpty { flex-basis: 42px; width: 42px; height: 42px; }
+  .pageScorer .stakeOptionInfo strong { font-size: 11px; }
+  .pageScorer .stakeOptionInfo span { font-size: 12px; }
+  .pageScorer .stakeAmount { justify-content: space-between; gap: 2px; }
+  .pageScorer .stakeAmount .stakeInput,
+  .pageScorer .stakeAdjust { width: 42px; height: 42px; }
+  .pageScorer .stakeAdjust { font-size: 26px; }
+  .pageScorer .stakeAmount .stakeInput { font-size: 17px; }
+  .pageScorer .stakeReturns { gap: 2px 7px; padding-top: 5px; font-size: 10px; }
+  .stakeVoidInfo { font-size: 11px; }
+}
+@media (max-width: 350px) {
+  .pageScorer .stakeOptions { grid-template-columns: 1fr; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .page::before,
   .page::after,

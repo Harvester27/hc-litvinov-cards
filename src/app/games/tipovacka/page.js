@@ -167,6 +167,7 @@ function ScorerStakes({ question, selected, onSelect }) {
         <span>{allocated === question.stake ? 'Hotovo' : allocated > question.stake ? `O ${allocated - question.stake} více` : `Zbývá ${question.stake - allocated}`}</span>
       </div>
       <div className={styles.stakesBar}><span style={{ width: `${Math.min(allocated / question.stake, 1) * 100}%` }} /></div>
+      <p className={styles.stakeVoidInfo}>Pokud vybraný hráč nenastoupí, body vložené na něj se anulují: za tuto volbu nezískáš ani neztratíš body. Ostatní volby se vyhodnotí běžně.</p>
       <div className={styles.stakeOptions} role="group" aria-label="Rozdělení bodů mezi střelce">
         {question.options.map((option) => {
           const stake = selected[option.id] ?? 0;
@@ -186,11 +187,32 @@ function ScorerStakes({ question, selected, onSelect }) {
                   <span>Kurz × {formatOdds(option.odds)}</span>
                 </div>
               </div>
-              <label className={styles.stakeAmount}>
-                <span className={styles.srOnly}>Body pro {option.label}</span>
-                <input type="number" inputMode="numeric" min="0" max="10" step="1" value={stake} onChange={(event) => onSelect(option.id, event.target.value)} />
+              <div className={styles.stakeAmount} role="group" aria-label={`Body pro ${option.label}`}>
+                <button
+                  type="button"
+                  className={styles.stakeAdjust}
+                  aria-label={`Odebrat bod: ${option.label}`}
+                  disabled={stake === 0}
+                  onClick={() => onSelect(option.id, stake - 1)}
+                >−</button>
+                <input
+                  type="text"
+                  className={styles.stakeInput}
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  aria-label={`Počet bodů pro ${option.label}`}
+                  value={stake}
+                  onChange={(event) => onSelect(option.id, event.target.value)}
+                />
+                <button
+                  type="button"
+                  className={styles.stakeAdjust}
+                  aria-label={`Přidat bod: ${option.label}`}
+                  disabled={allocated >= question.stake}
+                  onClick={() => onSelect(option.id, stake + 1)}
+                >+</button>
                 <span>b.</span>
-              </label>
+              </div>
               <div className={styles.stakeReturns}>
                 <span className={styles.positive}>Trefa: {formatPoints(outcome.win)} b.</span>
                 <span className={outcome.loss < 0 ? styles.negative : styles.neutral}>Chyba: {formatPoints(outcome.loss)} b.</span>
@@ -447,8 +469,13 @@ export default function TipovackaPage() {
 
   const selectStake = (id, raw) => {
     const amount = raw === '' ? 0 : Number(raw);
-    if (!Number.isInteger(amount) || amount < 0 || amount > 10) return;
-    setPicks((previous) => ({ ...previous, scorer: { ...previous.scorer, [id]: amount } }));
+    const maxStake = TIPOVACKA_ROUND.questions.scorer.stake;
+    if (!Number.isInteger(amount) || amount < 0 || amount > maxStake) return;
+    setPicks((previous) => {
+      const otherAllocated = Object.entries(previous.scorer).reduce((sum, [optionId, stake]) => sum + (optionId === id ? 0 : stake), 0);
+      if (otherAllocated + amount > maxStake) return previous;
+      return { ...previous, scorer: { ...previous.scorer, [id]: amount } };
+    });
     setFinished(false);
     setSaveFailed(false);
     setNotice('');
@@ -513,7 +540,7 @@ export default function TipovackaPage() {
   const activeKey = showingIntro ? null : QUESTION_KEYS[activeStep];
 
   return (
-    <div className={`${styles.page} ${showingIntro ? '' : styles.pageFlow}`}>
+    <div className={`${styles.page} ${showingIntro ? '' : styles.pageFlow} ${activeKey === 'scorer' ? styles.pageScorer : ''}`}>
       <Navigation />
       <main className={`${styles.shell} ${showingIntro ? '' : styles.shellFlow}`}>
         <div className={styles.breadcrumb}><Link href="/games"><ArrowLeft size={15} aria-hidden="true" /> Všechny hry</Link><span>/</span><span>Tipovačka</span></div>
