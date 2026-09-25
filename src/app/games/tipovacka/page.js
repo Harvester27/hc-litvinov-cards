@@ -23,6 +23,15 @@ const SCORER_PORTRAITS = {
   'jan-hanus': '/images/players/roster/hanus-jan.webp',
   'jiri-salanda': '/images/players/roster/salanda-jiri.webp',
 };
+const TOP_POINTS_PORTRAITS = {
+  'pavel-novak': '/CardGames/obyckartylancers/pavelnovakobyc.png',
+  'marian-dlugopolsky': SCORER_PORTRAITS['marian-dlugopolsky'],
+  'gustav-toman': '/images/players/roster/toman-gustav.jpg',
+};
+const TEAM_LOGOS = {
+  lancers: '/images/loga/lancers-logo.png',
+  wolves: '/images/loga/GlacierWolves.png',
+};
 const emptyScorerStakes = () => Object.fromEntries(TIPOVACKA_ROUND.questions.scorer.options.map(({ id }) => [id, 0]));
 const INITIAL_PICKS = { outcome: null, scorer: emptyScorerStakes(), topPoints: null, firstGoal: null, totalGoals: null };
 const QUESTION_DESCRIPTIONS = {
@@ -112,11 +121,13 @@ function LoadingScreen({ message = 'Ověřuji přístup…', retry }) {
 
 function OptionGroup({ questionKey, question, selected, onSelect }) {
   const risky = questionKey === 'outcome' || questionKey === 'topPoints';
+  const playerOptions = questionKey === 'topPoints';
 
   return (
-    <div className={styles.options} role="group" aria-label={question.title}>
+    <div className={`${styles.options} ${question.options.length === 3 ? styles.optionsThree : styles.optionsTwo}`} role="group" aria-label={question.title}>
       {question.options.map((option) => {
         const outcome = risky ? riskOutcome(option.odds) : { win: question.win, loss: question.loss };
+        const picture = playerOptions ? TOP_POINTS_PORTRAITS[option.id] : TEAM_LOGOS[option.id];
         return (
           <label key={option.id} className={`${styles.option} ${selected === option.id ? styles.optionSelected : ''}`}>
             <input
@@ -127,6 +138,12 @@ function OptionGroup({ questionKey, question, selected, onSelect }) {
               onChange={() => onSelect(questionKey, option.id)}
             />
             <span className={styles.optionCheck} aria-hidden="true">{selected === option.id && <Check size={14} strokeWidth={3} />}</span>
+            {picture && (
+              <span className={`${styles.optionPortrait} ${playerOptions ? styles.optionPlayerPortrait : styles.optionTeamLogo} ${option.id === 'pavel-novak' ? styles.optionPortraitPavel : ''}`} aria-hidden="true">
+                <Image src={picture} alt="" width={option.id === 'pavel-novak' ? 320 : 120} height={option.id === 'pavel-novak' ? 480 : 120} />
+              </span>
+            )}
+            {!picture && option.id === 'draw' && <span className={styles.optionPortrait} aria-hidden="true"><span className={styles.optionTieMark}>=</span></span>}
             <span className={styles.optionBody}>
               <span className={styles.optionName}>{option.label}</span>
               <span className={styles.optionScores}>
@@ -555,9 +572,10 @@ export default function TipovackaPage() {
   const adminName = playerName;
   const showingIntro = activeStep === null;
   const activeKey = showingIntro ? null : QUESTION_KEYS[activeStep];
+  const choiceScreen = activeKey === 'outcome' || activeKey === 'topPoints' || activeKey === 'firstGoal';
 
   return (
-    <div className={`${styles.page} ${showingIntro ? '' : styles.pageFlow} ${activeKey === 'scorer' ? styles.pageScorer : ''}`}>
+    <div className={`${styles.page} ${showingIntro ? '' : styles.pageFlow} ${activeKey === 'scorer' ? styles.pageScorer : ''} ${choiceScreen ? styles.pageChoices : ''} ${activeKey === 'totalGoals' ? styles.pageGoals : ''}`}>
       <Navigation />
       <main className={`${styles.shell} ${showingIntro ? '' : styles.shellFlow}`}>
         <div className={styles.breadcrumb}><Link href="/games"><ArrowLeft size={15} aria-hidden="true" /> Všechny hry</Link><span>/</span><span>Tipovačka</span></div>

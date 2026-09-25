@@ -557,7 +557,6 @@
 .optionSelected { border-color: var(--tip-gold); background: #e7d7b7; box-shadow: inset 0 0 0 1px rgba(128, 94, 35, .35); }
 .stakePortrait,
 .stakePortraitEmpty { border-color: var(--tip-line); background: #eee; }
-.stakePortrait img { filter: grayscale(1); }
 .stakePortraitEmpty { color: var(--tip-gold); background: #f5f5f5; }
 .stakeOptionInfo strong { color: var(--tip-ink); }
 .stakeOptionInfo span { color: var(--tip-gold); }
@@ -699,13 +698,58 @@
 .stakeAdjust:focus-visible { outline: 3px solid var(--tip-red); outline-offset: 2px; }
 .pageScorer .stakeAmount .stakeInput { width: 52px; height: 50px; padding: 0; font-size: 20px; }
 
+/* Give every answer the same generous scale as the scorer screen. */
+.pageChoices .flowWrap { width: min(1480px, 100%); }
+.pageChoices .question { padding: clamp(16px, 1.6vw, 25px); }
+.pageChoices .options { gap: 14px; margin-top: 20px; }
+.pageChoices .optionsThree { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.pageChoices .optionsTwo { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.pageChoices .option { min-height: 180px; align-items: center; gap: 12px; padding: 16px; }
+.pageChoices .optionCheck { width: 28px; height: 28px; }
+.pageChoices .optionName { font-size: 17px; }
+.pageChoices .optionScores { margin-top: 10px; font-size: 13px; }
+.pageChoices .odds { font-size: 23px; }
+.optionPortrait {
+  display: grid;
+  flex: 0 0 90px;
+  width: 90px;
+  height: 90px;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid var(--tip-line);
+  background: #fff;
+}
+.optionPortrait img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 25%; }
+.optionPlayerPortrait { background: #f7f7f7; }
+.optionTeamLogo img { object-fit: contain; padding: 7px; }
+.optionPortraitPavel { place-items: start; }
+.optionPortraitPavel img {
+  width: 374%;
+  height: 561%;
+  max-width: none;
+  max-height: none;
+  object-fit: fill;
+  transform: translate(-37%, -34%);
+}
+.optionTieMark { color: var(--tip-gold); font-family: Georgia, 'Times New Roman', serif; font-size: 60px; line-height: 1; }
+
+.pageGoals .flowWrap { width: min(1180px, 100%); }
+.pageGoals .question { min-height: 310px; }
+.pageGoals .goalsInputRow input { width: 136px; height: 102px; font-size: 54px; }
+.pageGoals .goalsInputRow > span { font-size: 15px; }
+
 @media (max-width: 1450px) {
   .pageScorer .stakeOptions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 1100px) {
+  .pageChoices .optionsThree { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 850px) {
   .pageScorer .stakeOption { grid-template-columns: minmax(0, 1fr); min-height: 170px; }
   .pageScorer .stakeAmount { justify-content: flex-end; }
   .pageScorer .stakeReturns { grid-column: auto; }
+  .pageChoices .option { min-height: 160px; }
+  .pageChoices .optionPortrait { flex-basis: 72px; width: 72px; height: 72px; }
 }
 @media (max-width: 620px) {
   .pageScorer .question { padding: 10px; }
@@ -723,6 +767,20 @@
   .pageScorer .stakeAmount .stakeInput { font-size: 17px; }
   .pageScorer .stakeReturns { gap: 2px 7px; padding-top: 5px; font-size: 10px; }
   .stakeVoidInfo { font-size: 11px; }
+  .pageChoices .question { padding: 10px; }
+  .pageChoices .optionsThree,
+  .pageChoices .optionsTwo { grid-template-columns: 1fr; }
+  .pageChoices .options { gap: 7px; margin-top: 12px; }
+  .pageChoices .option { min-height: 120px; gap: 9px; padding: 10px; }
+  .pageChoices .optionPortrait { flex-basis: 58px; width: 58px; height: 58px; }
+  .pageChoices .optionCheck { width: 24px; height: 24px; }
+  .pageChoices .optionName { font-size: 14px; }
+  .pageChoices .optionScores { gap: 2px 8px; margin-top: 5px; font-size: 11px; }
+  .pageChoices .odds { font-size: 18px; }
+  .optionTieMark { font-size: 42px; }
+  .pageGoals .question { min-height: 0; }
+  .pageGoals .goalsPick { margin-left: 0; }
+  .pageGoals .goalsInputRow input { width: 112px; height: 88px; font-size: 46px; }
 }
 @media (max-width: 350px) {
   .pageScorer .stakeOptions { grid-template-columns: 1fr; }
