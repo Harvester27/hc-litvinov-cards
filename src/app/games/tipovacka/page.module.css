@@ -722,15 +722,6 @@
 .optionPortrait img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 25%; }
 .optionPlayerPortrait { background: #f7f7f7; }
 .optionTeamLogo img { object-fit: contain; padding: 7px; }
-.optionPortraitPavel { position: relative; }
-.optionPortraitPavel img {
-  position: absolute;
-  top: -192%;
-  left: -138%;
-  width: 374%;
-  height: auto;
-  max-width: none;
-}
 .optionTieMark { color: var(--tip-gold); font-family: Georgia, 'Times New Roman', serif; font-size: 60px; line-height: 1; }
 
 .pageGoals .flowWrap { width: min(1180px, 100%); }

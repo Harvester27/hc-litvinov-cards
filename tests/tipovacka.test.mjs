@@ -10,12 +10,12 @@ const scorer = {
   'jan-hanus': 0, 'jiri-salanda': 0, 'none-listed': 0,
 };
 const picks = {
-  outcome: 'lancers', scorer, topPoints: 'pavel-novak',
+  outcome: 'lancers', scorer, topPoints: 'tomas-turecek',
   firstGoal: 'lancers', totalGoals: 5,
 };
 const result = {
   homeGoals: 3, awayGoals: 2, scorerIds: ['marian-dlugopolsky'],
-  playerPoints: { 'pavel-novak': 2, 'marian-dlugopolsky': 1, 'gustav-toman': 0 },
+  playerPoints: { 'tomas-turecek': 2, 'marian-dlugopolsky': 1, 'gustav-toman': 0 },
   firstGoalTeam: 'lancers', didNotPlayIds: [],
 };
 
@@ -28,15 +28,15 @@ test('six scorer odds and allocated stakes pay net gains in tenths', () => {
   assert.equal(TIPOVACKA_ROUND.questions.scorer.options.at(-1).id, 'none-listed');
 });
 
-test('single scorer selection preserves the original 63-point ticket', () => {
+test('Tomáš Tureček at 2.9 pays 19 points on a winning ten-point pick', () => {
   const beforePicks = structuredClone(picks);
   const beforeResult = structuredClone(result);
   const scored = scoreRound(picks, result);
   assert.deepEqual(Object.fromEntries(Object.entries(scored.breakdown)
     .map(([key, value]) => [key, value.points])), {
-    outcome: 4, scorer: 30, topPoints: 6, firstGoal: 5, totalGoals: 18,
+    outcome: 4, scorer: 30, topPoints: 19, firstGoal: 5, totalGoals: 18,
   });
-  assert.equal(scored.total, 63);
+  assert.equal(scored.total, 76);
   assert.deepEqual(picks, beforePicks);
   assert.deepEqual(result, beforeResult);
 });
@@ -56,7 +56,7 @@ test('all five named scorers can receive stakes, with multiple goals scored', ()
     ['jiri-salanda', -2],
   ]);
   assert.equal(scored.breakdown.scorer.points, 6.4);
-  assert.equal(scored.total, 39.4);
+  assert.equal(scored.total, 52.4);
 });
 
 test('two points on each of five scorers can all hit', () => {
@@ -67,7 +67,7 @@ test('two points on each of five scorers can all hit', () => {
   const scored = scoreRound(everyPlayer, {
     ...result, homeGoals: 5, awayGoals: 0,
     scorerIds: TIPOVACKA_ROUND.questions.scorer.options.slice(0, 5).map(({ id }) => id),
-    playerPoints: { ...result.playerPoints, 'pavel-novak': 5 },
+    playerPoints: { ...result.playerPoints, 'tomas-turecek': 5 },
   });
   assert.equal(scored.breakdown.scorer.status, 'hit');
   assert.equal(scored.breakdown.scorer.points, 12.2);
@@ -86,7 +86,7 @@ test('nobody listed wins even if another Lancers player scores', () => {
 test('all three risky questions can miss for minus thirty', () => {
   const scored = scoreRound(picks, {
     ...result, homeGoals: 2, awayGoals: 4, scorerIds: [],
-    playerPoints: { 'pavel-novak': 0, 'marian-dlugopolsky': 0, 'gustav-toman': 2 },
+    playerPoints: { 'tomas-turecek': 0, 'marian-dlugopolsky': 0, 'gustav-toman': 2 },
     firstGoalTeam: 'wolves',
   });
   assert.equal(scored.total, -30);
@@ -99,7 +99,7 @@ test('a nonparticipant voids only their scorer stake', () => {
     'jan-schubada': 5, 'marian-dlugopolsky': 5 } };
   const scored = scoreRound(split, {
     ...result, scorerIds: ['jan-schubada'],
-    didNotPlayIds: ['marian-dlugopolsky', 'pavel-novak'],
+    didNotPlayIds: ['marian-dlugopolsky', 'tomas-turecek'],
     playerPoints: { 'gustav-toman': 1 },
   });
   assert.equal(scored.breakdown.scorer.points, 3);
@@ -115,7 +115,7 @@ test('draw after shootout and 0:0 retain their original handling', () => {
   assert.equal(draw.breakdown.outcome.points, 40);
   const zero = scoreRound({ ...picks, outcome: 'draw', totalGoals: 0 }, {
     ...result, homeGoals: 0, awayGoals: 0, scorerIds: [],
-    playerPoints: { 'pavel-novak': 0, 'marian-dlugopolsky': 0, 'gustav-toman': 0 },
+    playerPoints: { 'tomas-turecek': 0, 'marian-dlugopolsky': 0, 'gustav-toman': 0 },
     firstGoalTeam: null,
   });
   assert.equal(zero.breakdown.firstGoal.status, 'void');
@@ -156,25 +156,30 @@ test('nobody listed cannot share a stake with named scorers', () => {
 });
 
 test('maximum is feasible for both named scorers and nobody listed', () => {
-  assert.equal(maxPossiblePoints(picks), 63);
+  assert.equal(maxPossiblePoints(picks), 76);
   const named = {
     outcome: 'draw', scorer: { ...scorer,
       'jan-schubada': 10, 'marian-dlugopolsky': 0 },
-    topPoints: 'pavel-novak', firstGoal: 'lancers', totalGoals: 2,
+    topPoints: 'tomas-turecek', firstGoal: 'lancers', totalGoals: 2,
   };
-  assert.equal(maxPossiblePoints(named), 75);
+  assert.equal(maxPossiblePoints(named), 88);
   assert.equal(scoreRound(named, {
     homeGoals: 1, awayGoals: 1, scorerIds: ['jan-schubada'],
-    playerPoints: { 'pavel-novak': 1, 'marian-dlugopolsky': 0, 'gustav-toman': 0 },
+    playerPoints: { 'tomas-turecek': 1, 'marian-dlugopolsky': 0, 'gustav-toman': 0 },
     firstGoalTeam: 'lancers', didNotPlayIds: [],
-  }).total, 75);
-  const scoreless = { ...named, scorer: { ...scorer,
+  }).total, 88);
+  const nobodyListed = { ...named, scorer: { ...scorer,
     'marian-dlugopolsky': 0, 'none-listed': 10 },
     firstGoal: 'wolves', totalGoals: 0 };
-  assert.equal(maxPossiblePoints(scoreless), 118);
-  assert.equal(scoreRound(scoreless, {
+  assert.equal(maxPossiblePoints(nobodyListed), 124);
+  assert.equal(scoreRound(nobodyListed, {
+    homeGoals: 2, awayGoals: 2, scorerIds: [],
+    playerPoints: { 'tomas-turecek': 1, 'marian-dlugopolsky': 0, 'gustav-toman': 0 },
+    firstGoalTeam: 'wolves', didNotPlayIds: [],
+  }).total, 124);
+  assert.equal(scoreRound(nobodyListed, {
     homeGoals: 0, awayGoals: 0, scorerIds: [],
-    playerPoints: { 'pavel-novak': 0, 'marian-dlugopolsky': 0, 'gustav-toman': 0 },
+    playerPoints: { 'tomas-turecek': 0, 'marian-dlugopolsky': 0, 'gustav-toman': 0 },
     firstGoalTeam: null, didNotPlayIds: [],
   }).total, 118);
 });
@@ -184,13 +189,13 @@ test('impossible results fail before any payout', () => {
   assert.throws(() => scoreRound(picks, { ...result, firstGoalTeam: null }));
   assert.throws(() => scoreRound(picks, { ...result, playerPoints: {} }), RangeError);
   assert.throws(() => scoreRound(picks, { ...result,
-    playerPoints: { ...result.playerPoints, 'pavel-novak': 4 } }), RangeError);
+    playerPoints: { ...result.playerPoints, 'tomas-turecek': 4 } }), RangeError);
   assert.throws(() => scoreRound(picks, { ...result, scorerIds: ['unknown'] }), /vypsanou pětici/);
   assert.throws(() => scoreRound(picks, { ...result,
     didNotPlayIds: ['marian-dlugopolsky'] }));
   assert.throws(() => scoreRound(picks, { ...result,
     homeGoals: 0, awayGoals: 2, scorerIds: [], firstGoalTeam: 'lancers',
-    playerPoints: { 'pavel-novak': 0, 'marian-dlugopolsky': 0, 'gustav-toman': 0 },
+    playerPoints: { 'tomas-turecek': 0, 'marian-dlugopolsky': 0, 'gustav-toman': 0 },
   }), /První gól/);
   assert.throws(() => scoreRound(picks, { ...result,
     scorerIds: ['marian-dlugopolsky', 'marian-dlugopolsky'] }), /Seznam střelců/);

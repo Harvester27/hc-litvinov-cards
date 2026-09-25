@@ -32,7 +32,7 @@ export const TIPOVACKA_ROUND = {
       title: 'Kdo z trojice získá nejvíce bodů (góly + asistence)?',
       stake: 10,
       options: [
-        { id: 'pavel-novak', label: 'Pavel Novák', odds: 1.6 },
+        { id: 'tomas-turecek', label: 'Tomáš Tureček', odds: 2.9 },
         { id: 'marian-dlugopolsky', label: 'Marian Dlugopolský', odds: 3 },
         { id: 'gustav-toman', label: 'Gustav Toman', odds: 2.5 },
       ],

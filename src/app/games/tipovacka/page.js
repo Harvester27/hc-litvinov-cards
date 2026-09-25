@@ -24,7 +24,7 @@ const SCORER_PORTRAITS = {
   'jiri-salanda': '/images/players/roster/salanda-jiri.webp',
 };
 const TOP_POINTS_PORTRAITS = {
-  'pavel-novak': '/CardGames/obyckartylancers/pavelnovakobyc.png',
+  'tomas-turecek': '/images/players/roster/turecek-tomas.webp',
   'marian-dlugopolsky': SCORER_PORTRAITS['marian-dlugopolsky'],
   'gustav-toman': '/images/players/roster/toman-gustav.jpg',
 };
@@ -69,7 +69,7 @@ function normalizeSavedPicks(raw) {
   return {
     outcome: raw.outcome ?? null,
     scorer,
-    topPoints: raw.topPoints ?? null,
+    topPoints: TIPOVACKA_ROUND.questions.topPoints.options.some(({ id }) => id === raw.topPoints) ? raw.topPoints : null,
     firstGoal: raw.firstGoal ?? null,
     totalGoals: raw.totalGoals ?? null,
   };
@@ -139,8 +139,8 @@ function OptionGroup({ questionKey, question, selected, onSelect }) {
             />
             <span className={styles.optionCheck} aria-hidden="true">{selected === option.id && <Check size={14} strokeWidth={3} />}</span>
             {picture && (
-              <span className={`${styles.optionPortrait} ${playerOptions ? styles.optionPlayerPortrait : styles.optionTeamLogo} ${option.id === 'pavel-novak' ? styles.optionPortraitPavel : ''}`} aria-hidden="true">
-                <Image src={picture} alt="" width={option.id === 'pavel-novak' ? 320 : 120} height={option.id === 'pavel-novak' ? 480 : 120} />
+              <span className={`${styles.optionPortrait} ${playerOptions ? styles.optionPlayerPortrait : styles.optionTeamLogo}`} aria-hidden="true">
+                <Image src={picture} alt="" width={120} height={120} />
               </span>
             )}
             {!picture && option.id === 'draw' && <span className={styles.optionPortrait} aria-hidden="true"><span className={styles.optionTieMark}>=</span></span>}
@@ -444,7 +444,9 @@ export default function TipovackaPage() {
           const restored = normalizeSavedPicks(data.picks);
           setPicks(restored);
           setFinished(isCompletePicks(restored));
-          setNotice(hasConflictingScorerStakes(restored.scorer)
+          setNotice(data.picks?.topPoints === 'pavel-novak'
+            ? 'Ve třetí otázce je teď Tomáš Tureček místo Pavla Nováka. Vyber nový tip a tiket znovu ulož.'
+            : hasConflictingScorerStakes(restored.scorer)
             ? 'Starší tiket kombinuje tip na hráče s tipem „Nikdo z uvedené pětice“. Ve druhé otázce jednu variantu zruš a znovu rozděl 10 bodů.'
             : typeof data.picks?.scorer === 'string'
               ? 'Starší tip na střelce byl převeden na vklad 10 bodů. Po úpravě tiket znovu ulož.'

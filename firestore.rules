@@ -104,7 +104,7 @@ service cloud.firestore {
           || validScorerStakes(request.resource.data.picks.scorer)
         )
         && request.resource.data.picks.topPoints in [
-          'pavel-novak', 'marian-dlugopolsky', 'gustav-toman'
+          'tomas-turecek', 'marian-dlugopolsky', 'gustav-toman'
         ]
         && request.resource.data.picks.firstGoal in ['lancers', 'wolves']
         && request.resource.data.picks.totalGoals is int
