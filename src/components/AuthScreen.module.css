@@ -68,6 +68,12 @@
 .notice, .error { padding: 12px 13px; margin-bottom: 20px; font-size: 12px; line-height: 1.55; }
 .notice { color: #d6e8d6; border: 1px solid #54745a; background: #23402d63; }
 .error { color: #ffd1c9; border: 1px solid #a35950; background: #4b272c63; }
+.verificationActions { margin-bottom: 24px; }
+.verificationActions p { margin: 0 0 12px; color: #b8c5be; font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
+.resendButton { width: 100%; min-height: 46px; padding: 10px 12px; border: 1px solid #b7a373; color: #ead4a0; background: #1b2929; cursor: pointer; font-size: 12px; font-weight: 700; }
+.resendButton:hover:not(:disabled) { border-color: #efd9a2; background: #243333; }
+.resendButton:disabled { opacity: .65; cursor: not-allowed; }
+.resendButton:focus-visible { outline: 2px solid #f0d9a2; outline-offset: 3px; }
 
 .form { display: flex; flex-direction: column; }
 .form label { margin: 0 0 8px; color: #d2d4ca; font-size: 12px; font-weight: 700; }

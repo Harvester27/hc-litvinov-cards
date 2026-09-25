@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import {
   createUserWithEmailAndPassword,
@@ -16,6 +16,29 @@ import { auth, googleProvider } from '@/lib/firebase';
 import styles from './AuthScreen.module.css';
 
 const googleLoginEnabled = process.env.NEXT_PUBLIC_GOOGLE_LOGIN_ENABLED !== 'false';
+const verificationCooldownMs = 60_000;
+
+function verificationStorageKey(user) {
+  return `lancers:verification:${user.uid}`;
+}
+
+function getVerificationErrorMessage(error) {
+  switch (error?.code) {
+    case 'auth/too-many-requests':
+    case 'auth/quota-exceeded':
+      return 'Další ověřovací e-mail teď nelze odeslat kvůli limitu požadavků. Počkej prosím několik minut a zkus to znovu.';
+    case 'auth/network-request-failed':
+      return 'Odeslání ověřovacího e-mailu se nepodařilo potvrdit. Zkontroluj připojení a před dalším pokusem i svou schránku.';
+    case 'auth/user-token-expired':
+    case 'auth/invalid-user-token':
+    case 'auth/user-not-found':
+      return 'Pro odeslání nového ověřovacího e-mailu se prosím znovu přihlas.';
+    case 'auth/user-disabled':
+      return 'Tento účet je zablokovaný.';
+    default:
+      return 'Ověřovací e-mail se nepodařilo odeslat. Zkus to prosím za chvíli znovu.';
+  }
+}
 
 function getErrorMessage(error) {
   switch (error?.code) {
@@ -71,8 +94,50 @@ export default function AuthScreen({ onLoginSuccess }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
+  // Keep only the SDK identity in this mounted screen, never the password.
+  // The website session is signed out while the address remains unverified.
+  const [verificationUser, setVerificationUser] = useState(null);
+  const [cooldownUntil, setCooldownUntil] = useState(0);
+  const [cooldownSeconds, setCooldownSeconds] = useState(0);
+  const resendInFlight = useRef(false);
+
+  useEffect(() => {
+    if (!cooldownUntil) return;
+    const updateCountdown = () => setCooldownSeconds(Math.max(0, Math.ceil((cooldownUntil - Date.now()) / 1000)));
+    const timer = setInterval(updateCountdown, 1000);
+    return () => clearInterval(timer);
+  }, [cooldownUntil]);
+
+  function setVerificationContext(user) {
+    setVerificationUser(user);
+    let deadline = 0;
+    if (user) {
+      try {
+        const storedDeadline = Number(sessionStorage.getItem(verificationStorageKey(user)));
+        if (Number.isFinite(storedDeadline) && storedDeadline > Date.now()) {
+          deadline = Math.min(storedDeadline, Date.now() + verificationCooldownMs);
+        }
+      } catch {
+        // Resending still works when browser storage is unavailable.
+      }
+    }
+    setCooldownUntil(deadline);
+    setCooldownSeconds(Math.max(0, Math.ceil((deadline - Date.now()) / 1000)));
+  }
+
+  function startVerificationCooldown(user) {
+    const deadline = Date.now() + verificationCooldownMs;
+    setCooldownUntil(deadline);
+    setCooldownSeconds(verificationCooldownMs / 1000);
+    try {
+      sessionStorage.setItem(verificationStorageKey(user), String(deadline));
+    } catch {
+      // The in-memory cooldown remains active without browser storage.
+    }
+  }
 
   function changeMode(nextMode) {
+    setVerificationContext(null);
     setMode(nextMode);
     setError('');
     setNotice('');
@@ -85,6 +150,7 @@ export default function AuthScreen({ onLoginSuccess }) {
     const address = email.trim();
     setError('');
     setNotice('');
+    setVerificationContext(null);
 
     if (mode === 'register') {
       if (password.length < 8) {
@@ -101,8 +167,10 @@ export default function AuthScreen({ onLoginSuccess }) {
     try {
       if (mode === 'register') {
         const { user } = await createUserWithEmailAndPassword(auth, address, password);
+        setVerificationContext(user);
         let verificationError = null;
         try {
+          startVerificationCooldown(user);
           await sendEmailVerification(user);
         } catch (mailError) {
           verificationError = mailError;
@@ -114,7 +182,8 @@ export default function AuthScreen({ onLoginSuccess }) {
         setConfirmation('');
         setMode('login');
         if (verificationError) {
-          setError('Účet vznikl, ale ověřovací e-mail se nepodařilo odeslat. Zkus se přihlásit a požádat o nový odkaz.');
+          setNotice('Účet je vytvořený, ale e-mail zatím není potvrzený. Novou registraci nepotřebuješ.');
+          setError(getVerificationErrorMessage(verificationError));
         } else {
           setNotice('Účet je vytvořený. Otevři e-mail, potvrď adresu a potom se přihlas. Zkontroluj i spam.');
         }
@@ -130,18 +199,10 @@ export default function AuthScreen({ onLoginSuccess }) {
       }
 
       if (!user.emailVerified) {
-        let resendFailed = false;
-        try {
-          await sendEmailVerification(user);
-        } catch {
-          resendFailed = true;
-        } finally {
-          await signOut(auth);
-        }
+        await signOut(auth);
+        setVerificationContext(user);
         setPassword('');
-        setNotice(resendFailed
-          ? 'E-mail ještě není potvrzený. Zkontroluj původní ověřovací zprávu a spam; další zprávu se teď nepodařilo odeslat.'
-          : 'E-mail ještě není potvrzený. Poslali jsme nový ověřovací odkaz. Po potvrzení se přihlas znovu.');
+        setNotice('E-mail ještě není potvrzený. Potvrď adresu odkazem ve zprávě a potom se přihlas. Pokud zpráva nedorazila, můžeš ji níže odeslat znovu.');
         return;
       }
 
@@ -152,6 +213,33 @@ export default function AuthScreen({ onLoginSuccess }) {
     } catch (authError) {
       setError(getErrorMessage(authError));
     } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleResendVerification() {
+    if (!verificationUser || busy || resendInFlight.current || Date.now() < cooldownUntil) return;
+    resendInFlight.current = true;
+    setBusy(true);
+    setError('');
+    setNotice('');
+    try {
+      await reload(verificationUser);
+      if (verificationUser.emailVerified) {
+        setVerificationContext(null);
+        setNotice('E-mail už je potvrzený. Teď se můžeš přihlásit.');
+        return;
+      }
+      startVerificationCooldown(verificationUser);
+      await sendEmailVerification(verificationUser);
+      setNotice('Požádali jsme o nový ověřovací e-mail. Zkontroluj doručené zprávy, Hromadné i Spam. Po potvrzení adresy se přihlas.');
+    } catch (mailError) {
+      setError(getVerificationErrorMessage(mailError));
+      if (['auth/user-token-expired', 'auth/invalid-user-token', 'auth/user-not-found', 'auth/user-disabled'].includes(mailError?.code)) {
+        setVerificationContext(null);
+      }
+    } finally {
+      resendInFlight.current = false;
       setBusy(false);
     }
   }
@@ -178,6 +266,7 @@ export default function AuthScreen({ onLoginSuccess }) {
   }
 
   async function handleGoogleSignIn() {
+    setVerificationContext(null);
     setBusy(true);
     setError('');
     setNotice('');
@@ -233,11 +322,20 @@ export default function AuthScreen({ onLoginSuccess }) {
           {notice && <div className={styles.notice} role="status">{notice}</div>}
           {error && <div className={styles.error} role="alert">{error}</div>}
 
+          {verificationUser && (
+            <div className={styles.verificationActions}>
+              <p>Ověření adresy <strong>{verificationUser.email}</strong>. Novou registraci nepotřebuješ.</p>
+              <button type="button" className={styles.resendButton} disabled={busy || cooldownSeconds > 0} onClick={handleResendVerification}>
+                {resendInFlight.current ? 'Odesílám…' : cooldownSeconds > 0 ? `Další e-mail za ${cooldownSeconds} s` : 'Odeslat ověřovací e-mail znovu'}
+              </button>
+            </div>
+          )}
+
           <form onSubmit={isReset ? handlePasswordReset : handleEmailSubmit} className={styles.form}>
             <label htmlFor="auth-email">E-mail</label>
             <div className={styles.inputWrap}>
               <Mail size={18} aria-hidden="true" />
-              <input id="auth-email" type="email" autoComplete="email" inputMode="email" autoCapitalize="none" spellCheck={false} required value={email} onChange={(event) => setEmail(event.target.value)} placeholder="tvuj@email.cz" disabled={busy} />
+              <input id="auth-email" type="email" autoComplete="email" inputMode="email" autoCapitalize="none" spellCheck={false} required value={email} onChange={(event) => { setEmail(event.target.value); setVerificationContext(null); setNotice(''); setError(''); }} placeholder="tvuj@email.cz" disabled={busy} />
             </div>
 
             {!isReset && (
@@ -278,7 +376,7 @@ export default function AuthScreen({ onLoginSuccess }) {
                   <button type="button" className={styles.googleButton} disabled={busy} onClick={handleGoogleSignIn}><GoogleMark /> Pokračovat přes Google</button>
                 </>
               )}
-              <p className={styles.footnote}>Staré účty už neplatí. Založ si prosím nový účet.</p>
+              <p className={styles.footnote}>Účet stačí vytvořit jednou. Před prvním přihlášením potvrď svou e-mailovou adresu.</p>
             </>
           )}
           <p className={styles.privacyFootnote}>
