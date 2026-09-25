@@ -552,7 +552,9 @@ export default function TipovackaPage() {
                 <section className={styles.standingsCard} aria-labelledby="standings-title">
                   <div className={styles.standingsHeading}>
                     <span className={styles.eyebrow}>ŽIVÁ TABULKA</span>
-                    <span className={styles.standingsLive}><span /> Online</span>
+                    <span className={`${styles.standingsLive} ${standingsState === 'error' ? styles.standingsOffline : ''}`}>
+                      <span /> {standingsState === 'ready' ? 'Online' : standingsState === 'error' ? 'Nedostupné' : 'Připojuji'}
+                    </span>
                   </div>
                   <h2 id="standings-title">Hráči ve hře</h2>
                   <p>Po vstupu do Tipovačky se tu objevíš automaticky.</p>

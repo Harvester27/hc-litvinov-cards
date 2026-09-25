@@ -203,6 +203,8 @@
 .standingsHeading { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .standingsLive { display: inline-flex; align-items: center; gap: 6px; color: #a6d8bb; font-size: 10px; font-weight: 700; }
 .standingsLive span { width: 6px; height: 6px; border-radius: 50%; background: #8bcea8; box-shadow: 0 0 0 4px #8bcea822; }
+.standingsOffline { color: #d5a9a2; }
+.standingsOffline span { background: #c7827b; box-shadow: 0 0 0 4px #c7827b22; }
 .standingsCard h2 { margin: 18px 0 8px; font-family: Georgia, 'Times New Roman', serif; font-size: 31px; font-weight: 400; line-height: 1.1; }
 .standingsCard > p { margin: 0; color: #aebdb8; font-size: 11px; line-height: 1.55; }
 .standingsScroll { max-height: 288px; margin-top: 18px; overflow: auto; border-top: 1px solid #5a6259; }
