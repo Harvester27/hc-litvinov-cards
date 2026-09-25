@@ -4,7 +4,7 @@ Kolo: Litvínov Lancers × HC Glacier Wolves, `glacier-wolves-2026-09-26`.
 Uzávěrka: 26. září 2026 v 19:15 Europe/Prague (`2026-09-26T17:15:00Z`).
 Cílová adresa: <https://www.litvinov-lancers.cz/games/tipovacka>.
 
-Tento protokol eviduje dokončené kontroly. Položky **PENDING** ještě nejsou potvrzené a před dokončením spuštění je musí doplnit odpovědný správce nasazení.
+Veřejné spuštění dokončeno 25. září 2026 v 17:13 pražského času. Testovací výsledky a opravy proběhly výhradně v emulátorech; produkční zápas zůstal bez výsledku.
 
 ## Dokončené automatické kontroly
 
@@ -28,18 +28,18 @@ Emulátory používají výhradně lokální adresy `127.0.0.1:8080` (Firestore)
 
 Bezpečné aktualizace odstranily hlášené produkční problémy high/critical. Next.js zůstal na 15.5.25 a Firebase Admin SDK na 13.10.0; cílený override aktualizuje PostCSS na 8.5.28. Osm zbývajících produkčních položek moderate souvisí s tranzitivními závislostmi Firebase Admin SDK. Jejich úplná automatická oprava vyžaduje samostatně ověřený hlavní upgrade SDK. Uvedené počty platí pro produkční závislosti, nikoli pro vývojové nástroje.
 
-## Dokončení spuštění – k doplnění
+## Dokončené produkční spuštění
 
 | Položka | Stav / doklad |
 | --- | --- |
 | Skutečné UI se dvěma hráči a administrátorem, mobil a počítač | **PASS 9/9** (`npm run test:browser`), Chromium, viewporty 390×844 a 1440×1000; screenshoty vizuálně ověřeny, bez chyb prohlížeče |
 | Finální produkční build | **PASS** (`npm run build`), zachovány dosavadní neblokující lint warnings jinde na webu |
 | Nasazení a ověření pravidel Firebase | **PASS**, ruleset `44ef55ee-a445-4ee1-b0fd-7abcce688bb2`, 25. 9. 2026 15:07:50 UTC; stažený obsah shodný s otestovaným souborem |
-| Nasazení webu na produkční doménu | **PENDING** |
-| Kontrola zachování původního administrátorského tiketu | **PENDING** |
+| Nasazení webu na produkční doménu | **PASS**, Vercel `dpl_7u97jU4mg1YviZwGWWjkLwLggcqa`, stav Ready, alias `www.litvinov-lancers.cz` |
+| Kontrola zachování původního administrátorského tiketu | **PASS**, původní tiket načten v živém rozhraní; serverové `updateTime` zůstává `2026-09-25T13:36:45.126977Z`, tedy před začátkem této úlohy, a je shodné s `createTime` (žádná aktualizace dokumentu) |
 | Odstranění dočasného lokálního souboru s Firebase klíčem | **PASS**, konkrétní dočasný JSON odstraněn a ověřena jeho nepřítomnost; produkční tajná proměnná zachována |
-| Zveřejnění karty pomocí `publicFeatures/tipovacka.visible` jako poslední krok | **PENDING** |
-| Kontrola živé hry a odkaz na nasazení / commit | **PENDING** |
+| Zveřejnění karty pomocí `publicFeatures/tipovacka.visible` jako poslední krok | **PASS**, `true` nastaveno až po živých kontrolách, `2026-09-25T15:13:07.984712Z`; karta se objevila i nepřihlášenému návštěvníkovi |
+| Kontrola živé hry a odkaz na nasazení / commit | **PASS**, commit `9712d55` na `origin/main`, přihlašovací vstup, vlastní admin tiket a administrace; anonymní GET tickets i POST preview/publish vrací 401 |
 
 ## Omezení a navazující práce
 
