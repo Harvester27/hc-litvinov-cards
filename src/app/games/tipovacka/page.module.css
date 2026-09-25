@@ -280,6 +280,14 @@
 .loadingCard p { margin: 0; color: #d5dfd9; font-size: 14px; }
 .loadingCard button { margin-top: 10px; padding: 10px 15px; border: 1px solid #cfb581; color: #dec995; background: transparent; cursor: pointer; }
 
+.nameGateWrap { display: grid; min-height: 100svh; place-items: center; padding: 140px 24px 40px; }
+.nameGateCard { width: min(580px, 100%); padding: clamp(27px, 5vw, 48px); border: 1px solid #84714f; background: linear-gradient(145deg, #202a2a, #11191c); box-shadow: 0 26px 80px #0006; }
+.nameGateIcon { display: grid; width: 60px; height: 60px; place-items: center; margin-bottom: 27px; border: 1px solid #b39867; color: #e2c890; background: #b3986718; }
+.nameGateCard h1 { margin: 16px 0 15px; font-family: Georgia, 'Times New Roman', serif; font-size: clamp(35px, 5vw, 54px); font-weight: 400; letter-spacing: -.045em; line-height: 1.06; }
+.nameGateCard p { max-width: 480px; margin: 0; color: #b9c4bf; font-size: 15px; line-height: 1.65; }
+.nameGateButton { display: inline-flex; min-height: 52px; align-items: center; justify-content: center; gap: 18px; margin-top: 31px; padding: 0 18px; border: 1px solid #e2cd9d; color: #141c1a; background: #dfc990; cursor: pointer; font: inherit; font-size: 13px; font-weight: 800; transition: background .15s ease, transform .15s ease; }
+.nameGateButton:hover { background: #f0dcad; transform: translateY(-1px); }
+
 .breadcrumb a:focus-visible,
 .simulationToggle:focus-visible,
 .saveButton:focus-visible,
@@ -287,6 +295,7 @@
 .backButton:focus-visible,
 .simulationAccess > button:focus-visible,
 .footer a:focus-visible,
+.nameGateButton:focus-visible,
 .loadingCard button:focus-visible { outline: 2px solid #ead29d; outline-offset: 3px; }
 
 @media (max-width: 1100px) {
@@ -305,6 +314,8 @@
   .simulationFields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 620px) {
+  .nameGateWrap { padding: 125px 16px 28px; }
+  .nameGateButton { width: 100%; }
   .shell { width: min(100% - 28px, 550px); padding-top: 130px; }
   .pageFlow .shellFlow { width: min(100% - 20px, 550px); padding-top: calc(var(--tip-nav-height) + 8px); padding-bottom: 8px; }
   .pageFlow .flowHead h1 { font-size: 31px; }

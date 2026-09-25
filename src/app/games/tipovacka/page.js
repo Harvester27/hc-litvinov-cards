@@ -141,6 +141,23 @@ function OptionGroup({ questionKey, question, selected, onSelect }) {
   );
 }
 
+function MissingNameScreen({ onConfirm }) {
+  return (
+    <div className={styles.page}>
+      <Navigation />
+      <main className={styles.nameGateWrap}>
+        <section className={styles.nameGateCard} role="alert" aria-labelledby="name-gate-heading" aria-describedby="name-gate-description">
+          <span className={styles.nameGateIcon} aria-hidden="true"><UserRoundX size={29} /></span>
+          <span className={styles.eyebrow}>TIPOVAČKA / PŘED ZAČÁTKEM</span>
+          <h1 id="name-gate-heading">Nemáš nastavené jméno do hry.</h1>
+          <p id="name-gate-description">Aby ses mohl zapojit do Tipovačky a objevil se v online tabulce, nastav si zobrazované jméno ve svém účtu. Po potvrzení tě přesuneme na profil.</p>
+          <button type="button" className={styles.nameGateButton} onClick={onConfirm}>Rozumím, přejít na profil <ArrowRight size={18} aria-hidden="true" /></button>
+        </section>
+      </main>
+    </div>
+  );
+}
+
 function ScorerStakes({ question, selected, onSelect }) {
   const allocated = Object.values(selected).reduce((sum, stake) => sum + stake, 0);
   return (
@@ -357,7 +374,6 @@ export default function TipovackaPage() {
       return;
     }
     if (!named) {
-      router.replace('/profil?tipovacka=1');
       return;
     }
 
@@ -484,7 +500,9 @@ export default function TipovackaPage() {
     [finished, picks],
   );
 
-  if (loading || !admin || !named || loadState === 'loading') return <LoadingScreen />;
+  if (loading || !admin) return <LoadingScreen />;
+  if (!named) return <MissingNameScreen onConfirm={() => router.replace('/profil?tipovacka=1')} />;
+  if (loadState === 'loading') return <LoadingScreen />;
   if (loadState === 'error') return <LoadingScreen message="Účet nebo soukromý návrh tipů se nepodařilo načíst." retry={() => setRetryCount((count) => count + 1)} />;
   if (loadedUid !== user.uid) return <LoadingScreen />;
 
