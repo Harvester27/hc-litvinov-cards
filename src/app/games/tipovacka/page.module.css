@@ -792,3 +792,9 @@
   .nameGateButton,
   .option { transition: none; }
 }
+.ticketSummary { padding: 24px; border: 1px solid #d6d0c6; color: #252525; background: #fffdfa; }
+.ticketSummary h2 { margin: 0 0 14px; font: 26px Georgia, serif; }
+.ticketSummary dl { margin: 0; display: grid; gap: 13px; }
+.ticketSummary dt { font-size: 12px; color: #666; }
+.ticketSummary dd { margin: 3px 0 0; font-size: 14px; overflow-wrap: anywhere; }
+.ticketSummary p { margin: 18px 0 0; color: #666; font-size: 12px; line-height: 1.6; }

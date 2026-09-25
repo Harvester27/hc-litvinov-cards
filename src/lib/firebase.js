@@ -1,6 +1,6 @@
 import { getApp, getApps, initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { connectAuthEmulator, getAuth, GoogleAuthProvider } from 'firebase/auth';
+import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
 // Firebase web configuration is public. All account and game data now live in
@@ -14,9 +14,24 @@ const firebaseConfig = {
   appId: '1:1044163449026:web:fde498f63b76fc74ceeb5b',
 };
 
-const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+const useEmulators = process.env.NEXT_PUBLIC_FIREBASE_EMULATORS === 'true';
+if (useEmulators && process.env.NODE_ENV === 'production') {
+  throw new Error('Produkční sestavení nesmí používat Firebase emulátory.');
+}
+if (useEmulators && typeof window !== 'undefined'
+  && !['localhost', '127.0.0.1'].includes(window.location.hostname)) {
+  throw new Error('Firebase emulátory lze použít pouze lokálně.');
+}
+const app = getApps().length ? getApp() : initializeApp(useEmulators
+  ? { ...firebaseConfig, projectId: 'demo-lancers-tipovacka', apiKey: 'demo-key' }
+  : firebaseConfig);
 
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+if (useEmulators && !globalThis.__lancersEmulatorsConnected) {
+  connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true });
+  connectFirestoreEmulator(db, '127.0.0.1', 8080);
+  globalThis.__lancersEmulatorsConnected = true;
+}
 export const storage = getStorage(app);
 export const googleProvider = new GoogleAuthProvider();

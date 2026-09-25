@@ -11,6 +11,17 @@ service cloud.firestore {
         && request.auth.token.email == 'sanarycogames@outlook.cz';
     }
 
+    function tipovackaPlayerName() {
+      return request.auth.token.name.trim().replace('\\s+', ' ');
+    }
+
+    function tipovackaPlayer() {
+      return verifiedAccount()
+        && request.auth.token.name is string
+        && tipovackaPlayerName().size() >= 2
+        && tipovackaPlayerName().size() <= 30;
+    }
+
     function validScorerStakes(stakes) {
       return stakes is map
         && stakes.keys().hasAll([
@@ -44,6 +55,11 @@ service cloud.firestore {
       return text is string && text.size() > 0 && text.size() <= 1000;
     }
 
+    // The deployment-controlled launch switch contains no personal data.
+    match /publicFeatures/tipovacka {
+      allow get: if true;
+    }
+
     // Profiles may contain private data. The new client can only read its own
     // profile; trusted server code must create or change profile and game data.
     match /users/{uid}/profile/data {
@@ -74,12 +90,15 @@ service cloud.firestore {
         && request.resource.data.createdAt == request.time;
     }
 
-    // The prediction game is an admin-only preview. Drafts are private to the
-    // verified owner of the single approved email until public launch.
+    // Keep the original collection so the saved administrator ticket survives
+    // launch. Named, verified players may access only their own ticket;
+    // only the administrator may inspect all tickets.
     match /tipovackaPreview/{uid} {
-      allow get: if tipovackaAdmin() && request.auth.uid == uid;
+      allow get: if tipovackaAdmin()
+        || (tipovackaPlayer() && request.auth.uid == uid);
+      allow list: if tipovackaAdmin();
 
-      allow create, update: if tipovackaAdmin()
+      allow create, update: if tipovackaPlayer()
         && request.auth.uid == uid
         // Tickets close at 19:15 Prague time on 26 September 2026.
         && request.time < timestamp.value(1790442900000)
@@ -118,29 +137,37 @@ service cloud.firestore {
     }
 
     // Trusted server code publishes the official result and computed scores.
-    // Browser clients may only read them after publication, during the
-    // admin-only preview. Server Admin SDK writes bypass these rules.
+    // Browser clients cannot publish results or invent evaluations. The
+    // trusted Admin SDK writes bypass these rules.
     match /tipovackaRounds/{roundId} {
       // A get must also work before the document exists for live listeners.
-      allow get: if tipovackaAdmin();
-      allow list: if tipovackaAdmin()
-        && resource.data.status == 'published';
+      allow get: if tipovackaAdmin() || (tipovackaPlayer()
+        && (!exists(/databases/$(database)/documents/tipovackaRounds/$(roundId))
+          || resource.data.status == 'published'));
+      allow list: if tipovackaAdmin();
 
       match /evaluations/{uid} {
-        allow get: if tipovackaAdmin();
-        allow list: if tipovackaAdmin()
+        allow get: if tipovackaAdmin() || (tipovackaPlayer()
+          && request.auth.uid == uid
           && get(/databases/$(database)/documents/tipovackaRounds/$(roundId))
-            .data.status == 'published';
+            .data.status == 'published');
+        allow list: if tipovackaAdmin();
+      }
+
+      // Revision history may contain private per-player differences and
+      // administrator audit data. It is never exposed to other players.
+      match /revisions/{revisionId} {
+        allow get, list: if tipovackaAdmin();
       }
     }
 
-    // The prediction standings are still an admin-only preview. Entering the
-    // game may add one zero-point row for the verified owner. Only trusted
-    // server code may later change scores or the number of evaluated rounds.
+    // Standings expose only the public player name and points. A player may
+    // create a zero-point entry and keep their own authenticated name current.
+    // All score changes require trusted server code.
     match /tipovackaStandings/{uid} {
-      allow get, list: if tipovackaAdmin();
+      allow get, list: if tipovackaPlayer() || tipovackaAdmin();
 
-      allow create: if tipovackaAdmin()
+      allow create: if tipovackaPlayer()
         && request.auth.uid == uid
         && request.resource.data.keys().hasAll([
           'displayName', 'totalPoints', 'roundsPlayed', 'joinedAt'
@@ -151,19 +178,21 @@ service cloud.firestore {
         && request.resource.data.displayName is string
         && request.resource.data.displayName.size() >= 2
         && request.resource.data.displayName.size() <= 30
+        && request.resource.data.displayName == tipovackaPlayerName()
         && request.resource.data.totalPoints is int
         && request.resource.data.totalPoints == 0
         && request.resource.data.roundsPlayed is int
         && request.resource.data.roundsPlayed == 0
         && request.resource.data.joinedAt == request.time;
 
-      allow update: if tipovackaAdmin()
+      allow update: if tipovackaPlayer()
         && request.auth.uid == uid
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['displayName'])
         && request.resource.data.diff(resource.data).affectedKeys().hasAll(['displayName'])
         && request.resource.data.displayName is string
         && request.resource.data.displayName.size() >= 2
-        && request.resource.data.displayName.size() <= 30;
+        && request.resource.data.displayName.size() <= 30
+        && request.resource.data.displayName == tipovackaPlayerName();
     }
 
     // This is public output for future server-generated standings. Old client

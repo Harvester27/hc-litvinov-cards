@@ -65,6 +65,12 @@
 .publishButton { margin: 0; background: #a12c31; border-color: #a12c31; }
 .publishButton:hover:not(:disabled) { background: #802228; }
 .spinner { animation: spin 1s linear infinite; }
+.confirmation { display: flex; align-items: flex-start; gap: 10px; margin-top: 20px; font-size: 13px; line-height: 1.6; }
+.confirmation input { width: 20px; height: 20px; flex: none; accent-color: #a12c31; }
+.correctionReason { display: grid; gap: 8px; margin-top: 20px; font-size: 14px; font-weight: 700; }
+.correctionReason textarea { width: 100%; min-height: 96px; padding: 12px; border: 1px solid #a58d61; color: #222; background: #fff; font: inherit; }
+.delta { margin: 0; padding: 12px 18px; color: #5b461d; background: #faf4e7; font-size: 13px; }
+.previewButton:disabled { opacity: .5; cursor: not-allowed; }
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (max-width: 760px) { .formGrid { grid-template-columns: 1fr; } .fullWidth { grid-column: auto; } }
 @media (max-width: 520px) { .panel { padding: 13px; } .heading { gap: 10px; } .checkGrid, .resultFacts { grid-template-columns: 1fr; } .previewHead, .breakdownMain { align-items: flex-start; flex-direction: column; } .breakdownOutcome { width: 100%; justify-content: space-between; } .publishBar { align-items: stretch; } .publishButton { width: 100%; } }

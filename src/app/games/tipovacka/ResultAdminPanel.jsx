@@ -1,8 +1,8 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Check, ClipboardCheck, Eye, LoaderCircle, ShieldCheck } from 'lucide-react';
-import { isCompletePicks, scoreRound, TIPOVACKA_ROUND, validateResult } from '@/lib/tipovacka.mjs';
+import { Check, ClipboardCheck, Eye, LoaderCircle } from 'lucide-react';
+import { isCompletePicks, TIPOVACKA_ROUND, validateResult } from '@/lib/tipovacka.mjs';
 import styles from './ResultAdminPanel.module.css';
 
 const QUESTION_KEYS = ['outcome', 'scorer', 'topPoints', 'firstGoal', 'totalGoals'];
@@ -94,12 +94,13 @@ function ScorePreview({ result, evaluations, published = false }) {
         <p className={styles.empty}>Zatím není uložený žádný dokončený tiket. Výsledek lze i tak zveřejnit, body se nepřičtou nikomu.</p>
       ) : (
         <div className={styles.evaluations}>
-          {evaluations.map(({ uid, displayName, score }) => (
+          {evaluations.map(({ uid, displayName, score, previousTotal, delta }) => (
             <article className={styles.playerResult} key={uid}>
               <div className={styles.playerResultHead}>
                 <h4>{displayName}</h4>
                 <strong className={score.total < 0 ? styles.loss : styles.gain}>{pointsLabel(score.total)}</strong>
               </div>
+              {previousTotal !== null && previousTotal !== undefined && <p className={styles.delta}>Před opravou {pointsLabel(previousTotal)} · změna v tabulce {pointsLabel(delta)}</p>}
               <ol className={styles.breakdown}>
                 {QUESTION_KEYS.map((key) => {
                   const item = score.breakdown[key];
@@ -116,7 +117,7 @@ function ScorePreview({ result, evaluations, published = false }) {
                         </div>
                       </div>
                       {item.reason && <p className={styles.voidReason}>{item.reason}</p>}
-                      {key === 'scorer' && item.lines.length > 1 && (
+                      {key === 'scorer' && item.lines.length > 0 && (
                         <div className={styles.scorerLines}>
                           {item.lines.map((line) => (
                             <span key={line.id}>{optionLabel('scorer', line.id)}: <b className={line.points < 0 ? styles.loss : line.points > 0 ? styles.gain : styles.even}>{pointsLabel(line.points)}</b>{line.reason ? ` · ${line.reason}` : ''}</span>
@@ -135,21 +136,25 @@ function ScorePreview({ result, evaluations, published = false }) {
   );
 }
 
-/**
- * Admin-only presentation. Firestore publication remains the parent's responsibility.
- * tickets: [{ uid, displayName, picks }]; onPublish(result, evaluations): Promise<void>.
- * Each evaluation has { uid, displayName, picks, score } (score is scoreRound output).
- */
-export default function ResultAdminPanel({ tickets = [], onPublish, publishing = false, publishedResult = null, canPublish = true }) {
-  const [draft, setDraft] = useState(blankDraft);
+/** Both preview and publication are validated and calculated by the server. */
+export default function ResultAdminPanel({ tickets = [], onPreview, onPublish, publishing = false, publishedResult = null, canPublish = true }) {
+  const [draft, setDraft] = useState(() => publishedResult ? {
+    ...publishedResult, homeGoals: String(publishedResult.homeGoals), awayGoals: String(publishedResult.awayGoals),
+    firstGoalTeam: publishedResult.firstGoalTeam ?? '',
+    playerPoints: Object.fromEntries(Object.entries(publishedResult.playerPoints).map(([id, value]) => [id, String(value)])),
+  } : blankDraft());
   const [preview, setPreview] = useState(null);
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
   const [publishSucceeded, setPublishSucceeded] = useState(false);
+  const [previewing, setPreviewing] = useState(false);
+  const [finalConfirmed, setFinalConfirmed] = useState(false);
+  const [reviewConfirmed, setReviewConfirmed] = useState(false);
+  const [correctionReason, setCorrectionReason] = useState('');
   const ticketSignature = JSON.stringify(tickets.map(({ uid, displayName, picks }) => [uid, displayName, picks]));
   const invalidTickets = useMemo(() => tickets.filter(({ picks }) => !isCompletePicks(picks)), [tickets]);
   const previewCurrent = preview?.ticketSignature === ticketSignature ? preview : null;
-  const locked = Boolean(publishedResult || publishSucceeded);
+  const locked = Boolean(publishSucceeded || publishing || saving || previewing);
 
   const setField = (key, value) => {
     setDraft((current) => ({ ...current, [key]: value }));
@@ -170,32 +175,40 @@ export default function ResultAdminPanel({ tickets = [], onPublish, publishing =
     setError('');
   };
 
-  const showPreview = () => {
+  const showPreview = async () => {
+    if (locked) return;
+    setPreviewing(true);
+    setReviewConfirmed(false);
     try {
+      if (!finalConfirmed) throw new Error('Nejdřív potvrď, že jde o konečný výsledek odehraného zápasu.');
+      if (publishedResult && correctionReason.trim().length < 10) throw new Error('Popiš důvod opravy alespoň 10 znaky.');
       if (invalidTickets.length) {
         throw new Error(`Nejdřív oprav ${invalidTickets.length} neúplný nebo neplatný tiket. Jinak by hráči přišli o vyhodnocení.`);
       }
       const result = buildResult(draft);
-      const evaluations = tickets.map(({ uid, displayName, picks }) => ({
-        uid,
-        displayName,
-        picks,
-        score: scoreRound(picks, result),
+      const response = await onPreview(result, publishedResult ? correctionReason.trim() : undefined);
+      const evaluations = response.evaluations.map((item) => ({
+        ...item,
+        previousTotal: response.mode === 'correct' ? item.previousTotal : null,
+        displayName: item.displayName ?? tickets.find(({ uid }) => uid === item.uid)?.displayName ?? item.uid,
+        score: { total: item.total, breakdown: item.breakdown },
       }));
-      setPreview({ result, evaluations, ticketSignature });
+      setPreview({ ...response, evaluations, ticketSignature });
       setError('');
     } catch (cause) {
       setPreview(null);
       setError(cause instanceof Error ? cause.message : 'Zkontroluj zadaný výsledek a zkus náhled znovu.');
+    } finally {
+      setPreviewing(false);
     }
   };
 
   const publish = async () => {
-    if (!previewCurrent || locked || saving || publishing || !canPublish || typeof onPublish !== 'function') return;
+    if (!previewCurrent || !reviewConfirmed || !finalConfirmed || locked || !canPublish || typeof onPublish !== 'function') return;
     setSaving(true);
     setError('');
     try {
-      await onPublish(previewCurrent.result, previewCurrent.evaluations);
+      await onPublish(previewCurrent.previewId);
       setPublishSucceeded(true);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Zveřejnění se nepovedlo. Zkus to znovu.');
@@ -204,27 +217,11 @@ export default function ResultAdminPanel({ tickets = [], onPublish, publishing =
     }
   };
 
-  const publishedEvaluations = useMemo(() => {
-    if (!publishedResult) return [];
-    return tickets.filter(({ picks }) => isCompletePicks(picks)).map(({ uid, displayName, picks }) => ({
-      uid, displayName, picks, score: scoreRound(picks, publishedResult),
-    }));
-  }, [publishedResult, tickets]);
-
-  if (publishedResult) {
-    return (
-      <div className={styles.panel}>
-        <div className={styles.heading}><ShieldCheck size={27} aria-hidden="true" /><div><span className={styles.eyebrow}>ADMINISTRACE TIPOVAČKY</span><h2>Výsledek je zveřejněný.</h2></div></div>
-        <ScorePreview result={publishedResult} evaluations={publishedEvaluations} published />
-      </div>
-    );
-  }
-
   return (
-    <section className={styles.panel} aria-labelledby="official-result-title">
+    <section className={styles.panel} aria-labelledby="admin-result-title">
       <div className={styles.heading}>
         <ClipboardCheck size={27} aria-hidden="true" />
-        <div><span className={styles.eyebrow}>ADMINISTRACE TIPOVAČKY</span><h2 id="official-result-title">Zadat skutečný výsledek</h2><p>Vyplň zápis po utkání, prohlédni body všech uložených tiketů a teprve potom vyhodnocení zveřejni.</p></div>
+        <div><span className={styles.eyebrow}>ADMINISTRACE TIPOVAČKY</span><h2 id="admin-result-title">{publishedResult ? 'Opravit zveřejněný výsledek' : 'Zadat skutečný výsledek'}</h2><p>{publishedResult ? 'Oprava zachová historii a hráčům započte jen rozdíl bodů. Počet odehraných kol se nezmění.' : 'Vyplň konečný zápis po utkání, prohlédni body všech uložených tiketů a teprve potom vyhodnocení zveřejni.'}</p></div>
       </div>
 
       <div className={styles.formGrid}>
@@ -266,23 +263,28 @@ export default function ResultAdminPanel({ tickets = [], onPublish, publishing =
 
         <fieldset className={`${styles.fieldset} ${styles.fullWidth}`}>
           <legend>5. Kdo nenastoupil?</legend>
-          <p>U označeného hráče se jeho tip anuluje. Hráč, který vstřelil gól, zároveň nemůže být označen jako nenastoupivší.</p>
+          <p>U označeného hráče se jeho tip anuluje. Pokud nenastoupí celá pětice střelců, anuluje se i „Nikdo z uvedené pětice“. Pokud z trojice pro kanadské body nastoupí nejvýše jeden hráč, anuluje se celá třetí otázka.</p>
           <div className={styles.checkGrid}>
             {allPlayers.map(({ id, label }) => <label key={id}><input type="checkbox" checked={draft.didNotPlayIds.includes(id)} onChange={() => togglePlayer('didNotPlayIds', id)} disabled={locked} /><span>{label}</span></label>)}
           </div>
         </fieldset>
       </div>
 
+      {publishedResult && <label className={styles.correctionReason}>Důvod opravy<textarea minLength={10} maxLength={500} value={correctionReason} disabled={locked} onChange={(event) => { setCorrectionReason(event.target.value); setPreview(null); }} placeholder="Co bylo v původním výsledku chybně a proč to opravuješ?" /></label>}
+      <label className={styles.confirmation}><input type="checkbox" checked={finalConfirmed} disabled={locked} onChange={(event) => { setFinalConfirmed(event.target.checked); setPreview(null); }} /> Potvrzuji, že zápas skončil a zadávám jeho konečný výsledek.</label>
+
       {error && <p className={styles.error} role="alert">{error}</p>}
-      {!locked && <button className={styles.previewButton} type="button" onClick={showPreview}><Eye size={18} aria-hidden="true" /> Zobrazit náhled bodů</button>}
+      {!publishSucceeded && <button className={styles.previewButton} type="button" onClick={() => void showPreview()} disabled={locked || !finalConfirmed}><Eye size={18} aria-hidden="true" /> {previewing ? 'Ověřuji náhled na serveru…' : 'Zobrazit náhled bodů'}</button>}
       {preview && !previewCurrent && <p className={styles.stale} role="status">Uložené tikety se mezitím změnily. Zobraz nový náhled před zveřejněním.</p>}
       {previewCurrent && <ScorePreview result={previewCurrent.result} evaluations={previewCurrent.evaluations} />}
+      {previewCurrent && <p className={styles.stale}>Náhled platí 15 minut. Při změně výsledku nebo tiketů je potřeba vytvořit a zkontrolovat nový náhled.</p>}
       {previewCurrent && !locked && (
         <div className={styles.publishBar}>
-          <p><strong>{canPublish ? 'Údaje souhlasí se zápisem?' : 'Zveřejnění bude možné po začátku zápasu.'}</strong><span>{canPublish ? 'Po zveřejnění se hráčům zobrazí vyhodnocení a body se zapíšou do tabulky.' : 'Náhled si můžeš prohlédnout už teď. Skutečný výsledek potvrdíš až po začátku utkání.'}</span></p>
-          <button className={styles.publishButton} type="button" onClick={() => void publish()} disabled={saving || publishing || !canPublish || typeof onPublish !== 'function'}>
+          <label className={styles.confirmation}><input type="checkbox" checked={reviewConfirmed} onChange={(event) => setReviewConfirmed(event.target.checked)} /> Zkontroloval jsem výsledek i body všech tiketů v tomto náhledu.</label>
+          <p><strong>{canPublish ? 'Údaje souhlasí se zápisem?' : 'Zveřejnění bude možné po začátku zápasu.'}</strong><span>{canPublish ? 'Po zveřejnění se hráčům zobrazí vyhodnocení a body se zapíšou do tabulky.' : 'Náhled skutečného výsledku připrav až po skončení utkání. Před začátkem zápasu jej server nepovolí.'}</span></p>
+          <button className={styles.publishButton} type="button" onClick={() => void publish()} disabled={saving || publishing || !canPublish || !reviewConfirmed || typeof onPublish !== 'function'}>
             {saving || publishing ? <LoaderCircle size={18} className={styles.spinner} aria-hidden="true" /> : <Check size={18} aria-hidden="true" />}
-            {saving || publishing ? 'Zveřejňuji…' : 'Zveřejnit vyhodnocení'}
+            {saving || publishing ? 'Zveřejňuji…' : publishedResult ? 'Zveřejnit opravu a rozdíl bodů' : 'Zveřejnit vyhodnocení'}
           </button>
         </div>
       )}

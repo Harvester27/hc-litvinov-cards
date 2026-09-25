@@ -14,13 +14,17 @@ function correctAnswer(key, result) {
     return labelFor(key, winner);
   }
   if (key === 'scorer') {
+    const nobodyPlayed = TIPOVACKA_ROUND.questions.scorer.options
+      .filter(({ id }) => id !== 'none-listed')
+      .every(({ id }) => result.didNotPlayIds.includes(id));
+    if (nobodyPlayed) return 'Z vypsané pětice nikdo nenastoupil · anulováno';
     return result.scorerIds.length
       ? result.scorerIds.map((id) => labelFor('scorer', id)).join(', ')
       : 'Nikdo z uvedené pětice';
   }
   if (key === 'topPoints') {
     const eligible = TIPOVACKA_ROUND.questions.topPoints.options.filter(({ id }) => !result.didNotPlayIds.includes(id));
-    if (!eligible.length) return 'Všichni tři nenastoupili';
+    if (eligible.length <= 1) return 'Nastoupil nejvýše jeden hráč z trojice · anulováno';
     const most = Math.max(...eligible.map(({ id }) => result.playerPoints[id]));
     const leaders = eligible.filter(({ id }) => result.playerPoints[id] === most);
     return `${leaders.map(({ label }) => label).join(', ')} (${most} b.)${leaders.length > 1 ? ' · shoda' : ''}`;
@@ -47,6 +51,13 @@ function statusText(item) {
 export default function OfficialEvaluation({ round, evaluation }) {
   if (!round?.result) return null;
   const { result } = round;
+  const revision = round.revision ?? 1;
+  const evaluationCurrent = evaluation && (evaluation.revision ?? 1) === revision;
+  const rawUpdatedAt = round.updatedAt;
+  const updatedAt = rawUpdatedAt?.toDate?.() ?? (rawUpdatedAt ? new Date(rawUpdatedAt) : null);
+  const updatedLabel = updatedAt && !Number.isNaN(updatedAt.getTime())
+    ? updatedAt.toLocaleString('cs-CZ', { timeZone: 'Europe/Prague', dateStyle: 'medium', timeStyle: 'short' })
+    : null;
 
   return (
     <section className={styles.wrap} aria-labelledby="official-result-title">
@@ -58,7 +69,16 @@ export default function OfficialEvaluation({ round, evaluation }) {
         <strong className={styles.score}>Lancers {result.homeGoals} : {result.awayGoals} Wolves</strong>
       </div>
       <p className={styles.resultNote}>Skóre je po prodloužení bez nájezdů. První gól: {correctAnswer('firstGoal', result)}.</p>
-      {evaluation ? (
+      {revision > 1 && (
+        <p className={styles.revisionNote}>
+          <strong>Výsledek byl opraven · verze {revision}.</strong>
+          {updatedLabel && <> Aktualizováno <time dateTime={updatedAt.toISOString()}>{updatedLabel}</time> (pražský čas).</>}
+          {evaluationCurrent && Number.isFinite(evaluation.delta) && (
+            <> Poslední oprava změnila tvé body o <strong>{pointsText(evaluation.delta)}</strong>. Do tabulky se započítal pouze tento rozdíl.</>
+          )}
+        </p>
+      )}
+      {evaluationCurrent ? (
         <>
           <div className={styles.total}><span>Tvůj výsledek za toto kolo</span><strong>{pointsText(evaluation.total)}</strong></div>
           <div className={styles.questions}>
@@ -92,7 +112,9 @@ export default function OfficialEvaluation({ round, evaluation }) {
             })}
           </div>
         </>
-      ) : <p className={styles.noTicket}>Pro toto kolo nemáš uložený tiket. Správný výsledek a tabulku přesto uvidíš.</p>}
+      ) : <p className={styles.noTicket}>{evaluation
+        ? 'Načítáme tvůj rozpis podle opraveného výsledku…'
+        : 'Pro toto kolo nemáš uložený tiket. Správný výsledek a tabulku přesto uvidíš.'}</p>}
     </section>
   );
 }

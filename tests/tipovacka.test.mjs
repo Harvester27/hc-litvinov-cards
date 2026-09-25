@@ -83,6 +83,44 @@ test('nobody listed wins even if another Lancers player scores', () => {
   assert.equal(scored.breakdown.scorer.points, 60);
 });
 
+test('nobody listed is void when all five candidates did not play', () => {
+  const nobody = { ...picks, scorer: { ...scorer,
+    'marian-dlugopolsky': 0, 'none-listed': 10 } };
+  const absent = TIPOVACKA_ROUND.questions.scorer.options
+    .filter(({ id }) => id !== 'none-listed').map(({ id }) => id);
+  const scored = scoreRound(nobody, {
+    ...result, scorerIds: [], didNotPlayIds: absent,
+    playerPoints: { ...result.playerPoints, 'marian-dlugopolsky': 0 },
+  });
+  assert.equal(scored.breakdown.scorer.status, 'void');
+  assert.equal(scored.breakdown.scorer.points, 0);
+  assert.deepEqual(scored.breakdown.scorer.lines, [{
+    pick: 'none-listed', status: 'void', points: 0,
+    reason: 'Nikdo z uvedené pětice do zápasu nenastoupil.',
+    id: 'none-listed', stake: 10,
+  }]);
+  assert.equal(scored.total, 46);
+});
+
+test('one participating scorer keeps nobody-listed active for both a hit and a miss', () => {
+  const nobody = { ...picks, scorer: { ...scorer,
+    'marian-dlugopolsky': 0, 'none-listed': 10 } };
+  const players = TIPOVACKA_ROUND.questions.scorer.options
+    .filter(({ id }) => id !== 'none-listed').map(({ id }) => id);
+  for (const participating of players) {
+    const onlyOnePlaying = {
+      ...result, didNotPlayIds: players.filter((id) => id !== participating),
+      playerPoints: { ...result.playerPoints, 'marian-dlugopolsky': participating === 'marian-dlugopolsky' ? 1 : 0 },
+    };
+    const hit = scoreRound(nobody, { ...onlyOnePlaying, scorerIds: [] });
+    assert.equal(hit.breakdown.scorer.status, 'hit', participating);
+    assert.equal(hit.breakdown.scorer.points, 60, participating);
+    const miss = scoreRound(nobody, { ...onlyOnePlaying, scorerIds: [participating] });
+    assert.equal(miss.breakdown.scorer.status, 'miss', participating);
+    assert.equal(miss.breakdown.scorer.points, -10, participating);
+  }
+});
+
 test('all three risky questions can miss for minus thirty', () => {
   const scored = scoreRound(picks, {
     ...result, homeGoals: 2, awayGoals: 4, scorerIds: [],
@@ -127,6 +165,45 @@ test('a tie for top scorer points voids the top-points question', () => {
     ...result, playerPoints: { ...result.playerPoints, 'marian-dlugopolsky': 2 },
   });
   assert.equal(scored.breakdown.topPoints.status, 'void');
+});
+
+test('the entire top-points question is void with zero or one participant, for every pick', () => {
+  const candidates = TIPOVACKA_ROUND.questions.topPoints.options.map(({ id }) => id);
+  for (const participating of [null, ...candidates]) {
+    const roundResult = {
+      ...result, scorerIds: [],
+      didNotPlayIds: candidates.filter((id) => id !== participating),
+      playerPoints: participating ? { [participating]: 3 } : {},
+    };
+    for (const topPoints of candidates) {
+      const scored = scoreRound({ ...picks, topPoints }, roundResult);
+      assert.deepEqual(scored.breakdown.topPoints, {
+        pick: topPoints, status: 'void', points: 0,
+        reason: 'Z vypsané trojice nastoupil nejvýše jeden hráč.',
+      });
+    }
+  }
+});
+
+test('two top-points participants still compete and a third absent pick is void', () => {
+  const twoPlayers = {
+    ...result, scorerIds: [], didNotPlayIds: ['marian-dlugopolsky'],
+    playerPoints: { 'tomas-turecek': 2, 'gustav-toman': 1 },
+  };
+  const winner = scoreRound(picks, twoPlayers).breakdown.topPoints;
+  assert.equal(winner.status, 'hit');
+  assert.equal(winner.points, 19);
+  const loser = scoreRound({ ...picks, topPoints: 'gustav-toman' }, twoPlayers).breakdown.topPoints;
+  assert.equal(loser.status, 'miss');
+  assert.equal(loser.points, -10);
+  const absent = scoreRound({ ...picks, topPoints: 'marian-dlugopolsky' }, twoPlayers).breakdown.topPoints;
+  assert.equal(absent.status, 'void');
+  assert.equal(absent.reason, 'Hráč do zápasu nenastoupil.');
+  const tied = scoreRound(picks, {
+    ...twoPlayers, playerPoints: { 'tomas-turecek': 2, 'gustav-toman': 2 },
+  }).breakdown.topPoints;
+  assert.equal(tied.status, 'void');
+  assert.equal(tied.reason, 'O nejvyšší počet bodů se hráči dělí.');
 });
 
 test('allocation needs six integer values adding to exactly ten', () => {

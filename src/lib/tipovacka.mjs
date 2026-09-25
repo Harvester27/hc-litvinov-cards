@@ -179,12 +179,16 @@ export function scoreRound(picks, result) {
   const outcomeOdds = questions.outcome.options.find(({ id }) => id === picks.outcome).odds;
   const topPointsOdds = questions.topPoints.options.find(({ id }) => id === picks.topPoints).odds;
   const didNotPlay = new Set(result.didNotPlayIds);
+  const noListedScorerPlayed = scorerPlayers.every(({ id }) => didNotPlay.has(id));
   const namedScorer = scorerPlayers.some(({ id }) => result.scorerIds.includes(id));
   const scorerLines = questions.scorer.options
     .filter(({ id }) => picks.scorer[id] > 0)
     .map(({ id, odds }) => {
       const stake = picks.scorer[id];
       const pick = id;
+      if (id === 'none-listed' && noListedScorerPlayed) {
+        return { ...voided(pick, 'Nikdo z uvedené pětice do zápasu nenastoupil.'), id, stake };
+      }
       if (id !== 'none-listed' && didNotPlay.has(id)) {
         return { ...voided(pick, 'Hráč do zápasu nenastoupil.'), id, stake };
       }
@@ -216,10 +220,12 @@ export function scoreRound(picks, result) {
       questions.totalGoals.win, questions.totalGoals.loss),
   };
 
-  if (didNotPlay.has(picks.topPoints)) {
+  const eligible = questions.topPoints.options.filter(({ id }) => !didNotPlay.has(id));
+  if (eligible.length <= 1) {
+    breakdown.topPoints = voided(picks.topPoints, 'Z vypsané trojice nastoupil nejvýše jeden hráč.');
+  } else if (didNotPlay.has(picks.topPoints)) {
     breakdown.topPoints = voided(picks.topPoints, 'Hráč do zápasu nenastoupil.');
   } else {
-    const eligible = questions.topPoints.options.filter(({ id }) => !didNotPlay.has(id));
     const highest = Math.max(...eligible.map(({ id }) => result.playerPoints[id]));
     const leaders = eligible.filter(({ id }) => result.playerPoints[id] === highest);
     breakdown.topPoints = leaders.length !== 1
