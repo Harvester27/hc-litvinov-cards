@@ -528,7 +528,17 @@ export default function TipovackaPage() {
               </div>
               <div className={styles.matchCard}>
                 <span className={styles.matchEyebrow}>PŘÍŠTÍ ZÁPAS / ČESKÝ POHÁR</span>
-                <div className={styles.matchNames}><strong>LANCERS</strong><span>VS</span><strong>WOLVES</strong></div>
+                <div className={styles.matchNames}>
+                  <div className={styles.matchTeam}>
+                    <Image className={styles.matchLogo} src="/images/loga/lancers-logo.png" alt="Logo Litvínov Lancers" width={110} height={110} />
+                    <strong>LANCERS</strong>
+                  </div>
+                  <span>VS</span>
+                  <div className={styles.matchTeam}>
+                    <Image className={styles.matchLogo} src="/images/loga/GlacierWolves.png" alt="Logo HC Glacier Wolves" width={110} height={110} />
+                    <strong>WOLVES</strong>
+                  </div>
+                </div>
                 <div className={styles.matchMeta}><span><Clock3 size={15} aria-hidden="true" /> Sobota 26. září 2026 · 19:15</span><span>Most</span></div>
               </div>
             </header>
