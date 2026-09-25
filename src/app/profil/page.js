@@ -189,7 +189,7 @@ export default function ProfilePage() {
               <div className={styles.avatar} aria-hidden="true">{initials}</div>
               <div className={styles.identityText}>
                 <span className={styles.smallLabel}>PŘIHLÁŠEN JAKO</span>
-                <strong>{savedName || 'Hráč Lancers'}</strong>
+                <strong>{savedName || 'Jméno není nastavené'}</strong>
                 <span>{user.email || 'E-mail není dostupný'}</span>
               </div>
               <div className={styles.verified}>
