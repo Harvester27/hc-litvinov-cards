@@ -7,6 +7,7 @@ import { chromium, expect as baseExpect } from '@playwright/test';
 
 const projectId = 'demo-lancers-tipovacka';
 const baseURL = 'http://127.0.0.1:3101';
+const loginPath = '/auth?next=%2Fprofil';
 // This runner must be started through npm run test:auth-browser.
 // Never create accounts or send verification messages against a real Firebase project.
 for (const [key, port] of [['FIREBASE_AUTH_EMULATOR_HOST', 9099], ['FIRESTORE_EMULATOR_HOST', 8080]]) {
@@ -70,7 +71,7 @@ try {
   const waiting = () => page.getByRole('button', { name: /Další e-mail za \d+ s/ });
   const oobRoute = /accounts:sendOobCode/;
   async function loginUnverified() {
-    await page.goto('/auth?next=/games/tipovacka');
+    await page.goto(loginPath);
     await page.getByLabel('E-mail', { exact: true }).fill(email);
     await page.getByLabel('Heslo', { exact: true }).fill(password);
     await page.getByRole('button', { name: 'Přihlásit se', exact: true }).click();
@@ -87,7 +88,7 @@ try {
     assert.ok(sizes.scroll <= sizes.width + 1, `${name}: horizontal overflow`);
   }
   await step('UI registration creates exactly one VERIFY_EMAIL in Auth emulator', async () => {
-    await page.goto('/auth?next=/games/tipovacka');
+    await page.goto(loginPath);
     await page.getByRole('button', { name: 'Registrace', exact: true }).click();
     await page.getByLabel('E-mail', { exact: true }).fill(email);
     await page.getByLabel('Heslo', { exact: true }).fill(password);
@@ -102,9 +103,11 @@ try {
     await expect(waiting()).toBeDisabled();
     await screenshot('registration-success-mobile');
   });
-  await step('New unverified registration is signed out and cannot enter game', async () => {
-    await page.goto('/games/tipovacka');
-    await expect(page.getByRole('heading', { name: 'Přihlas se a tipuj s Lancers.' })).toBeVisible();
+  await step('New unverified registration is signed out and cannot enter the account profile', async () => {
+    await page.goto('/profil');
+    await expect(page).toHaveURL(`${baseURL}${loginPath}`);
+    await expect(page.getByRole('heading', { name: 'Vítej zpět', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /^Můj účet/ })).toHaveCount(0);
   });
   await step('Unverified login sends no email and preserves registration cooldown without keeping password', async () => {
     await loginUnverified();
@@ -179,16 +182,52 @@ try {
     await expect(resend()).toHaveCount(0);
     assert.equal(sends.length, before);
   });
-  await step('Generated verification code works and verified login returns to Tipovacka', async () => {
+  await step('Generated verification code works and verified login returns to the account profile', async () => {
     const before = sends.length;
-    await page.goto('/auth?next=/games/tipovacka');
+    await page.goto(loginPath);
     await page.getByLabel('E-mail', { exact: true }).fill(email);
     await page.getByLabel('Heslo', { exact: true }).fill(password);
     await page.getByRole('button', { name: 'Přihlásit se', exact: true }).click();
-    await expect(page).toHaveURL(`${baseURL}/games/tipovacka`);
-    await expect(page.getByRole('heading', { name: 'Nemáš nastavené jméno do hry.' })).toBeVisible();
+    await expect(page).toHaveURL(`${baseURL}/profil`);
+    await expect(page.getByRole('heading', { name: /^Můj účet/ })).toBeVisible();
+    await expect(page.getByText('Ověřený účet', { exact: true })).toBeVisible();
     assert.equal(sends.length, before, 'Verified login must not resend verification email');
     await screenshot('verified-login-mobile');
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await screenshot('verified-login-desktop');
+  });
+  await step('Legacy profile query does not show the retired game prompt or link', async () => {
+    await page.goto('/profil?tipovacka=1');
+    await expect(page.getByRole('heading', { name: /^Můj účet/ })).toBeVisible();
+    await expect(page.locator('a[href*="/games/tipovacka"]')).toHaveCount(0);
+    assert.doesNotMatch(await page.locator('body').innerText(), /tipov[aá]čk/i);
+    await screenshot('profile-legacy-query-desktop');
+  });
+  await step('Games catalogue retains the other games and has no Tipovacka on mobile or desktop', async () => {
+    await page.goto('/games');
+    await expect(page.getByRole('heading', { name: 'Les stínů', exact: true })).toBeVisible();
+    for (const name of ['Les stínů', 'VIP Lancers', 'Lancers Card', 'Lancers CUP']) {
+      await expect(page.getByRole('heading', { name, exact: true })).toHaveCount(1);
+    }
+    await expect(page.locator('a[href*="/games/tipovacka"]')).toHaveCount(0);
+    assert.doesNotMatch(await page.locator('body').innerText(), /tipov[aá]čk/i);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await screenshot('games-after-removal-mobile');
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await screenshot('games-after-removal-desktop');
+  });
+  await step('Retired game page and GET/POST of all three game APIs return 404', async () => {
+    const retiredPage = await fetch(`${baseURL}/games/tipovacka`, { signal: AbortSignal.timeout(30000) });
+    assert.equal(retiredPage.status, 404, 'Retired game page must not be accessible');
+    for (const endpoint of ['preview', 'publish', 'tickets']) {
+      for (const method of ['GET', 'POST']) {
+        const response = await fetch(`${baseURL}/api/tipovacka/${endpoint}`, {
+          method, signal: AbortSignal.timeout(30000),
+          ...(method === 'POST' ? { headers: { 'Content-Type': 'application/json' }, body: '{}' } : {}),
+        });
+        assert.equal(response.status, 404, `${method} /api/tipovacka/${endpoint} must be removed`);
+      }
+    }
   });
   assert.deepEqual(errors, []);
   console.log('PASS no browser errors; no production accounts or real email used.');

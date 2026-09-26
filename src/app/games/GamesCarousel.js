@@ -4,12 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
-import { doc, onSnapshot } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 import styles from './page.module.css';
-
-const ADMIN_EMAIL = 'sanarycogames@outlook.cz';
 
 const publicGames = [
   {
@@ -62,19 +57,6 @@ const publicGames = [
   },
 ];
 
-const tipovackaGame = {
-  name: 'Tipovačka',
-  category: 'HOKEJOVÁ TIPOVAČKA',
-  description: 'Tipuj výsledek, střelce, nejproduktivnějšího hráče i první gól zápasu. Body rozhodnou o pořadí v žebříčku.',
-  image: '/images/clanky/lancers-glacier-wolves-2026.jpg',
-  imageAlt: 'Litvínov Lancers a HC Glacier Wolves před zápasem Českého poháru',
-  status: 'TIPUJ NYNÍ',
-  detail: 'ZDARMA · OVĚŘENÝ ÚČET',
-  action: 'Otevřít tipovačku',
-  href: '/games/tipovacka',
-  statusStyle: 'live',
-};
-
 function GameCard({ game, number, priority }) {
   const cardContent = (
     <>
@@ -111,13 +93,7 @@ function GameCard({ game, number, priority }) {
 }
 
 export default function GamesCarousel() {
-  const { user } = useAuth();
-  const isAdmin = Boolean(user?.emailVerified && user.email?.toLowerCase() === ADMIN_EMAIL);
-  const [tipovackaVisible, setTipovackaVisible] = useState(false);
-  useEffect(() => onSnapshot(doc(db, 'publicFeatures', 'tipovacka'),
-    (snapshot) => setTipovackaVisible(snapshot.data()?.visible === true),
-    () => setTipovackaVisible(false)), []);
-  const games = isAdmin || tipovackaVisible ? [...publicGames, tipovackaGame] : publicGames;
+  const games = publicGames;
   const gameCount = games.length;
   const trackRef = useRef(null);
   const indexRef = useRef(0);

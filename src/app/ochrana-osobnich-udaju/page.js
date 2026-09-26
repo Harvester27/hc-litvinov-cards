@@ -39,7 +39,7 @@ export default function PrivacyPage() {
           <ul>
             <li><strong>Účet:</strong> e-mail, identifikátor účtu, zobrazované jméno, způsob přihlášení a údaje potřebné pro ověření a zabezpečení účtu. Heslo spravuje Firebase Authentication.</li>
             <li><strong>Lancers Card:</strong> jméno hráče a týmu, počáteční herní finance a datum vytvoření profilu.</li>
-            <li><strong>Tipovačka:</strong> tipy k zápasu a čas jejich uložení, přiřazené k účtu. Při vstupu do hry ukládáme zobrazované jméno a účast ve společné tabulce; ostatní hráči vidí jméno, body a počet vyhodnocených kol. Tvůj tiket a podrobný rozpis bodů jsou dostupné tobě a správci hry pod účtem <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. Správce má pro kontrolu a vyhodnocení přístup ke všem tiketům. Po zveřejnění ukládáme skutečný výsledek, uzamčené tipy, body za každou otázku a celkové skóre. Při opravě výsledku uchováváme původní i opravený výsledek, změny bodů hráčů, důvod, čas a správce opravy. Tyto kontrolní záznamy a pracovní náhledy vyhodnocení nejsou dostupné ostatním hráčům.</li>
+            <li><strong>Archiv ukončených her:</strong> dříve uložené herní záznamy mohou obsahovat identifikátor účtu, zobrazované jméno, tipy, časy uložení, bodování a kontrolní historii. Archiv není veřejný a přístup k němu má pouze oprávněný správce. O přístup ke svým údajům nebo jejich výmaz můžeš požádat na <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</li>
             <li><strong>Komentáře:</strong> text komentáře, zobrazované jméno, identifikátor účtu a čas vložení nebo úpravy. Komentář a jméno jsou viditelné ostatním.</li>
             <li><strong>Klubový obsah:</strong> ve veřejných soupiskách, článcích a výsledcích mohou být jména, fotografie, sportovní statistiky a u některých hráčů také datum a místo narození, výška, váha nebo další údaje sportovního profilu.</li>
             <li><strong>Technický provoz:</strong> poskytovatelé přihlášení a hostingu zpracovávají například IP adresu, údaje o prohlížeči a bezpečnostní záznamy. Prohlížeč může uchovávat přihlášení a uložený postup hry Les stínů.</li>
@@ -48,9 +48,9 @@ export default function PrivacyPage() {
 
         <section className={styles.section} aria-labelledby="purpose-heading">
           <h2 id="purpose-heading">Proč údaje používáme</h2>
-          <p>Účet, herní profil, uložené tipy a účast v žebříčku vedeme, abychom ti mohli poskytnout přihlášení a hry, o které sis řekl(a). Stejně tak zveřejníme komentář, který se rozhodneš vložit do diskuse. Právním základem pro tyto funkce je poskytování služby podle čl. 6 odst. 1 písm. b) GDPR.</p>
+          <p>Účet a herní profil vedeme, abychom ti mohli poskytnout přihlášení a hry, o které sis řekl(a). Stejně tak zveřejníme komentář, který se rozhodneš vložit do diskuse. Právním základem pro tyto funkce je poskytování služby podle čl. 6 odst. 1 písm. b) GDPR.</p>
           <p>Bezpečnost účtů, ochranu před zneužitím a moderaci komentářů opíráme o oprávněný zájem na bezpečném provozu webu podle čl. 6 odst. 1 písm. f) GDPR. Veřejné soupisky a klubové zprávy slouží k informování o sportovní činnosti týmu. Zveřejnění přiměřených sportovních údajů posuzujeme podle oprávněného zájmu na informování o klubu a podle práv dotčených hráčů. U fotografií a podrobnějších údajů záleží na rozsahu zveřejnění; pokud oprávněný zájem nestačí, je nutný souhlas dotčeného hráče.</p>
-          <p>E-mail je potřebný pro vytvoření účtu. Komentování, vytvoření herního profilu a účast v Tipovačce jsou dobrovolné. Tipovačka vyžaduje ověřený účet a nastavené zobrazované jméno; pro tabulku nemusíš použít své občanské jméno. E-mail se v herní tabulce nezobrazuje. Údaje nepoužíváme k automatickému rozhodování s právními nebo podobně závažnými účinky.</p>
+          <p>E-mail je potřebný pro vytvoření účtu. Komentování a vytvoření herního profilu jsou dobrovolné. Jako zobrazované jméno nemusíš použít své občanské jméno. Údaje nepoužíváme k automatickému rozhodování s právními nebo podobně závažnými účinky.</p>
         </section>
 
         <section className={styles.section} aria-labelledby="services-heading">
@@ -65,7 +65,7 @@ export default function PrivacyPage() {
 
         <section className={styles.section} aria-labelledby="retention-heading">
           <h2 id="retention-heading">Jak dlouho údaje zůstávají</h2>
-          <p>Údaje účtu, herní profil, uložené tipy, jejich vyhodnocení a záznam v žebříčku uchováváme po dobu existence účtu. Pracovní náhledy a historii oprav Tipovačky používáme pro kontrolu správného přidělení bodů a řešení nesrovnalostí; platnost náhledu pro zveřejnění sama neznamená jeho smazání. Po ověřené žádosti zahrneme do výmazu nebo anonymizace také osobní údaje v těchto záznamech. Samotné výsledky zápasů bez vazby na hráčský účet mohou zůstat součástí sportovní historie. Komentáře uchováváme po dobu fungování diskuse a účtu autora. Po ověřené žádosti o smazání odstraníme účet a údaje, které už nepotřebujeme nebo je nemusíme uchovat z právního důvodu. Veřejný klubový obsah uchováváme po dobu, kdy je relevantní pro informace o týmu a jeho sportovní historii; požadavky na opravu či odstranění posuzujeme jednotlivě.</p>
+          <p>Údaje účtu, herní profil a osobní údaje v archivu ukončených her uchováváme po dobu existence účtu. Ukončení hry samo o sobě neznamená smazání jejích dříve uložených záznamů. Po ověřené žádosti zahrneme do výmazu nebo anonymizace také osobní údaje v tomto archivu. Samotné výsledky zápasů bez vazby na hráčský účet mohou zůstat součástí sportovní historie. Komentáře uchováváme po dobu fungování diskuse a účtu autora. Po ověřené žádosti o smazání odstraníme účet a údaje, které už nepotřebujeme nebo je nemusíme uchovat z právního důvodu. Veřejný klubový obsah uchováváme po dobu, kdy je relevantní pro informace o týmu a jeho sportovní historii; požadavky na opravu či odstranění posuzujeme jednotlivě.</p>
           <p>Tlačítko pro smazání jednotlivého komentáře jej nyní skryje na webu, ale jeho obsah zůstane v databázi. O úplné odstranění komentářů můžeš požádat e-mailem. Technické záznamy a zálohy se mažou podle cyklů jednotlivých poskytovatelů; Google popisuje svůj postup v <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener noreferrer">dokumentaci Firebase</a>.</p>
         </section>
 
@@ -76,7 +76,7 @@ export default function PrivacyPage() {
           <p>Pokud nejsi s vyřízením spokojen(a), můžeš podat stížnost u <a href="https://uoou.gov.cz/" target="_blank" rel="noopener noreferrer">Úřadu pro ochranu osobních údajů</a>.</p>
         </section>
 
-        <p className={styles.updated}>Naposledy aktualizováno 25. září 2026.</p>
+        <p className={styles.updated}>Naposledy aktualizováno 26. září 2026.</p>
       </main>
     </div>
   );

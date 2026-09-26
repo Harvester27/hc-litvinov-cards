@@ -1,5 +1,7 @@
 # Tipovačka – protokol veřejného spuštění 25. září 2026
 
+> Historický protokol. Na žádost provozovatele byla Tipovačka 26. 9. 2026 odstraněna z webu a její serverové funkce vypnuty; tento dokument zachycuje původní spuštění.
+
 Kolo: Litvínov Lancers × HC Glacier Wolves, `glacier-wolves-2026-09-26`.
 Uzávěrka: 26. září 2026 v 19:15 Europe/Prague (`2026-09-26T17:15:00Z`).
 Cílová adresa: <https://www.litvinov-lancers.cz/games/tipovacka>.

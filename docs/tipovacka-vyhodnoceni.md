@@ -1,5 +1,7 @@
 # Vyhodnocení Tipovačky
 
+> Historický dokument. Tipovačka byla 26. 9. 2026 odstraněna z webu a její serverové funkce vypnuty. Následující postup už není použitelný. Uložená data zůstala v neveřejném archivu pouze ke čtení správcem.
+
 ## Postup správce
 
 1. Otevři `/games/tipovacka` pod ověřeným účtem `sanarycogames@outlook.cz` s nastaveným jménem a otevři zadání výsledku. Hru mohou hrát všichni přihlášení uživatelé s ověřeným účtem a nastaveným jménem; zadání výsledku a kontrola všech tiketů patří pouze tomuto administrátorskému účtu.

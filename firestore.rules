@@ -6,58 +6,18 @@ service cloud.firestore {
       return request.auth != null && request.auth.token.email_verified == true;
     }
 
-    function tipovackaAdmin() {
+    function tipovackaArchiveAdmin() {
       return verifiedAccount()
         && request.auth.token.email == 'sanarycogames@outlook.cz';
-    }
-
-    function tipovackaPlayerName() {
-      return request.auth.token.name.trim().replace('\\s+', ' ');
-    }
-
-    function tipovackaPlayer() {
-      return verifiedAccount()
-        && request.auth.token.name is string
-        && tipovackaPlayerName().size() >= 2
-        && tipovackaPlayerName().size() <= 30;
-    }
-
-    function validScorerStakes(stakes) {
-      return stakes is map
-        && stakes.keys().hasAll([
-          'jan-schubada', 'marian-dlugopolsky', 'lubos-coufal',
-          'jan-hanus', 'jiri-salanda', 'none-listed'
-        ])
-        && stakes.keys().hasOnly([
-          'jan-schubada', 'marian-dlugopolsky', 'lubos-coufal',
-          'jan-hanus', 'jiri-salanda', 'none-listed'
-        ])
-        && stakes['jan-schubada'] is int
-        && stakes['marian-dlugopolsky'] is int
-        && stakes['lubos-coufal'] is int
-        && stakes['jan-hanus'] is int
-        && stakes['jiri-salanda'] is int
-        && stakes['none-listed'] is int
-        && stakes['jan-schubada'] >= 0
-        && stakes['marian-dlugopolsky'] >= 0
-        && stakes['lubos-coufal'] >= 0
-        && stakes['jan-hanus'] >= 0
-        && stakes['jiri-salanda'] >= 0
-        && stakes['none-listed'] >= 0
-        && stakes['jan-schubada'] + stakes['marian-dlugopolsky']
-          + stakes['lubos-coufal'] + stakes['jan-hanus']
-          + stakes['jiri-salanda'] + stakes['none-listed'] == 10
-        // A bet on no listed scorer must occupy all ten points.
-        && (stakes['none-listed'] == 0 || stakes['none-listed'] == 10);
     }
 
     function validCommentText(text) {
       return text is string && text.size() > 0 && text.size() <= 1000;
     }
 
-    // The deployment-controlled launch switch contains no personal data.
+    // The retired game's switch cannot expose or reactivate its old card.
     match /publicFeatures/tipovacka {
-      allow get: if true;
+      allow read, write: if false;
     }
 
     // Profiles may contain private data. The new client can only read its own
@@ -90,111 +50,37 @@ service cloud.firestore {
         && request.resource.data.createdAt == request.time;
     }
 
-    // Keep the original collection so the saved administrator ticket survives
-    // launch. Named, verified players may access only their own ticket;
-    // only the administrator may inspect all tickets.
+    // Tipovacka is retired. Preserve its existing documents as a private
+    // read-only archive for the verified administrator. No browser client,
+    // including the administrator, may create, change, or delete game data.
     match /tipovackaPreview/{uid} {
-      allow get: if tipovackaAdmin()
-        || (tipovackaPlayer() && request.auth.uid == uid);
-      allow list: if tipovackaAdmin();
-
-      allow create, update: if tipovackaPlayer()
-        && request.auth.uid == uid
-        // Every ticket must have its own scoring row before it can be saved.
-        && exists(/databases/$(database)/documents/tipovackaStandings/$(uid))
-        // Tickets close at 19:15 Prague time on 26 September 2026.
-        && request.time < timestamp.value(1790442900000)
-        // Publishing the official round also closes any remaining draft tab.
-        && !exists(/databases/$(database)/documents/tipovackaRounds/glacier-wolves-2026-09-26)
-        && request.resource.data.keys().hasAll(['roundId', 'picks', 'updatedAt'])
-        && request.resource.data.keys().hasOnly(['roundId', 'picks', 'updatedAt'])
-        && request.resource.data.roundId == 'glacier-wolves-2026-09-26'
-        && request.resource.data.picks is map
-        && request.resource.data.picks.keys().hasAll([
-          'outcome', 'scorer', 'topPoints', 'firstGoal', 'totalGoals'
-        ])
-        && request.resource.data.picks.keys().hasOnly([
-          'outcome', 'scorer', 'topPoints', 'firstGoal', 'totalGoals'
-        ])
-        && request.resource.data.picks.outcome in ['lancers', 'wolves', 'draw']
-        // Accept an old open tab during rollout; new drafts use six stakes.
-        && (
-          (
-            request.resource.data.picks.scorer is string
-            && request.resource.data.picks.scorer in [
-              'jan-schubada', 'marian-dlugopolsky', 'lubos-coufal',
-              'jan-hanus', 'jiri-salanda'
-            ]
-          )
-          || validScorerStakes(request.resource.data.picks.scorer)
-        )
-        && request.resource.data.picks.topPoints in [
-          'tomas-turecek', 'marian-dlugopolsky', 'gustav-toman'
-        ]
-        && request.resource.data.picks.firstGoal in ['lancers', 'wolves']
-        && request.resource.data.picks.totalGoals is int
-        && request.resource.data.picks.totalGoals >= 0
-        && request.resource.data.picks.totalGoals <= 30
-        && request.resource.data.updatedAt == request.time;
+      allow get, list: if tipovackaArchiveAdmin();
+      allow write: if false;
     }
 
-    // Trusted server code publishes the official result and computed scores.
-    // Browser clients cannot publish results or invent evaluations. The
-    // trusted Admin SDK writes bypass these rules.
+    match /tipovackaStandings/{uid} {
+      allow get, list: if tipovackaArchiveAdmin();
+      allow write: if false;
+    }
+
     match /tipovackaRounds/{roundId} {
-      // A get must also work before the document exists for live listeners.
-      allow get: if tipovackaAdmin() || (tipovackaPlayer()
-        && (!exists(/databases/$(database)/documents/tipovackaRounds/$(roundId))
-          || resource.data.status == 'published'));
-      allow list: if tipovackaAdmin();
+      allow get, list: if tipovackaArchiveAdmin();
+      allow write: if false;
 
       match /evaluations/{uid} {
-        allow get: if tipovackaAdmin() || (tipovackaPlayer()
-          && request.auth.uid == uid
-          && get(/databases/$(database)/documents/tipovackaRounds/$(roundId))
-            .data.status == 'published');
-        allow list: if tipovackaAdmin();
+        allow get, list: if tipovackaArchiveAdmin();
+        allow write: if false;
       }
 
-      // Revision history may contain private per-player differences and
-      // administrator audit data. It is never exposed to other players.
       match /revisions/{revisionId} {
-        allow get, list: if tipovackaAdmin();
+        allow get, list: if tipovackaArchiveAdmin();
+        allow write: if false;
       }
     }
 
-    // Standings expose only the public player name and points. A player may
-    // create a zero-point entry and keep their own authenticated name current.
-    // All score changes require trusted server code.
-    match /tipovackaStandings/{uid} {
-      allow get, list: if tipovackaPlayer() || tipovackaAdmin();
-
-      allow create: if tipovackaPlayer()
-        && request.auth.uid == uid
-        && request.resource.data.keys().hasAll([
-          'displayName', 'totalPoints', 'roundsPlayed', 'joinedAt'
-        ])
-        && request.resource.data.keys().hasOnly([
-          'displayName', 'totalPoints', 'roundsPlayed', 'joinedAt'
-        ])
-        && request.resource.data.displayName is string
-        && request.resource.data.displayName.size() >= 2
-        && request.resource.data.displayName.size() <= 30
-        && request.resource.data.displayName == tipovackaPlayerName()
-        && request.resource.data.totalPoints is int
-        && request.resource.data.totalPoints == 0
-        && request.resource.data.roundsPlayed is int
-        && request.resource.data.roundsPlayed == 0
-        && request.resource.data.joinedAt == request.time;
-
-      allow update: if tipovackaPlayer()
-        && request.auth.uid == uid
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['displayName'])
-        && request.resource.data.diff(resource.data).affectedKeys().hasAll(['displayName'])
-        && request.resource.data.displayName is string
-        && request.resource.data.displayName.size() >= 2
-        && request.resource.data.displayName.size() <= 30
-        && request.resource.data.displayName == tipovackaPlayerName();
+    match /tipovackaAdminPreviews/{previewId} {
+      allow get, list: if tipovackaArchiveAdmin();
+      allow write: if false;
     }
 
     // This is public output for future server-generated standings. Old client
