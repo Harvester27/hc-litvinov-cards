@@ -240,6 +240,9 @@ function MatchDialog({ match, onClose }) {
                     setActiveTab('lineups');
                     document.getElementById(`${uid}-lineups-tab`)?.focus();
                   }}>Prohlédnout soupisky <ArrowUpRight size={16} /></button>}
+                  {match.sourceUrl && <div><a className={styles.textButton} href={match.sourceUrl} target="_blank" rel="noopener noreferrer">
+                    Oficiální zápis utkání <ArrowUpRight size={16} />
+                  </a></div>}
                 </aside>
               </div>
               {match.saves && <section className={styles.savesCard} aria-label="Zásahy brankářů"><Shield size={22} /><div><h3>Zásahy brankářů</h3><p>{match.homeTeam} / {match.awayTeam}</p></div><strong>{match.saves.home ?? '—'} <span>:</span> {match.saves.away ?? '—'}</strong></section>}

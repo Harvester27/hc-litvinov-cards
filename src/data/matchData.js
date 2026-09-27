@@ -1,6 +1,79 @@
 // Databáze všech zápasů HC Litvínov Lancers
 import { czechCupMatches2025_26 } from './czechCupMatches';
 
+const czechCupMatches2026_27 = [
+  {
+    id: 'czech-cup-glacier-wolves-2026-09-26',
+    title: 'Vítězství 7:6 nad HC Glacier Wolves',
+    date: '26.9.2026',
+    time: '19:15',
+    location: 'ZS Most',
+    category: 'Český pohár',
+    season: '2026/27',
+    competition: 'czech-cup',
+    stage: 'group',
+    status: 'completed',
+    skaterStatsComplete: true,
+    goalieStatsComplete: false,
+    sourceUrl: 'https://ceskypohar.cz/match/403',
+    image: '🏆',
+    excerpt: 'Lancers vyhráli přestřelku s HC Glacier Wolves 7:6. Dvakrát skórovali Roman Šimek, Jan Schubada a Václav Materna.',
+    homeTeam: 'HC Glacier Wolves',
+    awayTeam: 'Litvínov Lancers',
+    opponentLogo: '/images/loga/GlacierWolves.png',
+    score: '6:7',
+    periods: '(3:3 2:3 1:1)',
+    format: '3× 15 minut',
+    homeLineup: {
+      goalie: 'Matty',
+      defenders: ['Mára', 'Hrdla', 'IRR'],
+      forwards: ['Enčev', 'Tommy', 'Štorky', 'Moučis', 'Štorkán', 'Stehla']
+    },
+    awayLineup: {
+      goalie: 'Vlastimil Nistor',
+      defenders: ['Jan Hanuš', 'Roman Šimek', 'Tomáš Tureček'],
+      forwards: ['Stanislav Švarc', 'Gustav Toman', 'Václav Materna', 'Luboš Coufal', 'Jan Schubada', 'Jiří Šalanda']
+    },
+    goals: [
+      { time: '07:44', team: 'away', scorer: 'Roman Šimek', assists: '(Luboš Coufal)', score: '0:1' },
+      { time: '09:33', team: 'home', scorer: 'Stehla', assists: '', score: '1:1' },
+      { time: '10:54', team: 'home', scorer: 'Tommy', assists: '', score: '2:1' },
+      { time: '12:54', team: 'away', scorer: 'Jan Hanuš', assists: '(Luboš Coufal)', score: '2:2' },
+      { time: '13:40', team: 'home', scorer: 'Štorky', assists: '(Stehla)', score: '3:2' },
+      { time: '14:14', team: 'away', scorer: 'Jan Schubada', assists: '(Jan Hanuš)', score: '3:3' },
+      { time: '18:39', team: 'home', scorer: 'Štorky', assists: '', score: '4:3' },
+      { time: '27:43', team: 'away', scorer: 'Roman Šimek', assists: '(Stanislav Švarc)', score: '4:4' },
+      { time: '28:20', team: 'away', scorer: 'Václav Materna', assists: '(Jiří Šalanda)', score: '4:5' },
+      { time: '28:55', team: 'home', scorer: 'Štorkán', assists: '', score: '5:5' },
+      { time: '29:16', team: 'away', scorer: 'Jan Schubada', assists: '(Roman Šimek)', score: '5:6' },
+      { time: '36:21', team: 'home', scorer: 'Štorkán', assists: '', score: '6:6' },
+      { time: '41:20', team: 'away', scorer: 'Václav Materna', assists: '(Jiří Šalanda)', score: '6:7' }
+    ],
+    penalties: [
+      { time: '11:00', team: 'home', player: '—', reason: 'podražení', duration: '2 min' },
+      { time: '18:05', team: 'home', player: 'Moučis', reason: 'podražení', duration: '2 min' },
+      { time: '41:01', team: 'home', player: '—', reason: 'podražení', duration: '2 min' }
+    ],
+    summary: 'Po první třetině byl stav 3:3. Ve druhé části se Lancers dostali do vedení 6:5, ale Glacier Wolves v čase 36:21 srovnali. O vítězství 7:6 rozhodl v čase 41:20 Václav Materna po asistenci Jiřího Šalandy. Roman Šimek a Jan Schubada přidali po dvou gólech.'
+  }
+];
+
+const khlaMatches2026_27 = [
+  {
+    id: 'khla-krokodyl-2026-10-02',
+    title: 'KHLA: Litvínov Lancers proti HC Krokodýl',
+    date: '2.10.2026',
+    time: '21:00',
+    category: 'KHLA',
+    season: '2026/27',
+    competition: 'khla',
+    stage: 'regular',
+    status: 'scheduled',
+    opponent: 'HC Krokodýl',
+    opponentLogo: '/images/loga/HCKrokodyl.png'
+  }
+];
+
 const friendlyMatches = [
   {
     id: 'friendly-viper-2026-09-05',
@@ -775,6 +848,8 @@ const completedCzechCupMatches = historicalMatches.map((match) => ({
 }));
 
 export const matchData = [
+  ...khlaMatches2026_27,
+  ...czechCupMatches2026_27,
   ...friendlyMatches,
   ...czechCupMatches2025_26,
   ...completedCzechCupMatches
@@ -801,6 +876,13 @@ export const getRecentMatches = (count = 5) => {
   return [...matchData]
     .filter((match) => match.status === 'completed')
     .sort((a, b) => getMatchTimestamp(b) - getMatchTimestamp(a))
+    .slice(0, count);
+};
+
+export const getUpcomingMatches = (count = 5) => {
+  return [...matchData]
+    .filter((match) => match.status === 'scheduled')
+    .sort((a, b) => getMatchTimestamp(a) - getMatchTimestamp(b))
     .slice(0, count);
 };
 

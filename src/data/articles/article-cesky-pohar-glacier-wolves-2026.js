@@ -14,11 +14,15 @@ export const articleCeskyPoharGlacierWolves2026 = {
   publishedAt: new Date('2026-09-19T10:00:00'),
   image: '🏒',
   featuredImage: '/images/clanky/lancers-glacier-wolves-2026.jpg',
-  featured: true,
+  featured: false,
   views: 0,
   likes: 0,
   content: `
     <div class="space-y-4">
+      <div class="rounded-xl border border-green-200 bg-green-50 p-4 text-green-900">
+        <strong>Aktualizace 27. září:</strong> Zápas už se odehrál. Lancers zvítězili 7:6.
+        <a href="/clanky/vyhra-glacier-wolves-2026" class="font-semibold underline">Přečíst reportáž a statistiky</a>.
+      </div>
       <div class="bg-gradient-to-r from-red-50 to-gray-50 rounded-xl p-6 mb-6 border border-red-100">
         <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-5">
           <img

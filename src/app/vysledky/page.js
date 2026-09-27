@@ -43,6 +43,7 @@ const teamLogos = {
   'Ducks Kláštěrec': '/images/loga/Ducks.png',
   'Viper Ústí': '/images/loga/Viper.png',
   'Sharks Ústí': '/images/loga/Sharks.png',
+  'HC Glacier Wolves': '/images/loga/GlacierWolves.png',
   'Berlín All Stars': '/images/loga/Berlin.png',
   'Berlin All Stars': '/images/loga/Berlin.png',
   'All Stars Berlín': '/images/loga/Berlin.png',
@@ -208,7 +209,7 @@ export default function VysledkyPage() {
     const all = getAllPlayers();
     const rows = [];
     for (const p of all) {
-      const s = getPlayerStats(p.id, seasonMatches);
+      const s = getPlayerStats(p.id, filteredMatches);
       if (s && s.gamesPlayed > 0) {
         rows.push({
           id: p.id,
@@ -227,7 +228,7 @@ export default function VysledkyPage() {
       }
     }
     return rows;
-  }, [seasonMatches]);
+  }, [filteredMatches]);
 
   const filteredPlayers = useMemo(() => {
     let rows = allPlayersWithStats;

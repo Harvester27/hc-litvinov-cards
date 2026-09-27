@@ -16,6 +16,7 @@ const teamLogos = [
   [/\bgurmani\b/, 'Gurmani.png'],
   [/\bducks\b/, 'Ducks.png'],
   [/\bsharks\b/, 'Sharks.png'],
+  [/\bglacier wolves\b/, 'GlacierWolves.png'],
   [/\bkrokodyl\b/, 'HCKrokodyl.png'],
   [/\bkopyta\b/, 'HCKopyta.png'],
   [/\bzihadla\b/, 'HCZihadla.png'],

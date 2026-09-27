@@ -4,8 +4,11 @@ import React, { useState } from 'react';
 import Navigation from '@/components/Navigation';
 import MatchDetail from '@/components/MatchDetail';
 import HeroTeamCarousel from '@/components/HeroTeamCarousel';
-import { getMatchById, getRecentMatches } from '@/data/matchData';
+import { getRecentMatches, getUpcomingMatches, matchData } from '@/data/matchData';
 import { getAllArticles } from '@/data/articleData';
+import { getAllPlayers } from '@/data/playerData';
+import { getPlayerStats } from '@/data/playerStats';
+import { khlaStandingsBySeason } from '@/data/khlaStandings';
 import { 
   Trophy, Users, Flame, Shield, Star, 
   Clock, MapPin, ChevronRight, Award, TrendingUp,
@@ -22,28 +25,28 @@ export default function HomePage() {
 
   // Získat poslední 2 zápasy
   const recentMatches = getRecentMatches(2);
-  const featuredMatch = getMatchById('friendly-viper-2026-09-05');
+  const featuredMatch = recentMatches[0];
+  const upcomingMatch = getUpcomingMatches(1)[0];
+  const lancersAtHome = /lancers/i.test(featuredMatch.homeTeam);
+  const [homeGoals, awayGoals] = featuredMatch.score.split(':').map(Number);
+  const lancersGoals = lancersAtHome ? homeGoals : awayGoals;
+  const opponentGoals = lancersAtHome ? awayGoals : homeGoals;
+  const featuredOpponent = lancersAtHome ? featuredMatch.awayTeam : featuredMatch.homeTeam;
+  const featuredResult = lancersGoals > opponentGoals ? 'VÝHRA' : lancersGoals < opponentGoals ? 'PROHRA' : 'REMÍZA';
   
   // Získat články
   const articles = getAllArticles();
 
-  // KHLA tabulka
-  const khlaStandings = [
-    { position: 1, team: 'HC Krokodýl', games: 14, points: 30 },
-    { position: 2, team: 'HC Kopyta', games: 14, points: 29 },
-    { position: 3, team: 'HC Žíhadla', games: 14, points: 28 },
-    { position: 4, team: 'HC Band Of Brothers', games: 14, points: 25 },
-    { position: 5, team: 'HC North Blades', games: 14, points: 15 },
-    { position: 6, team: 'HC F.R.I.E.N.D.S.', games: 14, points: 14 },
-    { position: 7, team: 'HC Lancers', games: 14, points: 14, isOurTeam: true },
-    { position: 8, team: 'HC Warriors', games: 14, points: 8 }
-  ];
-
-  const topPlayers = [
-    { name: 'Roman Šimek', number: 27, position: 'Obránce', goals: 4, assists: 8, points: 12 },
-    { name: 'Václav Materna', number: 91, position: 'Útočník', goals: 6, assists: 5, points: 11 },
-    { name: 'Michaela Nováková', number: 30, position: 'Brankářka', saves: '89.5%', shutouts: 1 }
-  ];
+  const khlaStandings = khlaStandingsBySeason['25/26'].teams;
+  const completedSeasonMatches = matchData.filter((match) =>
+    match.season === '2026/27' && match.status === 'completed'
+  );
+  const topPlayers = getAllPlayers()
+    .filter((player) => player.category === 'forwards' || player.category === 'defenders')
+    .map((player) => ({ ...player, stats: getPlayerStats(player.id, completedSeasonMatches) }))
+    .filter((player) => player.stats.gamesPlayed > 0)
+    .sort((a, b) => b.stats.points - a.stats.points || b.stats.goals - a.stats.goals)
+    .slice(0, 3);
 
   return (
     <div className="min-h-screen bg-white">
@@ -101,7 +104,7 @@ export default function HomePage() {
           <button
             type="button"
             className="w-full text-left pb-4 border-b border-gray-200 rounded-lg p-2 cursor-pointer hover:bg-gray-50 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
-            aria-label="Zobrazit detail zápasu Lancers – Viper Ústí nad Labem 3:1"
+            aria-label={`Zobrazit detail zápasu Lancers – ${featuredOpponent} ${lancersGoals}:${opponentGoals}`}
             onClick={() => {
               setSelectedMatch(featuredMatch);
               setShowMatchDetail(true);
@@ -109,7 +112,7 @@ export default function HomePage() {
           >
             <div className="flex items-center gap-2 mb-3">
               <div className="w-2 h-2 bg-red-600 rounded-full"></div>
-              <span className="text-red-600 font-bold text-sm uppercase tracking-wider">Poslední zápas - VÝHRA</span>
+              <span className="text-red-600 font-bold text-sm uppercase tracking-wider">Poslední zápas · {featuredResult}</span>
             </div>
             <div className="flex items-center gap-3 mb-2">
               <Image 
@@ -121,27 +124,27 @@ export default function HomePage() {
               />
               <div className="text-center">
                 <div className="text-3xl font-black">
-                  <span className="text-green-600">{featuredMatch.score.split(':')[0]}</span>
+                  <span className="text-green-600">{lancersGoals}</span>
                   <span className="text-gray-600 mx-2">:</span>
-                  <span className="text-red-600">{featuredMatch.score.split(':')[1]}</span>
+                  <span className="text-red-600">{opponentGoals}</span>
                 </div>
               </div>
               <Image 
-                src="/images/loga/Viper.png"
-                alt={featuredMatch.awayTeam}
+                src={featuredMatch.opponentLogo || '/images/loga/KHLA.png'}
+                alt={featuredOpponent}
                 width={40}
                 height={40}
                 className="object-contain"
               />
             </div>
-            <div className="text-2xl font-black mb-2">{featuredMatch.awayTeam}</div>
+            <div className="text-2xl font-black mb-2">{featuredOpponent}</div>
             <div className="text-gray-600 flex items-center gap-2 mb-4">
               <MapPin size={16} className="text-red-600" />
-              Domácí zápas v Litvínově
+              {featuredMatch.category} · {lancersAtHome ? 'doma' : 'venku'}
             </div>
             <div className="bg-gradient-to-r from-green-600 to-green-700 rounded-xl px-4 py-3 text-center">
               <div className="text-white text-sm font-semibold">{featuredMatch.date} • {featuredMatch.location}</div>
-              <div className="text-2xl font-black text-white">Domácí výhra {featuredMatch.score}</div>
+              <div className="text-2xl font-black text-white">{lancersAtHome ? 'Domácí' : 'Venkovní'} {featuredResult.toLowerCase()} {lancersGoals}:{opponentGoals}</div>
             </div>
             <div className="mt-3 flex items-center justify-center gap-1 text-sm font-bold text-red-600">
               Detail zápasu <ChevronRight size={16} />
@@ -159,25 +162,21 @@ export default function HomePage() {
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <Image
-                    src="/images/loga/GlacierWolves.png"
-                    alt="Glacier Wolves"
+                    src={upcomingMatch.opponentLogo}
+                    alt={upcomingMatch.opponent}
                     width={32}
                     height={32}
                     className="object-contain"
                   />
                   <div>
-                    <span className="font-black text-lg leading-tight">Glacier Wolves</span>
-                    <div className="text-xs text-red-600 font-semibold">Český pohár · venku</div>
+                    <span className="font-black text-lg leading-tight">{upcomingMatch.opponent}</span>
+                    <div className="text-xs text-red-600 font-semibold">KHLA Sportega Liga</div>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="font-black text-sm">26.9.</div>
-                  <div className="text-xs text-gray-600">19:15</div>
+                  <div className="font-black text-sm">{upcomingMatch.date}</div>
+                  <div className="text-xs text-gray-600">{upcomingMatch.time}</div>
                 </div>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <MapPin size={14} className="text-red-600 shrink-0" />
-                Most
               </div>
             </div>
           </div>
@@ -408,7 +407,7 @@ export default function HomePage() {
             <div className="bg-gradient-to-r from-black to-gray-900 p-4">
               <h3 className="text-xl font-bold text-white flex items-center gap-2">
                 <Trophy className="text-yellow-400" size={24} />
-                KHLA Sportega Liga
+                KHLA Sportega Liga 25/26
               </h3>
             </div>
             <div className="p-4 space-y-2">
@@ -449,37 +448,29 @@ export default function HomePage() {
           <div className="bg-gradient-to-br from-red-600 to-red-700 rounded-2xl p-6 text-white shadow-xl">
             <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
               <Star className="text-yellow-400" size={24} />
-              Hvězdy týmu
+              Bodování sezony 2026/27
             </h3>
             <div className="space-y-3">
               {topPlayers.map((player, index) => (
-                <div key={index} className="bg-black/20 rounded-xl p-3 backdrop-blur">
+                <div key={player.id} className="bg-black/20 rounded-xl p-3 backdrop-blur">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <span className="text-2xl font-black text-yellow-400">#{player.number}</span>
+                      <span className="text-xl font-black text-yellow-400">{index + 1}.</span>
                       <div>
                         <div className="font-bold text-sm">{player.name}</div>
                         <div className="text-xs text-red-200">{player.position}</div>
                       </div>
                     </div>
-                    {player.points && (
-                      <div className="text-right">
-                        <div className="text-xl font-black">{player.points}b</div>
-                        <div className="text-xs text-red-200">{player.goals}G {player.assists}A</div>
-                      </div>
-                    )}
-                    {player.saves && (
-                      <div className="text-right">
-                        <div className="text-xl font-black">{player.saves}</div>
-                        <div className="text-xs text-red-200">{player.shutouts} SO</div>
-                      </div>
-                    )}
+                    <div className="text-right">
+                      <div className="text-xl font-black">{player.stats.points}b</div>
+                      <div className="text-xs text-red-200">{player.stats.goals}G {player.stats.assists}A</div>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
-            <Link href="/soupisky" className="block mt-4 text-center text-yellow-400 hover:text-yellow-300 font-bold">
-              Celá soupiska →
+            <Link href="/vysledky" className="block mt-4 text-center text-yellow-400 hover:text-yellow-300 font-bold">
+              Všechny statistiky →
             </Link>
           </div>
         </div>
