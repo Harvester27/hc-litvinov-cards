@@ -21,6 +21,7 @@ Jako vzor slouží zápas `czech-cup-glacier-wolves-2026-09-26` v `matchData.js`
 
 - Úvodní stránka bere poslední odehrané a nejbližší plánované zápasy přes `getRecentMatches()` a `getUpcomingMatches()`; `/vysledky` ukazuje jen `completed`. Plánovaný zápas zůstane „příští“, dokud nepřepneš jeho `status` — datum samo nestačí. Když pro další sezonu přidáš nové zápasy, uprav i `src/data/matchFilters.js` a aktuálně napevno uvedenou sezonu v `src/app/page.js`.
 - Pro nové logo zkontroluj soubor v `public/images/loga/`, `opponentLogo`, mapování v `src/components/matchDetailData.js` a `src/app/vysledky/page.js`. U jiné soutěže než KHLA zkontroluj také popisek příštího zápasu na úvodní stránce.
+- Portréty Lancers nastavuje `photo` v `src/data/playerData.js`; fotky soupeřů páruje `src/data/opponentPlayers.js` podle týmu a plného jména. Soubory ukládej do `public/images/players/` a u převzatých fotografií poznamenej zdroj. Bez dostupné fotky nech zástupnou siluetu.
 - Článek je volitelný: vytvoř `src/data/articles/article-*.js` a přidej jej do `src/data/articleData.js`. Výsledek a statistiky fungují i bez článku.
 - Spusť `npm test` a `npm run build`. V prohlížeči ověř úvod, `/vysledky`, detail utkání, soupisku a součty statistik. Tipovačka má vlastní postup v `docs/tipovacka-vyhodnoceni.md`.
 - Před nasazením zkontroluj větev, `git status` a aktuální `origin/main`. Pokud pracovní složka obsahuje další rozpracované změny, odděl aktualizaci zápasu do čistého worktree.

@@ -25,9 +25,9 @@ const czechCupMatches2026_27 = [
     periods: '(3:3 2:3 1:1)',
     format: '3× 15 minut',
     homeLineup: {
-      goalie: 'Matty',
-      defenders: ['Mára', 'Hrdla', 'IRR'],
-      forwards: ['Enčev', 'Tommy', 'Štorky', 'Moučis', 'Štorkán', 'Stehla']
+      goalie: 'Pavel Matoušek',
+      defenders: ['Marek Vild', 'David Hrdlička', 'Jiří Krajník'],
+      forwards: ['Bohdan Enčev', 'Tomáš Krist', 'Pavel Štorkán', 'Radomír Moučka', 'Jaroslav Štorkán', 'Petr Stehlík']
     },
     awayLineup: {
       goalie: 'Vlastimil Nistor',
@@ -36,22 +36,22 @@ const czechCupMatches2026_27 = [
     },
     goals: [
       { time: '07:44', team: 'away', scorer: 'Roman Šimek', assists: '(Luboš Coufal)', score: '0:1' },
-      { time: '09:33', team: 'home', scorer: 'Stehla', assists: '', score: '1:1' },
-      { time: '10:54', team: 'home', scorer: 'Tommy', assists: '', score: '2:1' },
+      { time: '09:33', team: 'home', scorer: 'Petr Stehlík', assists: '', score: '1:1' },
+      { time: '10:54', team: 'home', scorer: 'Tomáš Krist', assists: '', score: '2:1' },
       { time: '12:54', team: 'away', scorer: 'Jan Hanuš', assists: '(Luboš Coufal)', score: '2:2' },
-      { time: '13:40', team: 'home', scorer: 'Štorky', assists: '(Stehla)', score: '3:2' },
+      { time: '13:40', team: 'home', scorer: 'Pavel Štorkán', assists: '(Petr Stehlík)', score: '3:2' },
       { time: '14:14', team: 'away', scorer: 'Jan Schubada', assists: '(Jan Hanuš)', score: '3:3' },
-      { time: '18:39', team: 'home', scorer: 'Štorky', assists: '', score: '4:3' },
+      { time: '18:39', team: 'home', scorer: 'Pavel Štorkán', assists: '', score: '4:3' },
       { time: '27:43', team: 'away', scorer: 'Roman Šimek', assists: '(Stanislav Švarc)', score: '4:4' },
       { time: '28:20', team: 'away', scorer: 'Václav Materna', assists: '(Jiří Šalanda)', score: '4:5' },
-      { time: '28:55', team: 'home', scorer: 'Štorkán', assists: '', score: '5:5' },
+      { time: '28:55', team: 'home', scorer: 'Jaroslav Štorkán', assists: '', score: '5:5' },
       { time: '29:16', team: 'away', scorer: 'Jan Schubada', assists: '(Roman Šimek)', score: '5:6' },
-      { time: '36:21', team: 'home', scorer: 'Štorkán', assists: '', score: '6:6' },
+      { time: '36:21', team: 'home', scorer: 'Jaroslav Štorkán', assists: '', score: '6:6' },
       { time: '41:20', team: 'away', scorer: 'Václav Materna', assists: '(Jiří Šalanda)', score: '6:7' }
     ],
     penalties: [
       { time: '11:00', team: 'home', player: '—', reason: 'podražení', duration: '2 min' },
-      { time: '18:05', team: 'home', player: 'Moučis', reason: 'podražení', duration: '2 min' },
+      { time: '18:05', team: 'home', player: 'Radomír Moučka', reason: 'podražení', duration: '2 min' },
       { time: '41:01', team: 'home', player: '—', reason: 'podražení', duration: '2 min' }
     ],
     summary: 'Po první třetině byl stav 3:3. Ve druhé části se Lancers dostali do vedení 6:5, ale Glacier Wolves v čase 36:21 srovnali. O vítězství 7:6 rozhodl v čase 41:20 Václav Materna po asistenci Jiřího Šalandy. Roman Šimek a Jan Schubada přidali po dvou gólech.'

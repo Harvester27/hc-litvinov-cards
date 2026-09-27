@@ -85,7 +85,9 @@ export const playerData = [
   // Obránci
   { 
     id: 'simek-roman',
-    name: 'Roman Šimek', 
+    name: 'Roman Šimek',
+    photo: '/images/players/roster/simek-roman.png',
+    photoSource: 'https://ceskypohar.cz/Image/76',
     number: 27, 
     position: 'Obránce', 
     age: 32, 

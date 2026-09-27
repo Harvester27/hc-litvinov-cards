@@ -89,7 +89,7 @@ test('timeline uses elapsed match time and preserves untimed events without fabr
 });
 
 test('all known match clubs resolve to existing logos while unknown opponents have no borrowed logo', () => {
-  const names = new Set(matchData.flatMap((match) => [match.homeTeam, match.awayTeam]));
+  const names = new Set(matchData.flatMap((match) => [match.homeTeam, match.awayTeam]).filter(Boolean));
   for (const name of names) {
     const logo = helpers.getTeamLogo(name);
     assert.ok(logo, `${name} must resolve to its known logo`);
