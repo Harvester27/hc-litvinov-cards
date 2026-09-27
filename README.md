@@ -18,3 +18,7 @@ npm run dev
 ```
 
 Web se otevře na [http://localhost:3000](http://localhost:3000). Před nasazením spusť `npm run build`. Veřejná konfigurace Firebase není tajný klíč; přístup k datům řídí pravidla Firestore.
+
+## Přidávání zápasů
+
+Stručný postup pro výsledky, sestavy a statistiky je v [návodu k přidání zápasu](docs/pridani-zapasu.md).
