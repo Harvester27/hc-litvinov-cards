@@ -14,6 +14,43 @@ const { getPlayerMatches, getPlayerStats, getTopScorers } = await import(moduleU
     .replace("'./matchData'", JSON.stringify(matchesUrl))
     .replace("'./playerData'", JSON.stringify(playersUrl)),
 ));
+const articlesUrl = moduleUrl(readProjectFile('src/data/articleData.js').replace(
+  /from '(\.\/articles\/[^']+)'/g,
+  (_, path) => `from ${JSON.stringify(moduleUrl(readProjectFile(`src/data/${path.slice(2)}.js`)))}`,
+));
+const { getArticleBySlug } = await import(articlesUrl);
+const { findPlayersInArticle, createPlayerLinks } = await import(moduleUrl(
+  readProjectFile('src/data/ArticleUtils.js')
+    .replace("'./playerData'", JSON.stringify(playersUrl))
+    .replace("'./articleData'", JSON.stringify(articlesUrl)),
+));
+
+test('article player detection respects Czech word boundaries in ordinary prose', () => {
+  const text = '<p>Celkově se nám nevídaně daří. Další zastávkou je Most.</p>';
+  assert.deepEqual(findPlayersInArticle(text), []);
+  assert.equal(createPlayerLinks(text), text);
+
+  const article = getArticleBySlug('uspesny-start-do-nove-sezony-2026');
+  assert.ok(article);
+  assert.deepEqual(findPlayersInArticle(article.content), []);
+  assert.equal(createPlayerLinks(article.content), article.content);
+});
+
+test('article links and mentions preserve full names, nicknames and historical Materna aliases', () => {
+  const text = '<p>Vašek Materna a Václav Materna, Šali, Tury, Dan Kačeňák a Pavel Schubada St.</p>';
+  const expected = ['materna-vaclav', 'salanda-jiri', 'turecek-tomas', 'kacenak-dan', 'schubada-pavel-st'];
+  assert.deepEqual(
+    findPlayersInArticle(text).map((player) => player.id).sort(),
+    [...expected].sort(),
+  );
+  const linked = createPlayerLinks(text);
+  for (const id of expected) {
+    assert.ok(linked.includes(`href="/profil/${id}"`), `${id}: a complete name or alias must link`);
+  }
+  assert.equal((linked.match(/href="\/profil\/materna-vaclav"/g) || []).length, 2);
+  assert.match(linked, />Šali<\/a>/);
+  assert.match(linked, />Pavel Schubada St\.<\/a>/);
+});
 
 test('both Materna names and old profile ID resolve to one photographed roster player', () => {
   const player = getPlayerById('materna-vaclav');

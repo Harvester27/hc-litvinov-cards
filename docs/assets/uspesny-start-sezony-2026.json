@@ -1,0 +1,13 @@
+{
+  "mode": "Built-in ImageGen",
+  "generatedAsset": "public/images/clanky/uspesny-start-sezony-2026-og.jpg",
+  "dimensions": {
+    "width": 1200,
+    "height": 630
+  },
+  "reference": "User-supplied gold Lancers logo, already approved for the winning-streak poster.",
+  "prompt": "Use case: ads-marketing.\nAsset type: landscape lead image for a Czech amateur ice-hockey club news article and Facebook/Open Graph sharing, exact aspect ratio 1200:630 (1.9048:1), high resolution.\nPrimary request: Create a polished cinematic sports editorial graphic for HC Litvínov Lancers celebrating an exceptional winning run and the successful start of season 2026/27.\nInput image 1 is a brand logo reference, NOT a scene to preserve. Faithfully reproduce the supplied black, white, silver and gold knight-on-horse shield emblem as the club emblem. Keep the recognisable knight, horse, lance, shield, gold mane and plume accurate.\nScene: dark indoor ice rink with softly defocused stadium lights, subtle mist above ice, authentic ice scratches and a black hockey puck in the foreground, warm gold rim lighting with restrained emerald-green light accents. No actual recognizable people or invented match photographs.\nComposition: clean premium sports campaign key visual, club emblem and very large metallic-gold number 15 as a strong integrated central composition. Editorial photograph texture in the rink, crisp emblem and typography. Hierarchy: large number 15, then readable Czech words VÝHER V ŘADĚ below it; small LITVÍNOV LANCERS wordmark above. Small season line 2026/27 at the bottom. Keep all significant content within central 80% of the image and allow generous dark breathing room around it, no edge clipping. The image must still read as a strong thumbnail.\nText verbatim only: \"LITVÍNOV LANCERS\", \"15\", \"VÝHER V ŘADĚ\", \"2026/27\". Correct Czech diacritics. Do not add the article headline or score results. No fabricated sponsor marks or watermarks, no extra logos, no winner trophy, no exaggerated confetti. Strong gold, black, silver and subtle emerald palette matching the approved streak poster. Finished publication-ready single graphic.",
+  "export": "Generated PNG exported to 1200x630 JPEG with Sharp, quality 92. Original generation preserved outside the repository.",
+  "poster": "public/images/clanky/lancers-15-vyher-v-rade.png",
+  "posterSource": "Approved poster version 2, green results and gold accents; unchanged 1800x2546 PNG."
+}

@@ -7,9 +7,11 @@ import { articleDvaTurnajeLitvinovOstrov2025 } from './articles/article-dva-turn
 import { articleStraubing2025 } from './articles/article-straubing-2025';
 import { articleCeskyPoharGlacierWolves2026 } from './articles/article-cesky-pohar-glacier-wolves-2026';
 import { articleVyhraGlacierWolves2026 } from './articles/article-vyhra-glacier-wolves-2026';
+import { articleUspesnyStartSezony2026 } from './articles/article-uspesny-start-do-nove-sezony-2026';
 
 // Databáze všech článků
 export const articles = [
+  articleUspesnyStartSezony2026,
   articleVyhraGlacierWolves2026,
   articleCeskyPoharGlacierWolves2026,
   articleHHCupLitvinov2025,

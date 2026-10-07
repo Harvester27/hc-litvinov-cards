@@ -310,13 +310,23 @@ export default function ArticleDetailClient({ slug }) {
           <article className="bg-white rounded-3xl shadow-xl overflow-hidden">
             {/* Featured Image */}
             {article.featuredImage && (
-              <div className="w-full h-64 md:h-96 overflow-hidden">
-                <img 
-                  src={article.featuredImage} 
-                  alt={article.title}
-                  className="w-full h-full object-cover"
-                />
-              </div>
+              <figure>
+                <div
+                  className={`w-full overflow-hidden ${article.featuredImageAspectRatio ? '' : 'h-64 md:h-96'}`}
+                  style={article.featuredImageAspectRatio ? { aspectRatio: article.featuredImageAspectRatio } : undefined}
+                >
+                  <img
+                    src={article.featuredImage}
+                    alt={article.imageAlt || article.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                {article.imageCaption && (
+                  <figcaption className="px-6 py-3 text-sm text-gray-500 bg-gray-50">
+                    {article.imageCaption}
+                  </figcaption>
+                )}
+              </figure>
             )}
             
             {/* Header */}

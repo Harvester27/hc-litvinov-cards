@@ -2,6 +2,13 @@
 import { getPlayerById, playerData } from './playerData';
 import { articles } from './articleData';
 
+// JavaScriptové \b nepočítá česká písmena jako součást slova.
+const wordCharacters = '[\\p{L}\\p{M}\\p{N}_]';
+const wholeNamePattern = (name) => {
+  const escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return `(?<!${wordCharacters})${escapedName}(?!${wordCharacters})`;
+};
+
 // Vytvoří mapu jmen hráčů pro rychlé vyhledávání
 const createPlayerNameMap = () => {
   const nameMap = new Map();
@@ -67,7 +74,7 @@ export const findPlayersInArticle = (articleContent) => {
   
   // Projdeme všechny možné jména a hledáme je v textu
   nameMap.forEach((player, name) => {
-    if (plainText.includes(name)) {
+    if (new RegExp(wholeNamePattern(name), 'iu').test(plainText)) {
       mentionedPlayers.add(player);
     }
   });
@@ -103,7 +110,7 @@ export const createPlayerLinks = (htmlContent) => {
   // Speciální fráze pro více hráčů
   const multiPlayerPhrases = [
     {
-      pattern: /bratři Matuškovi|Jiří a Lukáš Matuškovi/gi,
+      pattern: /(?<![\p{L}\p{M}\p{N}_])(?:bratři Matuškovi|Jiří a Lukáš Matuškovi)(?![\p{L}\p{M}\p{N}_])/giu,
       replacement: () => {
         const jiri = playerData.find(p => p.id === 'matuska-jiri');
         const lukas = playerData.find(p => p.id === 'matuska-lukas');
@@ -111,13 +118,13 @@ export const createPlayerLinks = (htmlContent) => {
       }
     },
     {
-      pattern: /Dan(?:em)?\s+Kačeňák(?:em)?|Dana?\s+Kačeňák(?:a|ovi)?/gi,
+      pattern: /(?<![\p{L}\p{M}\p{N}_])(?:Dan(?:em)?\s+Kačeňák(?:em)?|Dana?\s+Kačeňák(?:a|ovi)?)(?![\p{L}\p{M}\p{N}_])/giu,
       replacement: (match) => {
         return `<a href="/profil/kacenak-dan" class="text-amber-400 hover:text-amber-300 underline">${match}</a>`;
       }
     },
     {
-      pattern: /Lukáš(?:em)?\s+Zmeškal(?:em)?/gi,
+      pattern: /(?<![\p{L}\p{M}\p{N}_])Lukáš(?:em)?\s+Zmeškal(?:em)?(?![\p{L}\p{M}\p{N}_])/giu,
       replacement: (match) => {
         return `<a href="/profil/zmeskal-lukas" class="text-amber-400 hover:text-amber-300 underline">${match}</a>`;
       }
@@ -177,10 +184,9 @@ export const createPlayerLinks = (htmlContent) => {
   // Provést nahrazení
   replacements.forEach(({ text, player }) => {
     // Vytvoříme regex, který najde text, ale ne pokud už je v odkazu
-    const escapedText = text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const regex = new RegExp(
-      `(?<!<a[^>]*>)(?<!href=")\\b${escapedText}\\b(?![^<]*</a>)`,
-      'gi'
+      `(?<!<a[^>]*>)(?<!href=")${wholeNamePattern(text)}(?![^<]*</a>)`,
+      'giu'
     );
     
     processedContent = processedContent.replace(regex, (match) => {
