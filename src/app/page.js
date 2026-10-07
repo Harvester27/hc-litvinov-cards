@@ -170,7 +170,9 @@ export default function HomePage() {
                   />
                   <div>
                     <span className="font-black text-lg leading-tight">{upcomingMatch.opponent}</span>
-                    <div className="text-xs text-red-600 font-semibold">KHLA Sportega Liga</div>
+                    <div className="text-xs text-red-600 font-semibold">
+                      {upcomingMatch.round && `${upcomingMatch.round}. kolo · `}{upcomingMatch.category}
+                    </div>
                   </div>
                 </div>
                 <div className="text-right">
@@ -178,6 +180,11 @@ export default function HomePage() {
                   <div className="text-xs text-gray-600">{upcomingMatch.time}</div>
                 </div>
               </div>
+              {upcomingMatch.location && (
+                <div className="flex items-center gap-1 text-xs text-gray-600">
+                  <MapPin size={13} aria-hidden="true" />{upcomingMatch.location}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -236,8 +243,8 @@ export default function HomePage() {
                   <div className="flex gap-4">
                     <div className="w-16 h-16 relative flex-shrink-0 group-hover:scale-110 transition-transform">
                       <Image 
-                        src={match.competition === 'czech-cup' ? '/images/loga/CeskyPohar.png' : '/images/loga/lancers-logo.png'}
-                        alt={match.competition === 'czech-cup' ? 'Český pohár' : 'Litvínov Lancers'}
+                        src={match.competition === 'czech-cup' ? '/images/loga/CeskyPohar.png' : match.competition === 'khla' ? '/images/loga/KHLA.png' : '/images/loga/lancers-logo.png'}
+                        alt={match.competition === 'czech-cup' ? 'Český pohár' : match.competition === 'khla' ? 'KHLA' : 'Litvínov Lancers'}
                         width={64}
                         height={64}
                         className="object-contain"

@@ -50,12 +50,14 @@ const teamLogos = {
   
   // KHLA Liga týmy (z tabulky)
   'HC Krokodýl': '/images/loga/HCKrokodyl.png',
+  'Krokodýli Most': '/images/loga/HCKrokodyl.png',
   'HC Kopyta': '/images/loga/HCKopyta.png',
   'HC Žíhadla': '/images/loga/HCZihadla.png',
   'HC Band Of Brothers': '/images/loga/HCBandofBrothers.png',
   'HC North Blades': '/images/loga/HCNorthBlades.png',
   'HC F.R.I.E.N.D.S.': '/images/loga/HCFriends.png',
   'HC Warriors': '/images/loga/HCWarriors.png',
+  'HC Wariors': '/images/loga/HCWarriors.png',
   
   'default': '/images/loga/KHLA.png'
 };

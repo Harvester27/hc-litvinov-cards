@@ -84,3 +84,91 @@ test('opponent names do not create a Lancers appearance, and articles mention on
   const mentions = getPlayersInArticle('Vašek Materna a Václav Materna označují stejného hráče.');
   assert.deepEqual(mentions.map((player) => player.id), ['materna-vaclav']);
 });
+
+test('Krokodýli result adds one appearance and the recorded scoring and penalty totals to all eleven Lancers', () => {
+  const matches = matchData.filter((match) => match.id === 'khla-krokodyl-2026-10-02');
+  assert.equal(matches.length, 1, 'The scheduled entry must become one completed match');
+  const match = matches[0];
+  assert.equal(match.status, 'completed');
+  assert.equal(match.skaterStatsComplete, true);
+  assert.equal(match.goalieStatsComplete, false);
+  const expected = [
+    ['Tomáš Kodrle', 0, 0, 0],
+    ['Roman Šimek', 0, 0, 0],
+    ['Jiří Belinger', 2, 1, 0],
+    ['Roman Beneš', 0, 0, 0],
+    ['Luboš Coufal', 0, 2, 0],
+    ['Ladislav Černý', 0, 1, 0],
+    ['Stanislav Švarc', 2, 0, 2],
+    ['Jiří Šalanda', 1, 1, 0],
+    ['Ondřej Hrubý', 2, 0, 0],
+    ['Michal Koreš', 0, 1, 0],
+    ['Jan Schubada', 1, 1, 0],
+  ];
+  const roster = [match.homeLineup.goalie, ...match.homeLineup.players];
+  assert.deepEqual(roster, expected.map(([name]) => name));
+  const previousMatches = matchData.filter((entry) => entry.id !== match.id);
+
+  for (const [name, goals, assists, penaltyMinutes] of expected) {
+    const player = getPlayerByName(name);
+    assert.ok(player, `${name} must resolve to an existing profile`);
+    const stats = getPlayerStats(player.id, matches);
+    assert.equal(stats.gamesPlayed, 1, `${name}: one appearance`);
+    assert.equal(stats.goals, goals, `${name}: goals`);
+    assert.equal(stats.assists, assists, `${name}: assists`);
+    assert.equal(stats.points, goals + assists, `${name}: points`);
+    assert.equal(stats.penaltyMinutes, penaltyMinutes, `${name}: penalty minutes`);
+    assert.equal(stats.penalties, penaltyMinutes ? 1 : 0, `${name}: penalties`);
+    const before = getPlayerStats(player.id, previousMatches);
+    const after = getPlayerStats(player.id);
+    for (const field of ['gamesPlayed', 'goals', 'assists', 'points', 'penaltyMinutes', 'penalties']) {
+      assert.equal(after[field] - before[field], stats[field], `${name}: cumulative ${field}`);
+    }
+  }
+  assert.equal(playerData.filter((player) => getPlayerStats(player.id, matches).gamesPlayed > 0).length, 11);
+});
+
+test('Kodrle keeps one existing profile and earns a win without invented saves or save percentage', () => {
+  const match = matchData.find((entry) => entry.id === 'khla-krokodyl-2026-10-02');
+  assert.ok(match);
+  const player = getPlayerById('kodrle-tomas');
+  assert.equal(getPlayerByName('Tomáš Kodrle'), player);
+  assert.equal(playerData.filter((entry) => /Kodrle$/.test(entry.name)).length, 1);
+  assert.ok(existsSync(new URL(`../public${player.photo}`, import.meta.url)));
+  assert.equal(match.goalieStatsComplete, false);
+  assert.equal(Object.hasOwn(match, 'saves'), false);
+  const stats = getPlayerStats(player.id, [match]);
+  assert.equal(stats.gamesPlayed, 1);
+  assert.equal(stats.wins, 1);
+  assert.equal(stats.losses, 0);
+  assert.equal(Object.hasOwn(stats, 'savePercentage'), false);
+  const before = getPlayerStats(player.id, matchData.filter((entry) => entry.id !== match.id));
+  const after = getPlayerStats(player.id);
+  assert.equal(after.gamesPlayed - before.gamesPlayed, 1);
+  assert.equal(after.wins - before.wins, 1);
+  assert.equal(after.saves, before.saves);
+  assert.equal(Object.hasOwn(after, 'savePercentage'), false);
+});
+
+test('Warriors remains scheduled and cannot contribute player appearances even with a nominated lineup', () => {
+  const fixture = matchData.find((match) => match.id === 'khla-warriors-2026-10-09');
+  assert.ok(fixture);
+  assert.equal(fixture.status, 'scheduled');
+  assert.equal(fixture.date, '9.10.2026');
+  assert.equal(fixture.time, '20:45');
+  assert.match(fixture.location, /Most/);
+  assert.equal(fixture.homeLineup, undefined);
+  assert.equal(fixture.awayLineup, undefined);
+  assert.equal(fixture.score, undefined);
+  const nominated = {
+    ...fixture,
+    homeLineup: { goalie: 'Tomáš Kodrle', players: ['Jiří Belinger'] },
+    awayLineup: { goalie: 'Tomáš Kodrle', players: ['Jiří Belinger'] },
+    skaterStatsComplete: true,
+  };
+  for (const playerId of ['kodrle-tomas', 'belinger-jiri']) {
+    assert.deepEqual(getPlayerMatches(playerId, [fixture, nominated]), []);
+    assert.equal(getPlayerStats(playerId, [fixture, nominated]).gamesPlayed, 0);
+    assert.equal(getPlayerMatches(playerId).some((match) => match.id === fixture.id), false);
+  }
+});

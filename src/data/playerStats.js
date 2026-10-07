@@ -26,7 +26,8 @@ export const lineupIncludesPlayer = (lineup, player) => {
     ...(lineup.line2 || []),
     ...(lineup.line3 || []),
     ...(lineup.defenders || []),
-    ...(lineup.forwards || [])
+    ...(lineup.forwards || []),
+    ...(lineup.players || [])
   ];
 
   return skaters.some((name) => isPlayerName(name, player));
@@ -70,6 +71,9 @@ export const getPlayerMatches = (playerId, matches = matchData) => {
   if (!player) return [];
   
   return matches.filter((match) => {
+    // Starší zápasy nemají status; explicitně neodehrané zápasy se do startů nepočítají.
+    if (match.status && match.status !== 'completed') return false;
+
     const lancersSide = getLancersSide(match);
     if (lancersSide) {
       return lineupIncludesPlayer(

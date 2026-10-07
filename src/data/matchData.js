@@ -60,17 +60,222 @@ const czechCupMatches2026_27 = [
 
 const khlaMatches2026_27 = [
   {
-    id: 'khla-krokodyl-2026-10-02',
-    title: 'KHLA: Litvínov Lancers proti HC Krokodýl',
-    date: '2.10.2026',
-    time: '21:00',
-    category: 'KHLA',
-    season: '2026/27',
-    competition: 'khla',
-    stage: 'regular',
-    status: 'scheduled',
-    opponent: 'HC Krokodýl',
-    opponentLogo: '/images/loga/HCKrokodyl.png'
+    "id": "khla-krokodyl-2026-10-02",
+    "title": "Vítězství Lancers 8:5 nad Krokodýly Most",
+    "date": "2.10.2026",
+    "time": "21:00",
+    "location": "ZS Most",
+    "category": "KHLA",
+    "competition": "khla",
+    "stage": "regular",
+    "status": "completed",
+    "skaterStatsComplete": true,
+    "goalieStatsComplete": false,
+    "sourceUrl": "https://www.khla.cz/",
+    "image": "🏒",
+    "excerpt": "Lancers porazili Krokodýly Most 8:5. Stanislav Švarc, Ondřej Hrubý a Jiří Belinger vstřelili po dvou gólech.",
+    "homeTeam": "Litvínov Lancers",
+    "awayTeam": "Krokodýli Most",
+    "opponentLogo": "/images/loga/HCKrokodyl.png",
+    "score": "8:5",
+    "periods": "(4:0 4:2 0:3)",
+    "format": "3× 15 minut",
+    "homeLineup": {
+      "goalie": "Tomáš Kodrle",
+      "players": [
+        "Roman Šimek",
+        "Jiří Belinger",
+        "Roman Beneš",
+        "Luboš Coufal",
+        "Ladislav Černý",
+        "Stanislav Švarc",
+        "Jiří Šalanda",
+        "Ondřej Hrubý",
+        "Michal Koreš",
+        "Jan Schubada"
+      ],
+      "jerseyNumbers": {
+        "Tomáš Kodrle": 35,
+        "Roman Šimek": 26,
+        "Jiří Belinger": 11,
+        "Roman Beneš": 42,
+        "Luboš Coufal": 33,
+        "Ladislav Černý": 85,
+        "Stanislav Švarc": 94,
+        "Jiří Šalanda": 9,
+        "Ondřej Hrubý": 95,
+        "Michal Koreš": 6,
+        "Jan Schubada": 88
+      }
+    },
+    "awayLineup": {
+      "goalie": "Václav Šlégr",
+      "players": [
+        "Josef Bernard",
+        "Martin Matějka",
+        "Dobroslav Novotný",
+        "Radovan Kuchař",
+        "Dušan Hrdý",
+        "Milan Němec",
+        "Jiří Hykl",
+        "Martin Douša",
+        "Ondřej Polák",
+        "Jaroslav Šafařík",
+        "Petr Božek"
+      ],
+      "jerseyNumbers": {
+        "Václav Šlégr": 39,
+        "Josef Bernard": 77,
+        "Martin Matějka": 88,
+        "Dobroslav Novotný": 66,
+        "Radovan Kuchař": 96,
+        "Dušan Hrdý": 15,
+        "Milan Němec": 24,
+        "Jiří Hykl": 11,
+        "Martin Douša": 72,
+        "Ondřej Polák": 10,
+        "Jaroslav Šafařík": 35,
+        "Petr Božek": 46
+      }
+    },
+    "goals": [
+      {
+        "time": "04:48",
+        "team": "home",
+        "scorer": "Jan Schubada",
+        "assists": "(Ladislav Černý)",
+        "score": "1:0"
+      },
+      {
+        "time": "05:28",
+        "team": "home",
+        "scorer": "Stanislav Švarc",
+        "assists": "",
+        "score": "2:0"
+      },
+      {
+        "time": "07:17",
+        "team": "home",
+        "scorer": "Ondřej Hrubý",
+        "assists": "(Michal Koreš)",
+        "score": "3:0"
+      },
+      {
+        "time": "14:12",
+        "team": "home",
+        "scorer": "Jiří Belinger",
+        "assists": "(Jiří Šalanda)",
+        "score": "4:0"
+      },
+      {
+        "time": "20:10",
+        "team": "home",
+        "scorer": "Jiří Šalanda",
+        "assists": "(Luboš Coufal)",
+        "score": "5:0"
+      },
+      {
+        "time": "20:58",
+        "team": "away",
+        "scorer": "Radovan Kuchař",
+        "assists": "(Petr Božek)",
+        "score": "5:1"
+      },
+      {
+        "time": "23:13",
+        "team": "home",
+        "scorer": "Stanislav Švarc",
+        "assists": "(Jiří Belinger)",
+        "score": "6:1"
+      },
+      {
+        "time": "26:11",
+        "team": "away",
+        "scorer": "Jiří Hykl",
+        "assists": "(Dobroslav Novotný)",
+        "score": "6:2"
+      },
+      {
+        "time": "26:41",
+        "team": "home",
+        "scorer": "Ondřej Hrubý",
+        "assists": "(Jan Schubada)",
+        "score": "7:2"
+      },
+      {
+        "time": "28:06",
+        "team": "home",
+        "scorer": "Jiří Belinger",
+        "assists": "(Luboš Coufal)",
+        "score": "8:2"
+      },
+      {
+        "time": "35:39",
+        "team": "away",
+        "scorer": "Milan Němec",
+        "assists": "",
+        "score": "8:3"
+      },
+      {
+        "time": "36:06",
+        "team": "away",
+        "scorer": "Jiří Hykl",
+        "assists": "(Martin Matějka)",
+        "score": "8:4"
+      },
+      {
+        "time": "44:30",
+        "team": "away",
+        "scorer": "Radovan Kuchař",
+        "assists": "(Ondřej Polák)",
+        "score": "8:5"
+      }
+    ],
+    "penalties": [
+      {
+        "time": "11:25",
+        "team": "away",
+        "player": "Dušan Hrdý",
+        "reason": "držení",
+        "duration": "2 min"
+      },
+      {
+        "time": "21:50",
+        "team": "away",
+        "player": "Petr Božek",
+        "reason": "",
+        "duration": "2 min"
+      },
+      {
+        "time": "28:25",
+        "team": "home",
+        "player": "Stanislav Švarc",
+        "reason": "podrážení",
+        "duration": "2 min"
+      }
+    ],
+    "summary": "Lancers vedli po první třetině 4:0 a po druhé 8:2. Krokodýli Most ve třetí části snížili na konečných 8:5. Vítězný šestý gól Lancers vstřelil v čase 23:13 Stanislav Švarc po asistenci Jiřího Belingera. Švarc, Ondřej Hrubý a Jiří Belinger skórovali dvakrát; Jan Schubada a Jiří Šalanda přidali po jednom gólu.",
+    "season": "2026/27",
+    "round": 1,
+    "sourceLabel": "Výsledek a rozpis KHLA"
+  },
+  {
+    "id": "khla-warriors-2026-10-09",
+    "title": "2. kolo KHLA: HC Warriors proti Litvínov Lancers",
+    "date": "9.10.2026",
+    "time": "20:45",
+    "location": "ZS Most",
+    "category": "KHLA",
+    "season": "2026/27",
+    "competition": "khla",
+    "stage": "regular",
+    "round": 2,
+    "status": "scheduled",
+    "homeTeam": "HC Warriors",
+    "awayTeam": "Litvínov Lancers",
+    "opponent": "HC Warriors",
+    "opponentLogo": "/images/loga/HCWarriors.png",
+    "sourceUrl": "https://www.khla.cz/"
   }
 ];
 

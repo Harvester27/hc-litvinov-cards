@@ -96,6 +96,9 @@ test('all known match clubs resolve to existing logos while unknown opponents ha
     assert.ok(existsSync(new URL(`../public${logo}`, import.meta.url)), `${logo} must exist`);
   }
   assert.equal(helpers.getTeamLogo('Vipers Ústí nad Labem'), '/images/loga/Viper.png');
+  assert.equal(helpers.getTeamLogo('Krokodýli Most'), '/images/loga/HCKrokodyl.png');
+  assert.equal(helpers.getTeamLogo('HC Warriors'), '/images/loga/HCWarriors.png');
+  assert.equal(helpers.getTeamLogo('HC Wariors'), '/images/loga/HCWarriors.png');
   assert.equal(helpers.getTeamLogo('Nový soupeř'), null);
   assert.equal(helpers.getTeamLogo(null), null);
   assert.equal(helpers.isLancersTeam('Nonlancers'), false);
@@ -107,4 +110,57 @@ test('empty match values are safe and supplied historical period separators are 
   assert.deepEqual(helpers.getLineupGroups(undefined), []);
   assert.deepEqual(helpers.getPeriodScores('(1:0, 0 : 1, 2:0)'), ['1:0', '0:1', '2:0']);
   assert.deepEqual(helpers.getPeriodScores(undefined), []);
+});
+
+test('Krokodýli displays complete rosters without assigning unrecorded player positions', () => {
+  const match = matchById('khla-krokodyl-2026-10-02');
+  for (const [side, count] of [['home', 11], ['away', 12]]) {
+    const lineup = match[`${side}Lineup`];
+    const groups = helpers.getLineupGroups(lineup);
+    assert.deepEqual(groups.map((group) => group.label), ['Brankář', 'Hráči v poli']);
+    assert.deepEqual(groups.flatMap((group) => group.players), [lineup.goalie, ...lineup.players]);
+    assert.equal(groups.flatMap((group) => group.players).length, count);
+  }
+});
+
+test('Krokodýli preserves the recorded jersey numbers for both complete match lineups', () => {
+  const match = matchById('khla-krokodyl-2026-10-02');
+  const expectedNumbers = {
+    home: [35, 26, 11, 42, 33, 85, 94, 9, 95, 6, 88],
+    away: [39, 77, 88, 66, 96, 15, 24, 11, 72, 10, 35, 46],
+  };
+  for (const side of ['home', 'away']) {
+    const lineup = match[`${side}Lineup`];
+    const names = helpers.getLineupGroups(lineup).flatMap((group) => group.players);
+    assert.deepEqual(Object.keys(lineup.jerseyNumbers), names);
+    assert.deepEqual(names.map((name) => lineup.jerseyNumbers[name]), expectedNumbers[side]);
+  }
+});
+
+test('Krokodýli score, periods and chronological match events agree with the confirmed result', () => {
+  const match = matchById('khla-krokodyl-2026-10-02');
+  assert.equal(match.score, '8:5');
+  assert.deepEqual(helpers.getPeriodScores(match.periods), ['4:0', '4:2', '0:3']);
+  const goals = helpers.getRegulationGoals(match);
+  assert.equal(goals.length, 13);
+  let home = 0;
+  let away = 0;
+  const periods = [[0, 0], [0, 0], [0, 0]];
+  for (const goal of goals) {
+    if (goal.team === 'home') home += 1;
+    else away += 1;
+    assert.equal(goal.score, `${home}:${away}`);
+    const [minutes, seconds] = goal.time.split(':').map(Number);
+    const period = Math.min(2, Math.floor((minutes * 60 + seconds) / 900));
+    periods[period][goal.team === 'home' ? 0 : 1] += 1;
+  }
+  assert.deepEqual(periods, [[4, 0], [4, 2], [0, 3]]);
+  assert.equal(`${home}:${away}`, match.score);
+  assert.deepEqual(helpers.getTimelineEvents(match).map(({ time, kind }) => [time, kind]), [
+    ['04:48', 'goal'], ['05:28', 'goal'], ['07:17', 'goal'], ['11:25', 'penalty'],
+    ['14:12', 'goal'], ['20:10', 'goal'], ['20:58', 'goal'], ['21:50', 'penalty'],
+    ['23:13', 'goal'], ['26:11', 'goal'], ['26:41', 'goal'], ['28:06', 'goal'],
+    ['28:25', 'penalty'], ['35:39', 'goal'], ['36:06', 'goal'], ['44:30', 'goal'],
+  ]);
+  assert.equal(match.penalties.find((penalty) => penalty.player === 'Petr Božek').reason, '');
 });

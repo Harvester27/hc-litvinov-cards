@@ -17,13 +17,13 @@ const teamLogos = [
   [/\bducks\b/, 'Ducks.png'],
   [/\bsharks\b/, 'Sharks.png'],
   [/\bglacier wolves\b/, 'GlacierWolves.png'],
-  [/\bkrokodyl\b/, 'HCKrokodyl.png'],
+  [/\bkrokodyl(?:i)?\b/, 'HCKrokodyl.png'],
   [/\bkopyta\b/, 'HCKopyta.png'],
   [/\bzihadla\b/, 'HCZihadla.png'],
   [/\bband of brothers\b/, 'HCBandofBrothers.png'],
   [/\bnorth blades\b/, 'HCNorthBlades.png'],
   [/\bf\.?r\.?i\.?e\.?n\.?d\.?s\b/, 'HCFriends.png'],
-  [/\bwarriors\b/, 'HCWarriors.png'],
+  [/\bwar{1,2}iors\b/, 'HCWarriors.png'],
 ];
 
 export const getTeamLogo = (teamName) => {
@@ -94,6 +94,7 @@ export const getLineupGroups = (lineup) => {
     { label: '1. řada', players: lineup.line1 },
     { label: '2. řada', players: lineup.line2 },
     { label: '3. řada', players: lineup.line3 },
+    { label: 'Hráči v poli', players: lineup.players },
   ].filter((group) => Array.isArray(group.players) && group.players.length > 0);
 };
 

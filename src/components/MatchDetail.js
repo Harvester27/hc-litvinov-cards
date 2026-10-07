@@ -23,7 +23,7 @@ const formatAssists = (assists) => Array.isArray(assists)
   : String(assists || '').replace(/^\(|\)$/g, '').trim();
 const displayName = (name) => !name || name === '?' ? 'Hráč bude doplněn' : name;
 
-function PlayerAvatar({ name, player, photo = player?.photo, compact = false }) {
+function PlayerAvatar({ name, player, photo = player?.photo, jerseyNumber = player?.number, compact = false }) {
   const [failedSource, setFailedSource] = useState(null);
   return (
     <div className={`${styles.avatar} ${compact ? styles.avatarCompact : ''}`}>
@@ -38,7 +38,7 @@ function PlayerAvatar({ name, player, photo = player?.photo, compact = false }) 
           <path d="m33 66 17 18 17-18" fill="none" stroke="#202733" strokeWidth="5" />
         </svg>
       )}
-      {player?.number != null && <span className={styles.jerseyNumber}>#{player.number}</span>}
+      {jerseyNumber != null && <span className={styles.jerseyNumber}>#{jerseyNumber}</span>}
     </div>
   );
 }
@@ -100,6 +100,13 @@ function MatchDialog({ match, onClose }) {
 
   const isOurSide = (side) => isLancersTeam(side === 'home' ? match.homeTeam : side === 'away' ? match.awayTeam : '');
   const getPlayer = (name, side) => isOurSide(side) ? getPlayerByName(name) : null;
+  const getJerseyNumber = (name, side) => {
+    const lineup = side === 'home' ? match.homeLineup : side === 'away' ? match.awayLineup : null;
+    const player = getPlayer(name, side);
+    // Čísla ze zápisu platí jen pro toto utkání, obecnou soupisku nemění.
+    if (lineup?.jerseyNumbers) return lineup.jerseyNumbers[name] ?? lineup.jerseyNumbers[player?.name] ?? null;
+    return player?.number;
+  };
   const getTeam = (side) => side === 'home' ? match.homeTeam : side === 'away' ? match.awayTeam : '';
   const getOpponentPhoto = (name, side) => isOurSide(side) ? undefined : getOpponentPlayerPhoto(getTeam(side), name);
   const goals = getRegulationGoals(match);
@@ -115,7 +122,7 @@ function MatchDialog({ match, onClose }) {
   const renderGoal = (goal, index) => (
     <div key={`${goal.time}-${index}`} className={`${styles.goalRow} ${isOurSide(goal.team) ? styles.ourEvent : ''}`}>
       <span className={styles.eventTime}>{goal.time || '—'}</span>
-      <PlayerAvatar compact name={goal.scorer} player={getPlayer(goal.scorer, goal.team)} photo={getOpponentPhoto(goal.scorer, goal.team)} />
+      <PlayerAvatar compact name={goal.scorer} player={getPlayer(goal.scorer, goal.team)} photo={getOpponentPhoto(goal.scorer, goal.team)} jerseyNumber={getJerseyNumber(goal.scorer, goal.team)} />
       <div className={styles.eventCopy}>
         <div className={styles.eventName}>{playerLink(goal.scorer, goal.team)}</div>
         {formatAssists(goal.assists) && <p>Asistence: {formatAssists(goal.assists)}</p>}
@@ -168,7 +175,7 @@ function MatchDialog({ match, onClose }) {
               const Tag = player ? Link : 'div';
               return <Tag key={`${name}-${index}`} className={`${styles.playerCard} ${player ? styles.linkedCard : ''}`}
                 {...(player ? { href: `/profil/${player.id}`, onClick: onClose } : {})}>
-                <PlayerAvatar name={name} player={player} photo={getOpponentPhoto(name, side)} />
+                <PlayerAvatar name={name} player={player} photo={getOpponentPhoto(name, side)} jerseyNumber={getJerseyNumber(name, side)} />
                 <div className={styles.playerCardCopy}>
                   <strong>{displayName(name)}</strong>
                   {skaterStatsKnown && group.label !== 'Brankář' && name !== '?'
@@ -241,7 +248,7 @@ function MatchDialog({ match, onClose }) {
                     document.getElementById(`${uid}-lineups-tab`)?.focus();
                   }}>Prohlédnout soupisky <ArrowUpRight size={16} /></button>}
                   {match.sourceUrl && <div><a className={styles.textButton} href={match.sourceUrl} target="_blank" rel="noopener noreferrer">
-                    Oficiální zápis utkání <ArrowUpRight size={16} />
+                    {match.sourceLabel || 'Oficiální zápis utkání'} <ArrowUpRight size={16} />
                   </a></div>}
                 </aside>
               </div>
@@ -264,6 +271,7 @@ function MatchDialog({ match, onClose }) {
                     <div className={styles.timelinePerson}>
                       <PlayerAvatar compact name={event.kind === 'goal' ? event.scorer : event.servedBy || event.player}
                         player={getPlayer(event.kind === 'goal' ? event.scorer : event.servedBy || event.player, event.team)}
+                        jerseyNumber={getJerseyNumber(event.kind === 'goal' ? event.scorer : event.servedBy || event.player, event.team)}
                         photo={getOpponentPhoto(event.kind === 'goal' ? event.scorer : event.servedBy || event.player, event.team)} />
                       <div className={styles.eventCopy}>
                         <div className={styles.eventName}>{playerLink(event.kind === 'goal' ? event.scorer : event.player, event.team)}</div>
